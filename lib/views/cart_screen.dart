@@ -21,6 +21,42 @@ class _CartScreenState extends State<CartScreen> {
 
   bool isPlacingOrder = false; // Added for loading state
 
+  String _getSpiceLabel(dynamic level) {
+    if (level == null) return "Medium";
+    switch (level) {
+      case 1:
+        return "Mild";
+      case 2:
+        return "Medium";
+      case 3:
+        return "Hot";
+      case 4:
+        return "Extra Hot";
+      case 5:
+        return "Inferno";
+      default:
+        return "Medium";
+    }
+  }
+
+  String _getOilLabel(dynamic level) {
+    if (level == null) return "Medium Oil";
+    switch (level) {
+      case 1:
+        return "No Oil";
+      case 2:
+        return "Low Oil";
+      case 3:
+        return "Medium Oil";
+      case 4:
+        return "High Oil";
+      case 5:
+        return "Extra Oil";
+      default:
+        return "Medium Oil";
+    }
+  }
+
   @override
   void initState() {
     super.initState();
@@ -123,6 +159,8 @@ class _CartScreenState extends State<CartScreen> {
           'quantity': data['quantity'],
           'totalPrice': data['totalPrice'],
           'image': data['image'],
+          'spiceLevel': data['spiceLevel'],
+          'oilLevel': data['oilLevel'],
         };
       }).toList();
 
@@ -220,8 +258,8 @@ class _CartScreenState extends State<CartScreen> {
                           style: TextStyle(fontSize: 12.sp, color: Colors.black),
                         ),
                         subtitle: Text(
-                          'Quantity: ${item['quantity']}\nPrice: ${item['totalPrice']} PKR',
-                          style: const TextStyle(color: Colors.black),
+                          'Quantity: ${item['quantity']}\nPrice: ${item['totalPrice']} PKR${item['spiceLevel'] != null && item['oilLevel'] != null ? '\nSpice: ${_getSpiceLabel(item['spiceLevel'])} | Oil: ${_getOilLabel(item['oilLevel'])}' : ''}',
+                          style: const TextStyle(color: Colors.black, height: 1.3),
                         ),
                         trailing: IconButton(
                           icon: const Icon(Icons.delete, color: Colors.black),

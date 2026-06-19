@@ -1,6 +1,11 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:food_delivery_app/auth/login_screen.dart';
+import 'package:food_delivery_app/auth/signup_screen.dart';
+import 'package:food_delivery_app/views/cart_screen.dart';
+import 'package:food_delivery_app/views/food_cart.dart';
+import 'package:food_delivery_app/views/my_bottom_nav.dart';
 import 'package:food_delivery_app/views/splash.dart';
 import 'package:sizer/sizer.dart';
 
@@ -33,7 +38,7 @@ class MyApp extends StatelessWidget {
               colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
               useMaterial3: true,
             ),
-            home:const Splash(),
+            home: MyBottomNav(),
           );
         },
       );

@@ -11,6 +11,42 @@ class AllOrders extends StatefulWidget {
 }
 
 class _AllOrdersState extends State<AllOrders> {
+  String _getSpiceLabel(dynamic level) {
+    if (level == null) return "Medium";
+    switch (level) {
+      case 1:
+        return "Mild";
+      case 2:
+        return "Medium";
+      case 3:
+        return "Hot";
+      case 4:
+        return "Extra Hot";
+      case 5:
+        return "Inferno";
+      default:
+        return "Medium";
+    }
+  }
+
+  String _getOilLabel(dynamic level) {
+    if (level == null) return "Medium Oil";
+    switch (level) {
+      case 1:
+        return "No Oil";
+      case 2:
+        return "Low Oil";
+      case 3:
+        return "Medium Oil";
+      case 4:
+        return "High Oil";
+      case 5:
+        return "Extra Oil";
+      default:
+        return "Medium Oil";
+    }
+  }
+
   /// Convert Latitude and Longitude to Address
   Future<String> getAddressFromCoordinates(double latitude, double longitude) async {
     try {
@@ -144,11 +180,17 @@ class _AllOrdersState extends State<AllOrders> {
                           const Divider(),
                           Text("Items:", style: TextStyle(fontSize: 12.sp, fontWeight: FontWeight.bold)),
                           ...items.map((item) {
+                            final spice = item['spiceLevel'];
+                            final oil = item['oilLevel'];
+                            String itemText = "${item['itemName']} - Quantity: ${item['quantity']} - Price: ${item['totalPrice']} PKR";
+                            if (spice != null && oil != null) {
+                              itemText += "\n(Spice: ${_getSpiceLabel(spice)} | Oil: ${_getOilLabel(oil)})";
+                            }
                             return Padding(
                               padding: EdgeInsets.only(top: 0.5.h),
                               child: Text(
-                                "${item['itemName']} - Quantity: ${item['quantity']} - Price: ${item['totalPrice']} PKR",
-                                style: TextStyle(fontSize: 10.sp),
+                                itemText,
+                                style: TextStyle(fontSize: 10.sp, height: 1.3),
                               ),
                             );
                           }).toList(),
