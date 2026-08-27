@@ -74,14 +74,17 @@ class _CartScreenState extends State<CartScreen> {
   /// Delete Cart Item
   Future<void> deleteCartItem(String cartItemId) async {
     try {
-      await FirebaseFirestore.instance.collection('cart').doc(cartItemId).delete();
+      await FirebaseFirestore.instance
+          .collection('cart')
+          .doc(cartItemId)
+          .delete();
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Item removed from cart successfully')),
       );
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to remove item: $e')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Failed to remove item: $e')));
     }
   }
 
@@ -109,27 +112,34 @@ class _CartScreenState extends State<CartScreen> {
       LocationPermission permission = await Geolocator.checkPermission();
       if (permission == LocationPermission.denied) {
         permission = await Geolocator.requestPermission();
-        if (permission == LocationPermission.denied) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Location permissions are denied')),
-          );
-          return null;
-        }
       }
 
       if (permission == LocationPermission.deniedForever) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-              content: Text('Location permissions are permanently denied')),
+            content: Text(
+              'Location permission permanently denied. Open app settings.',
+            ),
+          ),
+        );
+        await Geolocator.openAppSettings();
+        return null;
+      }
+
+      if (permission == LocationPermission.denied) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Location permission denied.')),
         );
         return null;
       }
 
-      return await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to get location: $e')),
+      return await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.high,
       );
+    } catch (e) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Failed to get location: $e')));
       return null;
     }
   }
@@ -147,7 +157,9 @@ class _CartScreenState extends State<CartScreen> {
 
       if (location == null) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Failed to fetch location. Please try again.')),
+          const SnackBar(
+            content: Text('Failed to fetch location. Please try again.'),
+          ),
         );
         return;
       }
@@ -194,9 +206,9 @@ class _CartScreenState extends State<CartScreen> {
         ),
       );
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to place order: $e')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Failed to place order: $e')));
     } finally {
       setState(() {
         isPlacingOrder = false; // Stop loading
@@ -208,10 +220,13 @@ class _CartScreenState extends State<CartScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('My Cart', style: TextStyle(color: Colors.black)),
+        title: const Text(
+          'MY CART',
+          style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
+        ),
         backgroundColor: Colors.amber,
         centerTitle: true,
-        iconTheme: const IconThemeData(color: Colors.black),
+        // iconTheme: IconThemeData(color: Colors.black),
       ),
       body: StreamBuilder<QuerySnapshot>(
         stream: FirebaseFirestore.instance
@@ -240,11 +255,15 @@ class _CartScreenState extends State<CartScreen> {
                 child: ListView.builder(
                   itemCount: cartItems.length,
                   itemBuilder: (context, index) {
-                    final item = cartItems[index].data() as Map<String, dynamic>;
+                    final item =
+                        cartItems[index].data() as Map<String, dynamic>;
 
                     return Card(
                       color: Colors.amberAccent,
-                      margin: EdgeInsets.symmetric(horizontal: 3.w, vertical: 1.h),
+                      margin: EdgeInsets.symmetric(
+                        horizontal: 3.w,
+                        vertical: 1.h,
+                      ),
                       elevation: 3,
                       child: ListTile(
                         leading: Image.network(
@@ -255,11 +274,17 @@ class _CartScreenState extends State<CartScreen> {
                         ),
                         title: Text(
                           item['itemName'],
-                          style: TextStyle(fontSize: 12.sp, color: Colors.black),
+                          style: TextStyle(
+                            fontSize: 12.sp,
+                            color: Colors.black,
+                          ),
                         ),
                         subtitle: Text(
                           'Quantity: ${item['quantity']}\nPrice: ${item['totalPrice']} PKR${item['spiceLevel'] != null && item['oilLevel'] != null ? '\nSpice: ${_getSpiceLabel(item['spiceLevel'])} | Oil: ${_getOilLabel(item['oilLevel'])}' : ''}',
-                          style: const TextStyle(color: Colors.black, height: 1.3),
+                          style: const TextStyle(
+                            color: Colors.black,
+                            height: 1.3,
+                          ),
                         ),
                         trailing: IconButton(
                           icon: const Icon(Icons.delete, color: Colors.black),
@@ -273,22 +298,42 @@ class _CartScreenState extends State<CartScreen> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
-                  Text("Total :",style: TextStyle(fontSize: 14.sp,fontWeight: FontWeight.bold),),
-                  Text("${overallTotal} Pkr",style: TextStyle(fontSize: 14.sp,fontWeight: FontWeight.bold))
+                  Text(
+                    "Total :",
+                    style: TextStyle(
+                      fontSize: 14.sp,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  Text(
+                    "${overallTotal} Pkr",
+                    style: TextStyle(
+                      fontSize: 14.sp,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
                 ],
               ),
               const Divider(),
               Padding(
                 padding: EdgeInsets.all(3.w),
                 child: ElevatedButton(
-                  onPressed: isPlacingOrder ? null : () => placeOrder(cartItems),
+                  onPressed: isPlacingOrder
+                      ? null
+                      : () => placeOrder(cartItems),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.amber,
                     disabledBackgroundColor: Colors.amberAccent,
                   ),
                   child: isPlacingOrder
                       ? const CircularProgressIndicator(color: Colors.black)
-                      : Text('Place Order', style: TextStyle(fontSize: 14.sp, color: Colors.black)),
+                      : Text(
+                          'Place Order',
+                          style: TextStyle(
+                            fontSize: 14.sp,
+                            color: Colors.black,
+                          ),
+                        ),
                 ),
               ),
             ],

@@ -48,9 +48,15 @@ class _AllOrdersState extends State<AllOrders> {
   }
 
   /// Convert Latitude and Longitude to Address
-  Future<String> getAddressFromCoordinates(double latitude, double longitude) async {
+  Future<String> getAddressFromCoordinates(
+    double latitude,
+    double longitude,
+  ) async {
     try {
-      List<Placemark> placemarks = await placemarkFromCoordinates(latitude, longitude);
+      List<Placemark> placemarks = await placemarkFromCoordinates(
+        latitude,
+        longitude,
+      );
       if (placemarks.isNotEmpty) {
         Placemark place = placemarks[0];
         return "${place.street}, ${place.locality}, ${place.administrativeArea}, ${place.country}";
@@ -68,22 +74,36 @@ class _AllOrdersState extends State<AllOrders> {
 
   /// Update Order Status in Firestore
   Future<void> updateOrderStatus(String orderId, String currentStatus) async {
+    if (currentStatus == 'Cancelled') {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('Order already cancelled')));
+      return;
+    }
+
     try {
-      String newStatus = (currentStatus == 'Pending' || currentStatus == 'On a way')
-          ? 'On the Way'
-          : 'Delivered';
+      String newStatus;
+      if (currentStatus == 'Pending') {
+        newStatus = 'On the Way';
+      } else if (currentStatus == 'On the Way' || currentStatus == 'On a way') {
+        newStatus = 'Delivered';
+      } else {
+        // do not change Delivered/other states
+        newStatus = currentStatus;
+      }
 
-      await FirebaseFirestore.instance
-          .collection('orders')
-          .doc(orderId)
-          .update({'status': newStatus});
-
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Order status updated to $newStatus'),
-          backgroundColor: Colors.green,
-        ),
-      );
+      if (newStatus != currentStatus) {
+        await FirebaseFirestore.instance
+            .collection('orders')
+            .doc(orderId)
+            .update({'status': newStatus});
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Order status updated to $newStatus'),
+            backgroundColor: Colors.green,
+          ),
+        );
+      }
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -94,13 +114,56 @@ class _AllOrdersState extends State<AllOrders> {
     }
   }
 
+  /// Delete order document (admin remove)
+  Future<void> deleteOrder(String orderId) async {
+    final confirm = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Remove Order'),
+        content: const Text(
+          'Are you sure you want to remove this order? This action cannot be undone.',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: const Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(context, true),
+            child: const Text('Remove'),
+          ),
+        ],
+      ),
+    );
+
+    if (confirm != true) return;
+
+    try {
+      await FirebaseFirestore.instance
+          .collection('orders')
+          .doc(orderId)
+          .delete();
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('Order removed')));
+    } catch (e) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Failed to remove order: $e')));
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text(
           "All Orders",
-          style: TextStyle(fontSize: 20.sp, fontWeight: FontWeight.w800, color: Colors.white),
+          style: TextStyle(
+            fontSize: 20.sp,
+            fontWeight: FontWeight.w800,
+            color: Colors.white,
+          ),
         ),
         centerTitle: true,
         backgroundColor: Colors.black,
@@ -145,46 +208,87 @@ class _AllOrdersState extends State<AllOrders> {
                     : Future.value("No location provided"),
                 builder: (context, addressSnapshot) {
                   final address = addressSnapshot.data ?? "Loading address...";
+                  final status = order['status'] ?? '';
 
                   return Card(
-                    margin: EdgeInsets.symmetric(horizontal: 4.w, vertical: 1.h),
+                    margin: EdgeInsets.symmetric(
+                      horizontal: 4.w,
+                      vertical: 1.h,
+                    ),
                     elevation: 3,
                     child: Padding(
                       padding: EdgeInsets.all(3.w),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(
-                            "Order ID: ${order['userId']}",
-                            style: TextStyle(fontSize: 13.sp, fontWeight: FontWeight.bold, color: Colors.green),
+                          // Header row with Order ID and Remove button
+                          Row(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Expanded(
+                                child: Text(
+                                  "Order ID: $orderId",
+                                  style: TextStyle(
+                                    fontSize: 13.sp,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.green,
+                                  ),
+                                ),
+                              ),
+                              IconButton(
+                                onPressed: () => deleteOrder(orderId),
+                                icon: const Icon(
+                                  Icons.close,
+                                  color: Colors.red,
+                                ),
+                                tooltip: 'Remove order',
+                              ),
+                            ],
                           ),
                           const Divider(),
                           SizedBox(height: 1.h),
                           Text(
-                            "Status: ${order['status']}",
+                            "Status: $status",
                             style: TextStyle(
-                                fontSize: 13.sp,
-                                fontWeight: FontWeight.bold,
-                                color: order['status'] == "Pending" ? Colors.red : Colors.green),
+                              fontSize: 13.sp,
+                              fontWeight: FontWeight.bold,
+                              color: status == "Pending"
+                                  ? Colors.red
+                                  : Colors.green,
+                            ),
                           ),
                           SizedBox(height: 1.h),
                           Text(
                             "Address: $address",
-                            style: TextStyle(fontSize: 11.sp, color: Colors.grey),
+                            style: TextStyle(
+                              fontSize: 11.sp,
+                              color: Colors.grey,
+                            ),
                           ),
                           SizedBox(height: 1.h),
                           Text(
                             "Total Price: ${order['overallTotal']} PKR",
-                            style: TextStyle(fontSize: 12.sp, fontWeight: FontWeight.bold),
+                            style: TextStyle(
+                              fontSize: 12.sp,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
                           const Divider(),
-                          Text("Items:", style: TextStyle(fontSize: 12.sp, fontWeight: FontWeight.bold)),
+                          Text(
+                            "Items:",
+                            style: TextStyle(
+                              fontSize: 12.sp,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
                           ...items.map((item) {
                             final spice = item['spiceLevel'];
                             final oil = item['oilLevel'];
-                            String itemText = "${item['itemName']} - Quantity: ${item['quantity']} - Price: ${item['totalPrice']} PKR";
+                            String itemText =
+                                "${item['itemName']} - Quantity: ${item['quantity']} - Price: ${item['totalPrice']} PKR";
                             if (spice != null && oil != null) {
-                              itemText += "\n(Spice: ${_getSpiceLabel(spice)} | Oil: ${_getOilLabel(oil)})";
+                              itemText +=
+                                  "\n(Spice: ${_getSpiceLabel(spice)} | Oil: ${_getOilLabel(oil)})";
                             }
                             return Padding(
                               padding: EdgeInsets.only(top: 0.5.h),
@@ -196,20 +300,29 @@ class _AllOrdersState extends State<AllOrders> {
                           }).toList(),
                           SizedBox(height: 2.h),
                           ElevatedButton(
-                            onPressed: order['status'] == 'Delivered'
-                                ? null // Disable button if status is "Delivered"
+                            onPressed:
+                                (status == 'Delivered' || status == 'Cancelled')
+                                ? null
                                 : () {
-                              updateOrderStatus(orderId, order['status']);
-                            },
+                                    updateOrderStatus(orderId, status);
+                                  },
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: order['status'] == 'Delivered' ? Colors.grey : Colors.green,
+                              backgroundColor:
+                                  (status == 'Delivered' ||
+                                      status == 'Cancelled')
+                                  ? Colors.grey
+                                  : Colors.green,
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(15),
                               ),
                               minimumSize: Size(double.infinity, 7.h),
                             ),
                             child: Text(
-                              order['status'] == 'Delivered' ? "Delivered" : "Update Status",
+                              status == 'Delivered'
+                                  ? "Delivered"
+                                  : (status == 'Cancelled'
+                                        ? "Cancelled"
+                                        : "Update Status"),
                               style: TextStyle(
                                 color: Colors.white,
                                 fontSize: 13.sp,

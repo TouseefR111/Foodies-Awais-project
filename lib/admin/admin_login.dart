@@ -4,8 +4,6 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:food_delivery_app/admin/home_admin.dart';
 import 'package:sizer/sizer.dart';
 
-import '../auth/signup_screen.dart';
-
 class AdminLogin extends StatefulWidget {
   const AdminLogin({super.key});
 
@@ -14,152 +12,185 @@ class AdminLogin extends StatefulWidget {
 }
 
 class _AdminLoginState extends State<AdminLogin> {
+  final _formKey = GlobalKey<FormState>();
   bool obscureText = true;
-  TextEditingController idcontroller = TextEditingController();
-  TextEditingController passwordcontroller = TextEditingController();
+  final TextEditingController idcontroller = TextEditingController();
+  final TextEditingController passwordcontroller = TextEditingController();
 
   bool isload = false;
 
-  final spinkit = SpinKitChasingDots(
-    color: Colors.white,
-    size: 30.0,
-  );
+  final spinkit = const SpinKitChasingDots(color: Colors.white, size: 30.0);
 
-  getData() async {
+  Future<void> getData() async {
+    if (!_formKey.currentState!.validate()) return;
+
     setState(() {
       isload = true;
     });
 
-    await FirebaseFirestore.instance.collection("Admin").get().then((snapshot) {
-      snapshot.docs.forEach((result) {
-        if (result.data()["id"] != idcontroller.text.trim()) {
-          setState(() {
-            isload = false;
-          });
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text("ID is not correct")),
-          );
-        } else if (result.data()["password"] != passwordcontroller.text.trim()) {
-          setState(() {
-            isload = false;
-          });
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text("Password is not correct")),
-          );
-        } else {
-          setState(() {
-            isload = false;
-          });
-          Navigator.pushReplacement(
-              context, MaterialPageRoute(builder: (context) => HomeAdmin()));
-        }
-      });
-    });
+    try {
+      final snapshot = await FirebaseFirestore.instance
+          .collection('Admin')
+          .where('id', isEqualTo: idcontroller.text.trim())
+          .limit(1)
+          .get();
+
+      if (snapshot.docs.isEmpty) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(const SnackBar(content: Text("ID is not correct")));
+        setState(() => isload = false);
+        return;
+      }
+
+      final data = snapshot.docs.first.data();
+      final storedPassword = data['password'] ?? '';
+
+      if (storedPassword != passwordcontroller.text.trim()) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("Password is not correct")),
+        );
+        setState(() => isload = false);
+        return;
+      }
+
+      // Success
+      setState(() => isload = false);
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => const HomeAdmin()),
+      );
+    } catch (e) {
+      setState(() => isload = false);
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text("Login failed: $e")));
+    }
+  }
+
+  @override
+  void dispose() {
+    idcontroller.dispose();
+    passwordcontroller.dispose();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // Prevents resizing when the keyboard opens
-      resizeToAvoidBottomInset: false,
-      floatingActionButton: FloatingActionButton(
-        backgroundColor: Colors.amberAccent,
-        onPressed: () {
-          Navigator.pop(context);
-        },
-        child: const Icon(Icons.arrow_back, color: Colors.black),
-      ),
       backgroundColor: Colors.amber,
+      appBar: AppBar(
+        elevation: 0,
+        backgroundColor: Colors.transparent,
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back, color: Colors.black, size: 18.sp),
+          onPressed: () => Navigator.pop(context),
+        ),
+      ),
       body: SafeArea(
         child: Center(
-          child: Material(
-            elevation: 7.0,
-            borderRadius: BorderRadius.circular(20),
-            child: Container(
-              width: 80.w,
-              height: 70.h,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(20),
-              ),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  SizedBox(height: 4.h),
-                  Text(
-                    "Admin Login".toUpperCase(),
-                    style: const TextStyle(
-                        fontSize: 25, fontWeight: FontWeight.bold),
+          child: SingleChildScrollView(
+            padding: EdgeInsets.symmetric(horizontal: 6.w, vertical: 2.h),
+            child: ConstrainedBox(
+              constraints: BoxConstraints(maxWidth: 600),
+              child: Material(
+                elevation: 8.0,
+                borderRadius: BorderRadius.circular(16),
+                child: Container(
+                  padding: EdgeInsets.symmetric(horizontal: 5.w, vertical: 4.h),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(16),
                   ),
-                  const Divider(),
-                  SizedBox(height: 4.h),
-                  // ID TextField
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: TextFormField(
-                      decoration: InputDecoration(
-                        hintText: "Enter ID",
-                        prefixIcon: const Icon(Icons.email_outlined),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                      ),
-                      textInputAction: TextInputAction.next,
-                      controller: idcontroller,
-                    ),
-                  ),
-                  SizedBox(height: 2.h),
-                  // Password TextField
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: TextFormField(
-                      obscureText: obscureText,
-                      decoration: InputDecoration(
-                        hintText: "Password",
-                        prefixIcon: const Icon(Icons.lock),
-                        suffixIcon: InkWell(
-                          onTap: () {
-                            setState(() {
-                              obscureText = !obscureText;
-                            });
-                          },
-                          child: Icon(obscureText
-                              ? Icons.visibility_off
-                              : Icons.visibility),
-                        ),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                      ),
-                      textInputAction: TextInputAction.done,
-                      controller: passwordcontroller,
-                    ),
-                  ),
-                  SizedBox(height: 4.h),
-                  InkWell(
-                    onTap: () {
-                      getData();
-                    },
-                    child: Container(
-                      width: 160,
-                      height: 55,
-                      decoration: BoxDecoration(
-                        color: Colors.amberAccent,
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      child: Center(
-                        child: isload
-                            ? spinkit
-                            : const Text(
-                          "Log in",
+                  child: Form(
+                    key: _formKey,
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          "ADMIN LOGIN",
                           style: TextStyle(
-                              fontSize: 23,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.black),
+                            fontSize: 20.sp,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
-                      ),
+                        SizedBox(height: 3.h),
+                        TextFormField(
+                          controller: idcontroller,
+                          textInputAction: TextInputAction.next,
+                          decoration: InputDecoration(
+                            hintText: "Enter ID",
+                            prefixIcon: const Icon(Icons.person_outline),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            contentPadding: EdgeInsets.symmetric(
+                              vertical: 1.8.h,
+                              horizontal: 3.w,
+                            ),
+                          ),
+                          validator: (v) => (v == null || v.trim().isEmpty)
+                              ? "Please enter ID"
+                              : null,
+                        ),
+                        SizedBox(height: 2.h),
+                        TextFormField(
+                          controller: passwordcontroller,
+                          obscureText: obscureText,
+                          textInputAction: TextInputAction.done,
+                          decoration: InputDecoration(
+                            hintText: "Password",
+                            prefixIcon: const Icon(Icons.lock_outline),
+                            suffixIcon: InkWell(
+                              onTap: () =>
+                                  setState(() => obscureText = !obscureText),
+                              child: Icon(
+                                obscureText
+                                    ? Icons.visibility_off
+                                    : Icons.visibility,
+                              ),
+                            ),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            contentPadding: EdgeInsets.symmetric(
+                              vertical: 1.8.h,
+                              horizontal: 3.w,
+                            ),
+                          ),
+                          validator: (v) => (v == null || v.trim().isEmpty)
+                              ? "Please enter password"
+                              : null,
+                        ),
+                        SizedBox(height: 3.h),
+                        SizedBox(
+                          width: double.infinity,
+                          height: 7.h,
+                          child: ElevatedButton(
+                            onPressed: isload ? null : getData,
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.amberAccent,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                            ),
+                            child: isload
+                                ? spinkit
+                                : Text(
+                                    "Log in",
+                                    style: TextStyle(
+                                      fontSize: 14.sp,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.black,
+                                    ),
+                                  ),
+                          ),
+                        ),
+                        SizedBox(height: 2.h),
+                      ],
                     ),
                   ),
-                ],
+                ),
               ),
             ),
           ),

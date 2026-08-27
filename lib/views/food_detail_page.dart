@@ -1,249 +1,10 @@
-// import 'package:flutter/material.dart';
-// import 'package:flutter_custom_clippers/flutter_custom_clippers.dart';
-// import 'package:sizer/sizer.dart';
-//
-// import '../controller/database_methods.dart';
-// import '../controller/shared_pref_helper.dart';
-// import 'food_cart.dart';
-// class FoodDetailPage extends StatefulWidget {
-//
-//   final String image,itemName,itemDetail,itemPrice;
-//   const FoodDetailPage({super.key, required this.image, required this.itemName, required this.itemDetail, required this.itemPrice});
-//
-//   @override
-//   State<FoodDetailPage> createState() => _FoodDetailPageState();
-// }
-//
-// class _FoodDetailPageState extends State<FoodDetailPage> {
-//   int a = 1;
-//   int total = 0;
-//
-//   String? id;
-//
-//   getShareId() async{
-//     id = await SharedPrefHelper().getUserId();
-//     setState(() {
-//
-//     });
-//   }
-//
-//   @override
-//   void initState() {
-//     // TODO: implement initState
-//     super.initState();
-//     total = int.parse(widget.itemPrice);
-//     getShareId();
-//   }
-//
-//
-//   @override
-//   Widget build(BuildContext context) {
-//      return Scaffold(
-//       body: Column(
-//         crossAxisAlignment: CrossAxisAlignment.start,
-//         children: [
-//
-//           ClipPath(
-//             clipper: OvalBottomBorderClipper(),
-//             child: Container(
-//               height: 40.h,
-//               width: MediaQuery.of(context).size.width  ,
-//               color: Colors.pink,
-//               child: Center(child: Image.network(widget.image, height: 25.h,fit: BoxFit.cover,)),
-//             ),
-//           ),
-//           SizedBox(height: 5.h,),
-//
-//           Padding(
-//             padding: EdgeInsets.only(left: 3.w,right: 3.w),
-//             child: Container(
-//               width: double.infinity,
-//               decoration: BoxDecoration(
-//                 border: Border.all(color: Colors.pink),
-//                 borderRadius: BorderRadius.circular(15),
-//               ),
-//               child: Padding(
-//                 padding: const EdgeInsets.all(13.0),
-//                 child: Column(
-//                   crossAxisAlignment: CrossAxisAlignment.start,
-//                   children: [
-//                     Padding(
-//                       padding: EdgeInsets.symmetric(horizontal: 3.w),
-//                       child: Row(
-//                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
-//                         children: [
-//                           Text(widget.itemName,style: TextStyle(fontSize: 14.sp,fontWeight: FontWeight.bold),),
-//                           Text("${widget.itemPrice}PKr",style: TextStyle(fontSize: 12.sp,color: Colors.amber,fontWeight: FontWeight.bold),),
-//                         ],
-//                       ),
-//                     ),
-//                     SizedBox(height: 0.9.h,),
-//                     Padding(
-//                       padding: EdgeInsets.symmetric(horizontal: 3.w),
-//                       child: Row(
-//                         children: [
-//                           const Icon(Icons.star,color: Colors.amber,size: 20,),
-//                           Icon(Icons.star,color: Colors.amber,size: 20,),
-//                           const Icon(Icons.star,color: Colors.amber,size: 20,),
-//                           const Icon(Icons.star,color: Colors.amber,size: 20,),
-//                           const Icon(Icons.star,color: Colors.amber,size: 20,),
-//                           SizedBox(width:1.w,),
-//                           Text("4.9 Rating",style: TextStyle(fontSize: 10.sp),)
-//                         ],
-//                       ),
-//                     ),
-//                     SizedBox(height: 2.h,),
-//                     const Divider(color: Colors.pink,),
-//                     Padding(
-//                       padding:EdgeInsets.symmetric(horizontal:3.w),
-//                       child: Text("Details",style: TextStyle(fontSize: 13.sp,fontWeight: FontWeight.bold),),
-//                     ),
-//                     SizedBox(height: 2.h,),
-//                     Padding(
-//                       padding:EdgeInsets.symmetric(horizontal: 3.w),
-//                       child: Text(
-//                         textAlign: TextAlign.left,
-//                         widget.itemDetail,style: TextStyle(fontSize: 11.sp),
-//                       ),
-//                     ),
-//                     SizedBox(height: 0.9.h,),
-//                     const Divider(color: Colors.pink,),
-//                     Padding(
-//                       padding:EdgeInsets.symmetric(horizontal: 3.w),
-//                       child: Row(
-//                         children: [
-//                           Text("Delivery Time:",style: TextStyle(fontSize: 11.sp)),
-//                           SizedBox(width:3.w,),
-//                           Text("20mins",style: TextStyle(fontSize: 10.sp)),
-//                           SizedBox(width:0.5.w,),
-//                           Icon(Icons.alarm,size: 20,)
-//                         ],
-//                       ),
-//                     ),
-//                     SizedBox(height: 6.h),
-//                     Padding(
-//                       padding:EdgeInsets.symmetric(horizontal: 3.w),
-//                       child: Row(
-//                         mainAxisAlignment: MainAxisAlignment.center,
-//                         children: [
-//                           Text("Quantity :",style: TextStyle(fontSize: 13.sp,fontWeight: FontWeight.bold)),
-//                           SizedBox(width: 3.w,),
-//                           GestureDetector(
-//                             onTap:(){
-//                               if(a>1){
-//                                 --a;
-//                                 total = total - int.parse(widget.itemPrice);
-//                               }
-//                               setState(() {
-//
-//                               });
-//
-//                             },
-//                             child: Container(
-//                               width: 8.w,
-//                               height: 4.h,
-//                               decoration: BoxDecoration(
-//                                 color: Colors.pink,
-//                                 borderRadius: BorderRadius.circular(20),
-//                               ),
-//                               child: Center(child: Text("-",style: TextStyle(color: Colors.white,fontSize: 18.sp)),),
-//                             ),
-//                           ),
-//                           SizedBox(width: 3.w,),
-//                           Text(a.toString()),
-//                           SizedBox(width: 3.w,),
-//                           GestureDetector(
-//                             onTap:(){
-//                               ++a;
-//                               total = total + int.parse(widget.itemPrice);
-//                               setState(() {
-//                               });
-//                             },
-//                             child: Container(
-//                               width: 8.w,
-//                               height: 4.h,
-//                               decoration: BoxDecoration(
-//                                 color: Colors.pink,
-//                                 borderRadius: BorderRadius.circular(20),
-//                               ),
-//                               child:  const Center(child: Text("+",style: TextStyle(color: Colors.white),),),
-//                             ),
-//                           ),
-//                         ],
-//                       ),
-//                     ),
-//                   ],
-//                 ),
-//               ),
-//             ),
-//           ),
-//           const Spacer(),
-//           Container(
-//             width: double.infinity,
-//             height: 7.h,
-//             decoration: BoxDecoration(
-//                 color: Colors.pink,
-//                 borderRadius: BorderRadius.circular(10),
-//             ),
-//             child: Padding(
-//               padding:EdgeInsets.symmetric(horizontal: 4.w),
-//               child: Row(
-//                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
-//                 children: [
-//                   Column(
-//                     crossAxisAlignment: CrossAxisAlignment.start,
-//                     children: [
-//                       SizedBox(height: 1.h,),
-//                       Text("Total Amount:",style: TextStyle(fontSize: 12.sp,color: Colors.white,fontWeight: FontWeight.bold),),
-//                       Text("$total Pkr",style: TextStyle(fontSize: 12.sp,color: Colors.white,fontWeight: FontWeight.bold)),
-//                     ],
-//                   ),
-//
-//                   GestureDetector(
-//                     onTap: () {
-//                       Navigator.push(context, MaterialPageRoute(builder: (context) => const FoodCart()));
-//                     },
-//                     child: Container(
-//                       width: 33.w,
-//                       height: 5.h,
-//                       decoration: BoxDecoration(
-//                         border: Border.all(color: Colors.white),
-//                           borderRadius: BorderRadius.circular(10)
-//                       ),
-//                       child: Center(
-//                         child: Row(
-//                           mainAxisAlignment: MainAxisAlignment.center,
-//                           children: [
-//                             Text("Add to Cart",style: TextStyle(color: Colors.white,fontSize: 11.sp),),
-//                             SizedBox(width: 2.w,),
-//                             const Icon(Icons.add_shopping_cart,color: Colors.white,size: 25,)
-//                           ],
-//                         ),
-//                       ),
-//                     ),
-//                   )
-//                 ],
-//               ),
-//             ),
-//           ),
-//
-//         ],
-//       ),
-//
-//      );
-//   }
-// }
-
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_custom_clippers/flutter_custom_clippers.dart';
 import 'package:food_delivery_app/views/my_bottom_nav.dart';
 import 'package:sizer/sizer.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-
-import '../controller/database_methods.dart';
 import '../controller/shared_pref_helper.dart';
-import 'food_cart.dart';
 
 class FoodDetailPage extends StatefulWidget {
   final String image, itemName, itemDetail, itemPrice;
@@ -265,7 +26,7 @@ class _FoodDetailPageState extends State<FoodDetailPage> {
   int total = 0;
   String? id;
   int spiceLevel = 3; // Default to Medium (3)
-  int oilLevel = 3;   // Default to Medium (3)
+  int oilLevel = 3; // Default to Medium (3)
 
   String _getSpiceLabel(int level) {
     switch (level) {
@@ -344,10 +105,7 @@ class _FoodDetailPageState extends State<FoodDetailPage> {
                   SizedBox(height: 0.5.h),
                   Text(
                     "Set your preferred spice and oil levels",
-                    style: TextStyle(
-                      fontSize: 10.sp,
-                      color: Colors.grey[600],
-                    ),
+                    style: TextStyle(fontSize: 10.sp, color: Colors.grey[600]),
                   ),
                   SizedBox(height: 3.h),
 
@@ -357,7 +115,10 @@ class _FoodDetailPageState extends State<FoodDetailPage> {
                     children: [
                       Text(
                         "Spice Level",
-                        style: TextStyle(fontSize: 12.sp, fontWeight: FontWeight.bold),
+                        style: TextStyle(
+                          fontSize: 12.sp,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                       Text(
                         _getSpiceLabel(tempSpice),
@@ -390,7 +151,10 @@ class _FoodDetailPageState extends State<FoodDetailPage> {
                     children: [
                       Text(
                         "Oil Level",
-                        style: TextStyle(fontSize: 12.sp, fontWeight: FontWeight.bold),
+                        style: TextStyle(
+                          fontSize: 12.sp,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                       Text(
                         _getOilLabel(tempOil),
@@ -466,15 +230,15 @@ class _FoodDetailPageState extends State<FoodDetailPage> {
   /// Save Item to Cart in Firestore
   Future<void> addToCart() async {
     if (id == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('User ID not found!')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('User ID not found!')));
       return;
     }
 
     try {
       await FirebaseFirestore.instance.collection('cart').add({
-        "id":id,
+        "id": id,
         'itemName': widget.itemName,
         'itemDetail': widget.itemDetail,
         'itemPrice': widget.itemPrice,
@@ -489,7 +253,11 @@ class _FoodDetailPageState extends State<FoodDetailPage> {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           backgroundColor: Colors.green,
-            content: Text('Item added to cart successfully!',style: TextStyle(color: Colors.white),)),
+          content: Text(
+            'Item added to cart successfully!',
+            style: TextStyle(color: Colors.white),
+          ),
+        ),
       );
 
       Navigator.push(
@@ -497,9 +265,9 @@ class _FoodDetailPageState extends State<FoodDetailPage> {
         MaterialPageRoute(builder: (context) => const MyBottomNav()),
       );
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to add to cart: $e')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Failed to add to cart: $e')));
     }
   }
 
@@ -513,13 +281,13 @@ class _FoodDetailPageState extends State<FoodDetailPage> {
           ClipPath(
             clipper: OvalBottomBorderClipper(),
             child: Container(
-              height: 40.h,
+              height: MediaQuery.of(context).size.height * 0.40,
               width: MediaQuery.of(context).size.width,
               color: Colors.amber,
               child: Center(
                 child: Image.network(
                   widget.image,
-                  height: 25.h,
+                  height: MediaQuery.of(context).size.height * 0.40,
                   fit: BoxFit.cover,
                 ),
               ),
@@ -547,7 +315,10 @@ class _FoodDetailPageState extends State<FoodDetailPage> {
                       children: [
                         Text(
                           widget.itemName,
-                          style: TextStyle(fontSize: 14.sp, fontWeight: FontWeight.bold),
+                          style: TextStyle(
+                            fontSize: 14.sp,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
                         Text(
                           "${widget.itemPrice} PKR",
@@ -564,13 +335,13 @@ class _FoodDetailPageState extends State<FoodDetailPage> {
                     // Item Details
                     Text(
                       "Details",
-                      style: TextStyle(fontSize: 13.sp, fontWeight: FontWeight.bold),
+                      style: TextStyle(
+                        fontSize: 13.sp,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                     SizedBox(height: 1.h),
-                    Text(
-                      widget.itemDetail,
-                      style: TextStyle(fontSize: 11.sp),
-                    ),
+                    Text(widget.itemDetail, style: TextStyle(fontSize: 11.sp)),
                     SizedBox(height: 2.h),
 
                     // Diet Plan Customization
@@ -583,21 +354,37 @@ class _FoodDetailPageState extends State<FoodDetailPage> {
                           children: [
                             Text(
                               "Custom Diet Plan",
-                              style: TextStyle(fontSize: 12.sp, fontWeight: FontWeight.bold, color: Colors.black87),
+                              style: TextStyle(
+                                fontSize: 12.sp,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.black87,
+                              ),
                             ),
                             SizedBox(height: 0.5.h),
                             Text(
                               "Spice: ${_getSpiceLabel(spiceLevel)} | Oil: ${_getOilLabel(oilLevel)}",
-                              style: TextStyle(fontSize: 10.sp, color: Colors.black54, fontWeight: FontWeight.w500),
+                              style: TextStyle(
+                                fontSize: 10.sp,
+                                color: Colors.black54,
+                                fontWeight: FontWeight.w500,
+                              ),
                             ),
                           ],
                         ),
                         ElevatedButton.icon(
                           onPressed: _showDietPlanBottomSheet,
-                          icon: const Icon(Icons.restaurant_menu, color: Colors.black, size: 16),
+                          icon: const Icon(
+                            Icons.restaurant_menu,
+                            color: Colors.black,
+                            size: 16,
+                          ),
                           label: Text(
                             "Diet Plan",
-                            style: TextStyle(color: Colors.black, fontSize: 10.sp, fontWeight: FontWeight.bold),
+                            style: TextStyle(
+                              color: Colors.black,
+                              fontSize: 10.sp,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.amberAccent,
@@ -605,7 +392,10 @@ class _FoodDetailPageState extends State<FoodDetailPage> {
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(10),
                             ),
-                            padding: EdgeInsets.symmetric(horizontal: 4.w, vertical: 1.h),
+                            padding: EdgeInsets.symmetric(
+                              horizontal: 4.w,
+                              vertical: 1.h,
+                            ),
                           ),
                         ),
                       ],
@@ -617,7 +407,13 @@ class _FoodDetailPageState extends State<FoodDetailPage> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Text("Quantity:", style: TextStyle(fontSize: 13.sp, fontWeight: FontWeight.bold)),
+                        Text(
+                          "Quantity:",
+                          style: TextStyle(
+                            fontSize: 13.sp,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
                         SizedBox(width: 3.w),
                         GestureDetector(
                           onTap: () {
@@ -636,7 +432,14 @@ class _FoodDetailPageState extends State<FoodDetailPage> {
                               borderRadius: BorderRadius.circular(20),
                             ),
                             child: Center(
-                              child: Text("-", style: TextStyle(color: Colors.black, fontSize: 18.sp,fontWeight: FontWeight.bold)),
+                              child: Text(
+                                "-",
+                                style: TextStyle(
+                                  color: Colors.black,
+                                  fontSize: 18.sp,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
                             ),
                           ),
                         ),
@@ -658,7 +461,13 @@ class _FoodDetailPageState extends State<FoodDetailPage> {
                               borderRadius: BorderRadius.circular(20),
                             ),
                             child: Center(
-                              child: Text("+", style: TextStyle(color: Colors.black, fontSize: 18.sp)),
+                              child: Text(
+                                "+",
+                                style: TextStyle(
+                                  color: Colors.black,
+                                  fontSize: 18.sp,
+                                ),
+                              ),
                             ),
                           ),
                         ),
@@ -687,9 +496,23 @@ class _FoodDetailPageState extends State<FoodDetailPage> {
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      SizedBox(height: 1.h,),
-                      Text("Total Amount:", style: TextStyle(fontSize: 12.sp, color: Colors.black, fontWeight: FontWeight.bold)),
-                      Text("$total PKR", style: TextStyle(fontSize: 12.sp, color: Colors.black, fontWeight: FontWeight.bold)),
+                      SizedBox(height: 1.h),
+                      Text(
+                        "Total Amount:",
+                        style: TextStyle(
+                          fontSize: 12.sp,
+                          color: Colors.black,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      Text(
+                        "$total PKR",
+                        style: TextStyle(
+                          fontSize: 12.sp,
+                          color: Colors.black,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
                     ],
                   ),
                   GestureDetector(
@@ -702,10 +525,16 @@ class _FoodDetailPageState extends State<FoodDetailPage> {
                         borderRadius: BorderRadius.circular(10),
                       ),
                       child: Center(
-                        child: Text("Add to Cart", style: TextStyle(color: Colors.black, fontSize: 11.sp)),
+                        child: Text(
+                          "Add to Cart",
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontSize: 11.sp,
+                          ),
+                        ),
                       ),
                     ),
-                  )
+                  ),
                 ],
               ),
             ),

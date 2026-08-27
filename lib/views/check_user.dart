@@ -4,6 +4,8 @@ import 'package:food_delivery_app/views/welcome_screen.dart';
 
 import '../auth/login_screen.dart';
 import 'my_bottom_nav.dart';
+
+// ...existing code...
 class CheckUser extends StatefulWidget {
   const CheckUser({super.key});
 
@@ -12,20 +14,21 @@ class CheckUser extends StatefulWidget {
 }
 
 class _CheckUserState extends State<CheckUser> {
-  User? user = FirebaseAuth.instance.currentUser;
+  User? user;
 
-  checkUser(BuildContext context){
-    if(user != null){
-      return const LoginScreen();
-    }
-    else{
-      return const MyBottomNav();
-    }
+  @override
+  void initState() {
+    super.initState();
+    user = FirebaseAuth.instance.currentUser;
+  }
 
+  Widget _resolve() {
+    // return home when user is signed in, otherwise login
+    return user != null ? const MyBottomNav() : const LoginScreen();
   }
 
   @override
   Widget build(BuildContext context) {
-    return const CheckUser();
+    return _resolve();
   }
 }

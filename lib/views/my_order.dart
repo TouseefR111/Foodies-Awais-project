@@ -67,9 +67,15 @@ class _MyOrderState extends State<MyOrder> {
   }
 
   /// Convert Latitude and Longitude to Address
-  Future<String> getAddressFromCoordinates(double latitude, double longitude) async {
+  Future<String> getAddressFromCoordinates(
+    double latitude,
+    double longitude,
+  ) async {
     try {
-      List<Placemark> placemarks = await placemarkFromCoordinates(latitude, longitude);
+      List<Placemark> placemarks = await placemarkFromCoordinates(
+        latitude,
+        longitude,
+      );
       if (placemarks.isNotEmpty) {
         Placemark place = placemarks[0];
         return "${place.street}, ${place.locality}, ${place.administrativeArea}, ${place.country}";
@@ -88,13 +94,34 @@ class _MyOrderState extends State<MyOrder> {
         .snapshots();
   }
 
+  /// Cancel order by updating status
+  Future<void> cancelOrder(String orderId) async {
+    try {
+      await FirebaseFirestore.instance.collection('orders').doc(orderId).update(
+        {'status': 'Cancelled'},
+      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('Order cancelled')));
+    } catch (e) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Failed to cancel order: $e')));
+    }
+  }
+  
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text(
           "My Order History",
-          style: TextStyle(fontSize: 20.sp, fontWeight: FontWeight.w800, color: Colors.black),
+          style: TextStyle(
+            fontSize: 20.sp,
+            fontWeight: FontWeight.w800,
+            color: Colors.black,
+          ),
         ),
         centerTitle: true,
         backgroundColor: Colors.amber,
@@ -123,6 +150,7 @@ class _MyOrderState extends State<MyOrder> {
           }
 
           final orders = snapshot.data!.docs;
+          
 
           return ListView.builder(
             itemCount: orders.length,
@@ -138,9 +166,14 @@ class _MyOrderState extends State<MyOrder> {
                     : Future.value("No location provided"),
                 builder: (context, addressSnapshot) {
                   final address = addressSnapshot.data ?? "Loading address...";
+                  final status = order['status'] ?? '';
+                  final orderId = orders[index].id;
 
                   return Card(
-                    margin: EdgeInsets.symmetric(horizontal: 4.w, vertical: 1.h),
+                    margin: EdgeInsets.symmetric(
+                      horizontal: 4.w,
+                      vertical: 1.h,
+                    ),
                     elevation: 3,
                     child: Padding(
                       padding: EdgeInsets.all(3.w),
@@ -148,34 +181,58 @@ class _MyOrderState extends State<MyOrder> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            "Order ID: ${order['userId']}",
-                            style: TextStyle(fontSize: 13.sp, fontWeight: FontWeight.bold,color: Colors.green),
+                            "Order ID: $orderId",
+                            style: TextStyle(
+                              fontSize: 13.sp,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.green,
+                            ),
                           ),
                           Divider(),
                           SizedBox(height: 1.h),
                           Text(
-                            "Status: ${order['status']}",
-                            style: TextStyle(fontSize: 13.sp, fontWeight: FontWeight.bold,color: order['status'] == "Pending" ? Colors.red :Colors.green),
+                            "Status: $status",
+                            style: TextStyle(
+                              fontSize: 13.sp,
+                              fontWeight: FontWeight.bold,
+                              color: status == "Pending"
+                                  ? Colors.red
+                                  : Colors.green,
+                            ),
                           ),
                           SizedBox(height: 1.h),
                           Text(
                             "Address: $address",
-                            style: TextStyle(fontSize: 11.sp, color: Colors.grey),
+                            style: TextStyle(
+                              fontSize: 11.sp,
+                              color: Colors.grey,
+                            ),
                           ),
                           SizedBox(height: 1.h),
                           Text(
                             "Total Price: ${order['overallTotal']} PKR",
-                            style: TextStyle(fontSize: 12.sp, fontWeight: FontWeight.bold),
+                            style: TextStyle(
+                              fontSize: 12.sp,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
                           SizedBox(height: 1.h),
                           const Divider(),
-                          Text("Items:", style: TextStyle(fontSize: 12.sp, fontWeight: FontWeight.bold)),
+                          Text(
+                            "Items:",
+                            style: TextStyle(
+                              fontSize: 12.sp,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
                           ...items.map((item) {
                             final spice = item['spiceLevel'];
                             final oil = item['oilLevel'];
-                            String itemText = "${item['itemName']} - Quantity: ${item['quantity']} - Price: ${item['totalPrice']} PKR";
+                            String itemText =
+                                "${item['itemName']} - Quantity: ${item['quantity']} - Price: ${item['totalPrice']} PKR";
                             if (spice != null && oil != null) {
-                              itemText += "\n(Spice: ${_getSpiceLabel(spice)} | Oil: ${_getOilLabel(oil)})";
+                              itemText +=
+                                  "\n(Spice: ${_getSpiceLabel(spice)} | Oil: ${_getOilLabel(oil)})";
                             }
                             return Padding(
                               padding: EdgeInsets.only(top: 0.5.h),
@@ -185,6 +242,28 @@ class _MyOrderState extends State<MyOrder> {
                               ),
                             );
                           }).toList(),
+                          if (status == "Pending") ...[
+                            SizedBox(height: 2.h),
+                            SizedBox(
+                              width: double.infinity,
+                              child: ElevatedButton(
+                                onPressed: () => cancelOrder(orderId),
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors.redAccent,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                ),
+                                child: Text(
+                                  "Cancel Order",
+                                  style: TextStyle(
+                                    fontSize: 12.sp,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
                         ],
                       ),
                     ),

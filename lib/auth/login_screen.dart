@@ -6,8 +6,8 @@ import 'package:sizer/sizer.dart';
 
 import '../controller/database_methods.dart';
 import '../controller/shared_pref_helper.dart';
-import '../views/home_screen.dart';
 import '../views/my_bottom_nav.dart';
+
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
 
@@ -16,36 +16,23 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-
   final formKey = GlobalKey<FormState>();
-  TextEditingController emailController = TextEditingController();
-  TextEditingController passwordController = TextEditingController();
-
-
-  String? userId;
-  // Added for loading state
+  final emailController = TextEditingController();
+  final passwordController = TextEditingController();
+  bool obscureText = true;
+  bool isLoad = false;
+  final spinkit = const SpinKitChasingDots(color: Colors.white, size: 30.0);
 
   @override
-  void initState() {
-    super.initState();
-    getShareId();
+  void dispose() {
+    emailController.dispose();
+    passwordController.dispose();
+    super.dispose();
   }
 
-  /// Fetch User ID from Shared Preferences
-  Future<void> getShareId() async {
-    userId = await SharedPrefHelper().getUserId();
-    setState(() {});
-  }
+  Future<void> loginData() async {
+    if (!formKey.currentState!.validate()) return;
 
-  bool obscureText = true;
-  final spinkit = const SpinKitChasingDots(
-    color: Colors.white,
-    size: 30.0,
-  );
-
-  bool isLoad = false;
-
-  loginData() async {
     setState(() {
       isLoad = true;
     });
@@ -56,220 +43,231 @@ class _LoginScreenState extends State<LoginScreen> {
         password: passwordController.text.trim(),
       );
 
-      if (credential.user != null) {
-        // String userId = credential.user!.uid;  // Get user ID
+      final uid = credential.user?.uid;
+      if (uid == null) throw Exception('Login failed');
 
-        // Fetch user data from Firestore
-        var userDoc = await DatabaseMethods().getUserData(userId.toString());
+      final userDoc = await DatabaseMethods().getUserData(uid);
 
-        if (userDoc.exists) {
-          Map<String, dynamic> userData = userDoc.data() as Map<String, dynamic>;
-
-          // Save retrieved data in SharedPreferences
-          await SharedPrefHelper().saveUserId(userId.toString());
-          await SharedPrefHelper().saveUserName(userData["userName"]);
-          await SharedPrefHelper().saveUserContact(userData["userContact"]);
-          await SharedPrefHelper().saveUserEmail(userData["userEmail"]);
-
-          setState(() {
-            isLoad = false;
-          });
-
-          // Navigate to the main screen
-          Navigator.pushReplacement(
-              context, MaterialPageRoute(builder: (context) => const MyBottomNav()));
-        } else {
-          setState(() {
-            isLoad = false;
-          });
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text("User data not found in Firestore")),
-          );
-        }
+      if (!userDoc.exists) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("User data not found in Firestore")),
+        );
+        return;
       }
-    } on FirebaseAuthException catch (e) {
-      setState(() {
-        isLoad = false;
-      });
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(e.code.toString())),
+
+      final userData = userDoc.data() as Map<String, dynamic>;
+
+      await SharedPrefHelper().saveUserId(uid);
+      await SharedPrefHelper().saveUserName(userData["userName"] ?? "");
+      await SharedPrefHelper().saveUserContact(userData["userContact"] ?? "");
+      await SharedPrefHelper().saveUserEmail(userData["userEmail"] ?? "");
+
+      if (!mounted) return;
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => const MyBottomNav()),
       );
+    } on FirebaseAuthException catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(e.message ?? e.code)));
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text("Login failed: $e")));
+    } finally {
+      if (mounted) setState(() => isLoad = false);
     }
   }
 
-
+  InputDecoration _inputDecoration({
+    required String hint,
+    required IconData icon,
+    Widget? suffix,
+  }) {
+    return InputDecoration(
+      hintText: hint,
+      prefixIcon: Icon(icon),
+      suffixIcon: suffix,
+      border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+      filled: true,
+      fillColor: Colors.white,
+      contentPadding: EdgeInsets.symmetric(vertical: 1.6.h, horizontal: 3.w),
+    );
+  }
 
   @override
-    Widget build(BuildContext context) {
-      return Scaffold(
-        backgroundColor: Colors.amber,
-        body: Container(
-          child: Stack(
-            children: [
-              //title text
-              Padding(
-                padding: EdgeInsets.symmetric(vertical:5.h),
-                child: const Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Padding(
-                      padding: EdgeInsets.all(20),
-                      child: Text(
-                        "FOODIES",
-                        style:
-                        TextStyle(fontSize: 40, fontWeight: FontWeight.bold,color: Colors.black,letterSpacing: 1),
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.amber.shade400,
+      body: SafeArea(
+        child: Center(
+          child: SingleChildScrollView(
+            padding: EdgeInsets.symmetric(horizontal: 6.w, vertical: 3.h),
+            child: ConstrainedBox(
+              constraints: BoxConstraints(maxWidth: 600),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  SizedBox(height: 2.h),
+                  Center(
+                    child: Text(
+                      "FOODIES",
+                      style: TextStyle(
+                        fontSize: 34.sp,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black87,
+                        letterSpacing: 1.2,
                       ),
                     ),
-                  ],
-                ),
-              ),
-              // //end container
-              Container(
-                margin: EdgeInsets.only(top: MediaQuery.of(context).size.height / 3),
-                height: 600,
-                decoration: const BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(30),
-                      topRight: Radius.circular(30)),
-                ),
-                child: Row(
-                  children: [
-                    Padding(
-                      padding: EdgeInsets.only(top: 11.h, left: 16.w),
-                      child: InkWell(
-                        onTap: () {
-                          Navigator.push(context, MaterialPageRoute(
-                              builder: (context) =>
-                                  const SignupScreen()));
-                        },
-                        child: Text(
-                          "Does not have an Account? Sign up",
-                          style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 12.sp),
-                        ),
-                      ),
-                    )
-                  ],
-                ),
-              ),
-              Form(
-                key: formKey,
-                child: Positioned(
-                  top: 160,
-                  left: 38,
-                  child: Material(
-                    elevation: 7.0,
+                  ),
+                  SizedBox(height: 3.h),
+                  Material(
+                    elevation: 6,
                     borderRadius: BorderRadius.circular(20),
-                    child: Column(
-                      children: [
-                        Container(
-                          width: 80.w,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(20),
-                            // color: Colors.redAccent,
-                          ),
-                          child: Column(
-                            children: [
-                              Padding(
-                                padding: const EdgeInsets.all(10.0),
-                                child: Text(
-                                  "Log In Here",
-                                  style: TextStyle(
-                                      fontSize: 20.sp, fontWeight: FontWeight.bold),
-                                ),
+                    child: Container(
+                      width: double.infinity,
+                      padding: EdgeInsets.symmetric(
+                        vertical: 3.h,
+                        horizontal: 5.w,
+                      ),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: Form(
+                        key: formKey,
+                        child: Column(
+                          children: [
+                            Text(
+                              "Log In",
+                              style: TextStyle(
+                                fontSize: 20.sp,
+                                fontWeight: FontWeight.w700,
                               ),
-                              SizedBox(
-                                height: 3.h,
+                            ),
+                            SizedBox(height: 2.h),
+                            TextFormField(
+                              controller: emailController,
+                              keyboardType: TextInputType.emailAddress,
+                              textInputAction: TextInputAction.next,
+                              decoration: _inputDecoration(
+                                hint: "Email",
+                                icon: Icons.email_outlined,
                               ),
-                              //Email field
-                              Padding(
-                                padding: EdgeInsets.symmetric(horizontal: 5.w),
-                                child: TextFormField(
-                                  decoration: InputDecoration(
-                                      hintText: "Email",
-                                      prefixIcon: const Icon(Icons.email_outlined),
-                                      border: OutlineInputBorder(
-                                        borderRadius: BorderRadius.circular(10),
-                                      )),
-                                  textInputAction: TextInputAction.next,
-                                  controller: emailController,
-                                  validator: (value) => value!.isEmpty ?"Required Email here" : null,
-                                ),
-                              ),
-                              //password field
-                              SizedBox(
-                                height: 5.h,
-                              ),
-                              Padding(
-                                padding: EdgeInsets.symmetric(horizontal: 5.w),
-                                child: TextFormField(
-                                  decoration: InputDecoration(
-                                      hintText: "Password",
-                                      prefixIcon: const Icon(Icons.lock),
-                                      suffixIcon: InkWell(
-                                          onTap: () {
-                                            setState(() {
-                                              obscureText = !obscureText;
-                                            });
-                                          },
-
-                                          child: Icon(obscureText
-                                              ? Icons.visibility_off
-                                              : Icons.visibility)),
-                                      border: OutlineInputBorder(
-                                        borderRadius: BorderRadius.circular(10),
-                                      )),
-                                  textInputAction: TextInputAction.next,
-                                  controller: passwordController,
-                                  validator: (value) => value!.isEmpty ? "Required password here" : null,
-                                  obscureText: obscureText,
-                                ),
-                              ),
-                              SizedBox(
-                                height: 3.h,
-                              ),
-                              InkWell(
-                                onTap: () {
-                                  if (formKey.currentState!.validate()) {
-                                    loginData();
-                                  }
-                                },
-                                child: Container(
-                                  width: 160,
-                                  height: 55,
-                                  decoration: BoxDecoration(
-                                    color: Colors.amber,
-                                    borderRadius: BorderRadius.circular(20),
+                              validator: (v) {
+                                if (v == null || v.trim().isEmpty) {
+                                  return "Email is required";
+                                }
+                                final email = v.trim();
+                                final emailRegex = RegExp(
+                                  r"^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$",
+                                );
+                                return emailRegex.hasMatch(email)
+                                    ? null
+                                    : "Enter a valid email";
+                              },
+                            ),
+                            SizedBox(height: 2.h),
+                            TextFormField(
+                              controller: passwordController,
+                              obscureText: obscureText,
+                              textInputAction: TextInputAction.done,
+                              decoration: _inputDecoration(
+                                hint: "Password",
+                                icon: Icons.lock_outline,
+                                suffix: InkWell(
+                                  onTap: () => setState(
+                                    () => obscureText = !obscureText,
                                   ),
-                                  child: Center(
-                                    child: isLoad ? spinkit : Text(
-                                      "Log in",
-                                      style: TextStyle(
-                                          fontSize: 18.sp,
-                                          fontWeight: FontWeight.bold,
-                                          color: Colors.black),
+                                  child: Padding(
+                                    padding: EdgeInsets.all(0.8.w),
+                                    child: Icon(
+                                      obscureText
+                                          ? Icons.visibility_off
+                                          : Icons.visibility,
                                     ),
                                   ),
                                 ),
                               ),
-                              SizedBox(
-                                height: 3.h,
+                              validator: (v) {
+                                if (v == null || v.trim().isEmpty) {
+                                  return "Password is required";
+                                }
+                                if (v.trim().length < 6) {
+                                  return "Password must be at least 6 characters";
+                                }
+                                return null;
+                              },
+                              onFieldSubmitted: (_) => loginData(),
+                            ),
+                            SizedBox(height: 3.h),
+                            SizedBox(
+                              width: double.infinity,
+                              height: 7.h,
+                              child: ElevatedButton(
+                                onPressed: isLoad ? null : loginData,
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors.amberAccent,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(14),
+                                  ),
+                                ),
+                                child: isLoad
+                                    ? spinkit
+                                    : Text(
+                                        "Log in",
+                                        style: TextStyle(
+                                          fontSize: 16.sp,
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.black87,
+                                        ),
+                                      ),
                               ),
-                            ],
-                          ),
+                            ),
+                            SizedBox(height: 2.h),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text(
+                                  "Don't have an account? ",
+                                  style: TextStyle(fontSize: 11.sp),
+                                ),
+                                GestureDetector(
+                                  onTap: () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) =>
+                                            const SignupScreen(),
+                                      ),
+                                    );
+                                  },
+                                  child: Text(
+                                    "Sign up",
+                                    style: TextStyle(
+                                      fontSize: 11.sp,
+                                      fontWeight: FontWeight.bold,
+                                      decoration: TextDecoration.underline,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
                         ),
-                      ],
+                      ),
                     ),
                   ),
-                ),
+                  SizedBox(height: 3.h),
+                ],
               ),
-
-            ],
+            ),
           ),
         ),
-      );
-    }
+      ),
+    );
   }
-
+}
