@@ -245,6 +245,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg_provider/flutter_svg_provider.dart';
 import 'package:food_delivery_app/views/food_detail_page.dart';
 import 'package:food_delivery_app/widgets/banner_image_widget.dart';
+import 'package:food_delivery_app/widgets/deal_widget.dart';
 import 'package:food_delivery_app/widgets/heading_text_widget.dart';
 import 'package:food_delivery_app/widgets/sub_heading_text_widget.dart';
 import 'package:food_delivery_app/widgets/user_name_widget.dart';
@@ -276,6 +277,7 @@ class _HomeScreenState extends State<HomeScreen> {
     super.initState();
     getShareId();
   }
+
   /// Fetch filtered products based on category
   Widget allWidget() {
     Stream<QuerySnapshot> productStream;
@@ -318,40 +320,64 @@ class _HomeScreenState extends State<HomeScreen> {
             itemBuilder: (context, index) {
               final product = products[index];
               return Padding(
-                padding: EdgeInsets.only(left: 3.w, bottom: 2.h,right: 2.w),
+                padding: EdgeInsets.only(left: 3.w, bottom: 2.h, right: 2.w),
                 child: GestureDetector(
-                  onTap: (){
-                    Navigator.push(context, MaterialPageRoute(builder: (context) => FoodDetailPage(image:product['imageUrl'], itemName:product['itemName'], itemDetail: product['itemDetail'], itemPrice:product['itemPrice'])));
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => FoodDetailPage(
+                          image: product['imageUrl'],
+                          itemName: product['itemName'],
+                          itemDetail: product['itemDetail'],
+                          itemPrice: product['itemPrice'],
+                        ),
+                      ),
+                    );
                   },
                   child: Material(
                     elevation: 8.0,
-                    borderRadius:const BorderRadius.only(topLeft: Radius.circular(30),bottomRight: Radius.circular(35)),
+                    borderRadius: const BorderRadius.only(
+                      topLeft: Radius.circular(30),
+                      bottomRight: Radius.circular(35),
+                    ),
                     color: Colors.white,
                     child: Container(
                       width: 44.w,
                       height: 30.h,
                       decoration: const BoxDecoration(
-                        borderRadius: BorderRadius.only(topLeft: Radius.circular(15),bottomRight: Radius.circular(15)),
+                        borderRadius: BorderRadius.only(
+                          topLeft: Radius.circular(15),
+                          bottomRight: Radius.circular(15),
+                        ),
                       ),
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.start,
                         children: [
-                          SizedBox(height: 3.h,),
+                          SizedBox(height: 3.h),
                           Text(
                             product['itemName'],
                             style: TextStyle(
-                                fontSize: 12.sp, fontWeight: FontWeight.bold),
+                              fontSize: 15.sp,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
                           Padding(
                             padding: const EdgeInsets.all(8.0),
-                            child: Image.network(product['imageUrl'], height: 13.h),
+                            child: Image.network(
+                              product['imageUrl'],
+                              height: 13.h,
+                            ),
                           ),
-                          const Divider(color: Colors.amber,),
+                          const Divider(color: Colors.amber),
                           SizedBox(height: 1.h),
                           Text(
                             "${product['itemPrice']} Pkr",
                             style: TextStyle(
-                                fontWeight: FontWeight.bold, fontSize: 13.sp,color: Colors.grey),
+                              fontWeight: FontWeight.bold,
+                              fontSize: 15.sp,
+                              color: Colors.grey,
+                            ),
                           ),
                         ],
                       ),
@@ -378,7 +404,7 @@ class _HomeScreenState extends State<HomeScreen> {
     return Scaffold(
       body: ListView(
         children: [
-          UserNameWidget(text:userName.toString().toUpperCase()),
+          UserNameWidget(text: userName.toString().toUpperCase()),
           const HeadingTextWidget(text: "Delicious Food"),
           const SubHeadingTextWidget(text: "You Get All Food Here."),
           SizedBox(height: 1.h),
@@ -387,63 +413,87 @@ class _HomeScreenState extends State<HomeScreen> {
           SingleChildScrollView(
             scrollDirection: Axis.horizontal,
             child: Padding(
-              padding: EdgeInsets.only(left: 3.w,bottom: 2.h,right: 3.w),
+              padding: EdgeInsets.only(left: 3.w, bottom: 2.h, right: 3.w),
               child: Row(
                 children: [
                   /// Burger Button
                   Padding(
-                    padding: EdgeInsets.only(right:3.w),
+                    padding: EdgeInsets.only(right: 3.w),
                     child: GestureDetector(
                       onTap: () => selectCategory('Burger'),
-                      child: categoryButton('assets/images/burger.svg',
-                          selectedCategory == 'Burger'),
+                      child: categoryButton(
+                        'assets/images/burger.svg',
+                        selectedCategory == 'Burger',
+                      ),
                     ),
                   ),
 
                   /// Pizza Button
                   Padding(
-                    padding: EdgeInsets.only(right:3.w),
+                    padding: EdgeInsets.only(right: 3.w),
                     child: GestureDetector(
                       onTap: () => selectCategory('Pizza'),
-                      child: categoryButton('assets/images/pizza.svg',
-                          selectedCategory == 'Pizza'),
+                      child: categoryButton(
+                        'assets/images/pizza.svg',
+                        selectedCategory == 'Pizza',
+                      ),
                     ),
                   ),
 
                   /// Wings Button
                   Padding(
-                    padding: EdgeInsets.only(right:3.w),
+                    padding: EdgeInsets.only(right: 3.w),
                     child: GestureDetector(
                       onTap: () => selectCategory('Wings'),
-                      child: categoryButton('assets/images/wings.svg',
-                          selectedCategory == 'Wings'),
+                      child: categoryButton(
+                        'assets/images/wings.svg',
+                        selectedCategory == 'Wings',
+                      ),
                     ),
                   ),
 
                   /// Soup Button
                   Padding(
-                    padding: EdgeInsets.only(right:3.w),
+                    padding: EdgeInsets.only(right: 3.w),
                     child: GestureDetector(
                       onTap: () => selectCategory('Soup'),
-                      child: categoryButton('assets/images/soup.svg',
-                          selectedCategory == 'Soup'),
+                      child: categoryButton(
+                        'assets/images/soup.svg',
+                        selectedCategory == 'Soup',
+                      ),
+                    ),
+                  ),
+
+                  /// Shawarma Button
+                  Padding(
+                    padding: EdgeInsets.only(right: 3.w),
+                    child: GestureDetector(
+                      onTap: () => selectCategory('Shawarma'),
+                      child: categoryButton(
+                        'assets/images/shawarma.jpg',
+                        selectedCategory == 'Shawarma',
+                      ),
                     ),
                   ),
 
                   Padding(
-                    padding: EdgeInsets.only(right:3.w),
+                    padding: EdgeInsets.only(right: 3.w),
                     child: GestureDetector(
                       onTap: () => selectCategory('shakes'),
-                      child: categoryButton('assets/images/shaks.svg',
-                          selectedCategory == 'shakes'),
+                      child: categoryButton(
+                        'assets/images/shaks.svg',
+                        selectedCategory == 'shakes',
+                      ),
                     ),
                   ),
 
                   /// All Button
                   GestureDetector(
                     onTap: () => selectCategory('all'),
-                    child: categoryButton('assets/images/category.svg',
-                        selectedCategory == 'all'),
+                    child: categoryButton(
+                      'assets/images/category.svg',
+                      selectedCategory == 'all',
+                    ),
                   ),
                 ],
               ),
@@ -451,6 +501,8 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
           SizedBox(height: 3.h),
           allWidget(),
+          SizedBox(height: 2.h),
+          const DealWidget(),
           SizedBox(height: 2.h),
         ],
       ),

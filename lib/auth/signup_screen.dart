@@ -131,7 +131,7 @@ class _SignupScreenState extends State<SignupScreen> {
               Text(
                 "FOODIES",
                 style: TextStyle(
-                  fontSize: 34.sp,
+                  fontSize: 30.sp,
                   fontWeight: FontWeight.bold,
                   color: Colors.black,
                 ),
@@ -155,7 +155,7 @@ class _SignupScreenState extends State<SignupScreen> {
                           "Register Yourself",
                           textAlign: TextAlign.center,
                           style: TextStyle(
-                            fontSize: 22.sp,
+                            fontSize: 20.sp,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
@@ -256,7 +256,7 @@ class _SignupScreenState extends State<SignupScreen> {
                             textAlign: TextAlign.center,
                             style: TextStyle(
                               fontWeight: FontWeight.bold,
-                              fontSize: 12.sp,
+                              fontSize: 16.sp,
                             ),
                           ),
                         ),

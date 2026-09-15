@@ -97,7 +97,7 @@ class _FoodDetailPageState extends State<FoodDetailPage> {
                   Text(
                     "Customize Diet Plan",
                     style: TextStyle(
-                      fontSize: 16.sp,
+                      fontSize: 18.sp,
                       fontWeight: FontWeight.bold,
                       color: Colors.black87,
                     ),
@@ -105,7 +105,7 @@ class _FoodDetailPageState extends State<FoodDetailPage> {
                   SizedBox(height: 0.5.h),
                   Text(
                     "Set your preferred spice and oil levels",
-                    style: TextStyle(fontSize: 10.sp, color: Colors.grey[600]),
+                    style: TextStyle(fontSize: 14.sp, color: Colors.grey[600]),
                   ),
                   SizedBox(height: 3.h),
 
@@ -116,14 +116,14 @@ class _FoodDetailPageState extends State<FoodDetailPage> {
                       Text(
                         "Spice Level",
                         style: TextStyle(
-                          fontSize: 12.sp,
+                          fontSize: 14.sp,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
                       Text(
                         _getSpiceLabel(tempSpice),
                         style: TextStyle(
-                          fontSize: 11.sp,
+                          fontSize: 14.sp,
                           fontWeight: FontWeight.bold,
                           color: Colors.amber[800],
                         ),
@@ -152,14 +152,14 @@ class _FoodDetailPageState extends State<FoodDetailPage> {
                       Text(
                         "Oil Level",
                         style: TextStyle(
-                          fontSize: 12.sp,
+                          fontSize: 14.sp,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
                       Text(
                         _getOilLabel(tempOil),
                         style: TextStyle(
-                          fontSize: 11.sp,
+                          fontSize: 14.sp,
                           fontWeight: FontWeight.bold,
                           color: Colors.amber[800],
                         ),
@@ -200,7 +200,7 @@ class _FoodDetailPageState extends State<FoodDetailPage> {
                     child: Text(
                       "Save Preferences",
                       style: TextStyle(
-                        fontSize: 12.sp,
+                        fontSize: 14.sp,
                         color: Colors.black,
                         fontWeight: FontWeight.bold,
                       ),
@@ -316,14 +316,14 @@ class _FoodDetailPageState extends State<FoodDetailPage> {
                         Text(
                           widget.itemName,
                           style: TextStyle(
-                            fontSize: 14.sp,
+                            fontSize: 18.sp,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
                         Text(
                           "${widget.itemPrice} PKR",
                           style: TextStyle(
-                            fontSize: 12.sp,
+                            fontSize: 16.sp,
                             color: Colors.black,
                             fontWeight: FontWeight.bold,
                           ),
@@ -336,12 +336,12 @@ class _FoodDetailPageState extends State<FoodDetailPage> {
                     Text(
                       "Details",
                       style: TextStyle(
-                        fontSize: 13.sp,
+                        fontSize: 18.sp,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
                     SizedBox(height: 1.h),
-                    Text(widget.itemDetail, style: TextStyle(fontSize: 11.sp)),
+                    Text(widget.itemDetail, style: TextStyle(fontSize: 14.sp)),
                     SizedBox(height: 2.h),
 
                     // Diet Plan Customization
@@ -355,7 +355,7 @@ class _FoodDetailPageState extends State<FoodDetailPage> {
                             Text(
                               "Custom Diet Plan",
                               style: TextStyle(
-                                fontSize: 12.sp,
+                                fontSize: 16.sp,
                                 fontWeight: FontWeight.bold,
                                 color: Colors.black87,
                               ),
@@ -364,7 +364,7 @@ class _FoodDetailPageState extends State<FoodDetailPage> {
                             Text(
                               "Spice: ${_getSpiceLabel(spiceLevel)} | Oil: ${_getOilLabel(oilLevel)}",
                               style: TextStyle(
-                                fontSize: 10.sp,
+                                fontSize: 14.sp,
                                 color: Colors.black54,
                                 fontWeight: FontWeight.w500,
                               ),
@@ -382,7 +382,7 @@ class _FoodDetailPageState extends State<FoodDetailPage> {
                             "Diet Plan",
                             style: TextStyle(
                               color: Colors.black,
-                              fontSize: 10.sp,
+                              fontSize: 14.sp,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
@@ -410,7 +410,7 @@ class _FoodDetailPageState extends State<FoodDetailPage> {
                         Text(
                           "Quantity:",
                           style: TextStyle(
-                            fontSize: 13.sp,
+                            fontSize: 16.sp,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
@@ -500,7 +500,7 @@ class _FoodDetailPageState extends State<FoodDetailPage> {
                       Text(
                         "Total Amount:",
                         style: TextStyle(
-                          fontSize: 12.sp,
+                          fontSize: 16.sp,
                           color: Colors.black,
                           fontWeight: FontWeight.bold,
                         ),
@@ -508,7 +508,7 @@ class _FoodDetailPageState extends State<FoodDetailPage> {
                       Text(
                         "$total PKR",
                         style: TextStyle(
-                          fontSize: 12.sp,
+                          fontSize: 16.sp,
                           color: Colors.black,
                           fontWeight: FontWeight.bold,
                         ),
@@ -529,7 +529,7 @@ class _FoodDetailPageState extends State<FoodDetailPage> {
                           "Add to Cart",
                           style: TextStyle(
                             color: Colors.black,
-                            fontSize: 11.sp,
+                            fontSize: 14.sp,
                           ),
                         ),
                       ),

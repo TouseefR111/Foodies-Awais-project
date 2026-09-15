@@ -116,7 +116,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     child: Text(
                       "FOODIES",
                       style: TextStyle(
-                        fontSize: 34.sp,
+                        fontSize: 30.sp,
                         fontWeight: FontWeight.bold,
                         color: Colors.black87,
                         letterSpacing: 1.2,
@@ -220,7 +220,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                     : Text(
                                         "Log in",
                                         style: TextStyle(
-                                          fontSize: 16.sp,
+                                          fontSize: 18.sp,
                                           fontWeight: FontWeight.bold,
                                           color: Colors.black87,
                                         ),
@@ -233,7 +233,7 @@ class _LoginScreenState extends State<LoginScreen> {
                               children: [
                                 Text(
                                   "Don't have an account? ",
-                                  style: TextStyle(fontSize: 11.sp),
+                                  style: TextStyle(fontSize: 16.sp),
                                 ),
                                 GestureDetector(
                                   onTap: () {
@@ -248,7 +248,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                   child: Text(
                                     "Sign up",
                                     style: TextStyle(
-                                      fontSize: 11.sp,
+                                      fontSize: 16.sp,
                                       fontWeight: FontWeight.bold,
                                       decoration: TextDecoration.underline,
                                     ),

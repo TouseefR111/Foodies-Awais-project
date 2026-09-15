@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:food_delivery_app/admin/add_deal.dart';
 import 'package:food_delivery_app/admin/add_product.dart';
 import 'package:food_delivery_app/admin/all_orders.dart';
 import 'package:food_delivery_app/admin/product_list_screen.dart';
@@ -13,9 +14,11 @@ class HomeAdmin extends StatefulWidget {
 }
 
 class _HomeAdminState extends State<HomeAdmin> {
-
   void logoutUser() {
-    Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const WelcomeScreen())); // Navigate to login screen
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (context) => const WelcomeScreen()),
+    ); // Navigate to login screen
   }
 
   @override
@@ -28,20 +31,17 @@ class _HomeAdminState extends State<HomeAdmin> {
         title: Text(
           "admin Dashboard".toUpperCase(),
           style: TextStyle(
-              fontWeight: FontWeight.w800,
-              fontSize: 15.sp,
-              color: Colors.white),
+            fontWeight: FontWeight.w800,
+            fontSize: 15.sp,
+            color: Colors.white,
+          ),
         ),
         centerTitle: true,
         actions: [
           Padding(
             padding: const EdgeInsets.only(right: 10),
             child: IconButton(
-              icon: const Icon(
-                Icons.logout,
-                color: Colors.white,
-                size: 25,
-              ),
+              icon: const Icon(Icons.logout, color: Colors.white, size: 25),
               onPressed: () {
                 // Show Logout Confirmation Dialog
                 showDialog(
@@ -77,12 +77,15 @@ class _HomeAdminState extends State<HomeAdmin> {
       ),
       body: Column(
         children: [
-          SizedBox(height: 3.h,),
+          SizedBox(height: 3.h),
           Padding(
             padding: EdgeInsets.symmetric(horizontal: 7.w),
             child: GestureDetector(
-              onTap: (){
-                Navigator.push(context, MaterialPageRoute(builder: (context)=>const AddProduct()));
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const AddProduct()),
+                );
               },
               child: Material(
                 elevation: 7.0,
@@ -97,19 +100,31 @@ class _HomeAdminState extends State<HomeAdmin> {
                   child: Row(
                     children: [
                       Image.asset("assets/images/pizza.png"),
-                      Text("Add Item",style: TextStyle(fontSize: 20.sp,fontWeight: FontWeight.bold,color: Colors.white),)
+                      Text(
+                        "Add Item",
+                        style: TextStyle(
+                          fontSize: 20.sp,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                        ),
+                      ),
                     ],
                   ),
                 ),
               ),
             ),
           ),
-          SizedBox(height: 3.h,),
+          SizedBox(height: 3.h),
           Padding(
             padding: EdgeInsets.symmetric(horizontal: 7.w),
             child: GestureDetector(
-              onTap: (){
-                Navigator.push(context, MaterialPageRoute(builder: (context) => const ProductListScreen()));
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const ProductListScreen(),
+                  ),
+                );
               },
               child: Material(
                 elevation: 7.0,
@@ -124,7 +139,14 @@ class _HomeAdminState extends State<HomeAdmin> {
                   child: Row(
                     children: [
                       Image.asset("assets/images/pizza.png"),
-                      Text("Manage Items",style: TextStyle(fontSize: 20.sp,fontWeight: FontWeight.bold,color: Colors.white),)
+                      Text(
+                        "Manage Items",
+                        style: TextStyle(
+                          fontSize: 20.sp,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                        ),
+                      ),
                     ],
                   ),
                 ),
@@ -132,12 +154,60 @@ class _HomeAdminState extends State<HomeAdmin> {
             ),
           ),
 
-          SizedBox(height: 4.h,),
+          SizedBox(height: 3.h),
           Padding(
             padding: EdgeInsets.symmetric(horizontal: 7.w),
             child: GestureDetector(
-              onTap: (){
-                Navigator.push(context, MaterialPageRoute(builder: (context) => const AllOrders()));
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const AddDeal()),
+                );
+              },
+              child: Material(
+                elevation: 7.0,
+                borderRadius: BorderRadius.circular(15),
+                child: Container(
+                  width: MediaQuery.of(context).size.width,
+                  height: 12.h,
+                  decoration: BoxDecoration(
+                    color: Colors.purple,
+                    borderRadius: BorderRadius.circular(15),
+                  ),
+                  child: Row(
+                    children: [
+                      const Padding(
+                        padding: EdgeInsets.all(20),
+                        child: Icon(
+                          Icons.local_offer,
+                          color: Colors.white,
+                          size: 55,
+                        ),
+                      ),
+                      Text(
+                        "Add Deal",
+                        style: TextStyle(
+                          fontSize: 20.sp,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ),
+
+          SizedBox(height: 4.h),
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: 7.w),
+            child: GestureDetector(
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const AllOrders()),
+                );
               },
               child: Material(
                 elevation: 7.0,
@@ -153,8 +223,16 @@ class _HomeAdminState extends State<HomeAdmin> {
                     children: [
                       ClipRRect(
                         borderRadius: BorderRadius.circular(15),
-                          child: Image.asset("assets/images/order.png")),
-                      Text("All Orders",style: TextStyle(fontSize: 20.sp,fontWeight: FontWeight.bold,color: Colors.white),)
+                        child: Image.asset("assets/images/order.png"),
+                      ),
+                      Text(
+                        "All Orders",
+                        style: TextStyle(
+                          fontSize: 20.sp,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                        ),
+                      ),
                     ],
                   ),
                 ),

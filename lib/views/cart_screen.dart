@@ -166,11 +166,19 @@ class _CartScreenState extends State<CartScreen> {
 
       final orderItems = cartItems.map((item) {
         final data = item.data() as Map<String, dynamic>;
+
         return {
           'itemName': data['itemName'],
           'quantity': data['quantity'],
           'totalPrice': data['totalPrice'],
           'image': data['image'],
+
+          'isDeal': data['isDeal'] ?? false,
+
+          'dealId': data['dealId'],
+
+          'dealItems': data['dealItems'],
+
           'spiceLevel': data['spiceLevel'],
           'oilLevel': data['oilLevel'],
         };
@@ -231,7 +239,7 @@ class _CartScreenState extends State<CartScreen> {
       body: StreamBuilder<QuerySnapshot>(
         stream: FirebaseFirestore.instance
             .collection('cart')
-            .where('id', isEqualTo: id)
+            .where('id', isEqualTo: userId)
             .snapshots(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
@@ -272,19 +280,72 @@ class _CartScreenState extends State<CartScreen> {
                           height: 15.w,
                           fit: BoxFit.cover,
                         ),
-                        title: Text(
-                          item['itemName'],
-                          style: TextStyle(
-                            fontSize: 12.sp,
-                            color: Colors.black,
-                          ),
+                        title: Row(
+                          children: [
+                            Expanded(
+                              child: Text(
+                                item['itemName'],
+                                style: TextStyle(
+                                  fontSize: 12.sp,
+                                  color: Colors.black,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+
+                            if (item['isDeal'] == true)
+                              Container(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 8,
+                                  vertical: 4,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: Colors.red,
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                                child: const Text(
+                                  "DEAL",
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 10,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ),
+                          ],
                         ),
-                        subtitle: Text(
-                          'Quantity: ${item['quantity']}\nPrice: ${item['totalPrice']} PKR${item['spiceLevel'] != null && item['oilLevel'] != null ? '\nSpice: ${_getSpiceLabel(item['spiceLevel'])} | Oil: ${_getOilLabel(item['oilLevel'])}' : ''}',
-                          style: const TextStyle(
-                            color: Colors.black,
-                            height: 1.3,
-                          ),
+
+                        subtitle: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Quantity: ${item['quantity']}',
+                              style: const TextStyle(color: Colors.black),
+                            ),
+
+                            Text(
+                              'Price: ${item['totalPrice']} PKR',
+                              style: const TextStyle(color: Colors.black),
+                            ),
+
+                            if (item['isDeal'] == true)
+                              Text(
+                                "Special Deal Package",
+                                style: TextStyle(
+                                  color: Colors.red[700],
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+
+                            if (item['isDeal'] != true &&
+                                item['spiceLevel'] != null &&
+                                item['oilLevel'] != null)
+                              Text(
+                                'Spice: ${_getSpiceLabel(item['spiceLevel'])} | '
+                                'Oil: ${_getOilLabel(item['oilLevel'])}',
+                                style: const TextStyle(color: Colors.black),
+                              ),
+                          ],
                         ),
                         trailing: IconButton(
                           icon: const Icon(Icons.delete, color: Colors.black),

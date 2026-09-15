@@ -28,7 +28,7 @@ class _AddProductState extends State<AddProduct> {
   TextEditingController itemNameController = TextEditingController();
   TextEditingController itemDetailController = TextEditingController();
 
-  List<String> fooditems = ["Burger","Pizza","Soup","Wings","shakes"];
+  List<String> fooditems = ["Burger","Pizza","Soup","Wings","shakes","Shawarma"];
 
   bool isLoad = false;
   late String downloadUrl;// For tracking selected category

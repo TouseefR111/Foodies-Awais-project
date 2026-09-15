@@ -3,7 +3,7 @@ import 'package:sizer/sizer.dart';
 
 class SubHeadingTextWidget extends StatelessWidget {
   final String text;
-  const SubHeadingTextWidget({super.key,required this.text});
+  const SubHeadingTextWidget({super.key, required this.text});
 
   @override
   Widget build(BuildContext context) {
@@ -14,8 +14,7 @@ class SubHeadingTextWidget extends StatelessWidget {
         children: [
           Text(
             text,
-            style:
-            TextStyle(fontSize: 11.sp, fontWeight: FontWeight.bold),
+            style: TextStyle(fontSize: 14.sp, fontWeight: FontWeight.bold),
           ),
         ],
       ),

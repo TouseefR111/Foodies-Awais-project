@@ -48,7 +48,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                     Text(
                       "FOODIES",
                       style: TextStyle(
-                        fontSize: 36.sp,
+                        fontSize: 30.sp,
                         fontWeight: FontWeight.bold,
                         color: Colors.black87,
                         letterSpacing: 1.2,
@@ -99,7 +99,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                         child: Text(
                           "LOGIN AS USER",
                           style: TextStyle(
-                            fontSize: 14.sp,
+                            fontSize: 18.sp,
                             fontWeight: FontWeight.bold,
                             color: Colors.black87,
                           ),
@@ -129,7 +129,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                         child: Text(
                           "LOGIN AS ADMIN",
                           style: TextStyle(
-                            fontSize: 14.sp,
+                            fontSize: 18.sp,
                             fontWeight: FontWeight.bold,
                             color: Colors.black87,
                           ),
@@ -149,7 +149,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                       child: Text(
                         "Already have an account? Login",
                         style: TextStyle(
-                          fontSize: 10.sp,
+                          fontSize: 14.sp,
                           color: Colors.black54,
                           decoration: TextDecoration.underline,
                         ),
