@@ -17,10 +17,7 @@ import 'package:flutter/foundation.dart'
 class DefaultFirebaseOptions {
   static FirebaseOptions get currentPlatform {
     if (kIsWeb) {
-      throw UnsupportedError(
-        'DefaultFirebaseOptions have not been configured for web - '
-        'you can reconfigure this by running the FlutterFire CLI again.',
-      );
+      return web;
     }
     switch (defaultTargetPlatform) {
       case TargetPlatform.android:
@@ -28,15 +25,9 @@ class DefaultFirebaseOptions {
       case TargetPlatform.iOS:
         return ios;
       case TargetPlatform.macOS:
-        throw UnsupportedError(
-          'DefaultFirebaseOptions have not been configured for macos - '
-          'you can reconfigure this by running the FlutterFire CLI again.',
-        );
+        return macos;
       case TargetPlatform.windows:
-        throw UnsupportedError(
-          'DefaultFirebaseOptions have not been configured for windows - '
-          'you can reconfigure this by running the FlutterFire CLI again.',
-        );
+        return windows;
       case TargetPlatform.linux:
         throw UnsupportedError(
           'DefaultFirebaseOptions have not been configured for linux - '
@@ -51,19 +42,45 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions android = FirebaseOptions(
     apiKey: 'AIzaSyDnvGph9juEwTVP3Mt5bAjPXFmN7XnOD5Q',
-    appId: '1:241816291051:android:dabacd5c90f5675ef4a0ae',
+    appId: '1:241816291051:android:38dc2bea856e8b0af4a0ae',
     messagingSenderId: '241816291051',
     projectId: 'foodiesapp-6068c',
     storageBucket: 'foodiesapp-6068c.firebasestorage.app',
   );
-
   static const FirebaseOptions ios = FirebaseOptions(
     apiKey: 'AIzaSyArlM9n1nAwIYXOm5YljKMVGi80JVUEaEw',
-    appId: '1:241816291051:ios:8b3cae6ced888124f4a0ae',
+    appId: '1:241816291051:ios:eab0bbb6ce726d35f4a0ae',
     messagingSenderId: '241816291051',
     projectId: 'foodiesapp-6068c',
     storageBucket: 'foodiesapp-6068c.firebasestorage.app',
-    iosBundleId: 'com.example.foodiesApp',
+    iosBundleId: 'com.example.foodDeliveryApp',
+  );
+  static const FirebaseOptions web = FirebaseOptions(
+    apiKey: 'AIzaSyDy6D2RCpsHjHgsEt3--Bu72_jk__7XklY',
+    appId: '1:241816291051:web:19f525634d73050ef4a0ae',
+    messagingSenderId: '241816291051',
+    projectId: 'foodiesapp-6068c',
+    authDomain: 'foodiesapp-6068c.firebaseapp.com',
+    storageBucket: 'foodiesapp-6068c.firebasestorage.app',
+    measurementId: 'G-R845PDLYXD',
   );
 
+  static const FirebaseOptions macos = FirebaseOptions(
+    apiKey: 'AIzaSyArlM9n1nAwIYXOm5YljKMVGi80JVUEaEw',
+    appId: '1:241816291051:ios:eab0bbb6ce726d35f4a0ae',
+    messagingSenderId: '241816291051',
+    projectId: 'foodiesapp-6068c',
+    storageBucket: 'foodiesapp-6068c.firebasestorage.app',
+    iosBundleId: 'com.example.foodDeliveryApp',
+  );
+
+  static const FirebaseOptions windows = FirebaseOptions(
+    apiKey: 'AIzaSyABgot5m35BvDZqzbpUMsFslrjznBhZkYM',
+    appId: '1:241816291051:web:46d5de5e861377e4f4a0ae',
+    messagingSenderId: '241816291051',
+    projectId: 'foodiesapp-6068c',
+    authDomain: 'foodiesapp-6068c.firebaseapp.com',
+    storageBucket: 'foodiesapp-6068c.firebasestorage.app',
+    measurementId: 'G-0E1CQM3256',
+  );
 }

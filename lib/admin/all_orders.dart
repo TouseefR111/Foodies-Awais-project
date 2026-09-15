@@ -48,17 +48,18 @@ class _AllOrdersState extends State<AllOrders> {
   }
 
   /// Convert Latitude and Longitude to Address
+  final Geocoding _geocoding = Geocoding();
   Future<String> getAddressFromCoordinates(
     double latitude,
     double longitude,
   ) async {
     try {
-      List<Placemark> placemarks = await placemarkFromCoordinates(
+      List<Placemark> placemarks = await _geocoding.placemarkFromCoordinates(
         latitude,
         longitude,
       );
       if (placemarks.isNotEmpty) {
-        Placemark place = placemarks[0];
+        final Placemark place = placemarks.first;
         return "${place.street}, ${place.locality}, ${place.administrativeArea}, ${place.country}";
       }
     } catch (e) {

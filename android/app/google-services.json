@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "241816291051",
+    "project_id": "foodiesapp-6068c",
+    "storage_bucket": "foodiesapp-6068c.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:241816291051:android:38dc2bea856e8b0af4a0ae",
+        "android_client_info": {
+          "package_name": "com.example.food_delivery_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDnvGph9juEwTVP3Mt5bAjPXFmN7XnOD5Q"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:241816291051:android:dabacd5c90f5675ef4a0ae",
+        "android_client_info": {
+          "package_name": "com.example.foodies_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDnvGph9juEwTVP3Mt5bAjPXFmN7XnOD5Q"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

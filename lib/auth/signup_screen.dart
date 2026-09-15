@@ -131,7 +131,7 @@ class _SignupScreenState extends State<SignupScreen> {
               Text(
                 "FOODIES",
                 style: TextStyle(
-                  fontSize: 40.sp,
+                  fontSize: 34.sp,
                   fontWeight: FontWeight.bold,
                   color: Colors.black,
                 ),
