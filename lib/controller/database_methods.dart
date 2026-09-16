@@ -1,55 +1,90 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-class DatabaseMethods{
-
+class DatabaseMethods {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
-  Future getSendingCategoryFood(Map<String,dynamic> userInfo, String category) async{
-    await FirebaseFirestore.instance.collection(category).add(userInfo);
+  // Add category food
+  Future getSendingCategoryFood(
+      Map<String, dynamic> userInfo, String category) async {
+    await _firestore.collection(category).add(userInfo);
   }
 
+  // Get user data
   Future<DocumentSnapshot> getUserData(String userId) async {
     return await _firestore.collection("users").doc(userId).get();
   }
 
-  Future <Stream<QuerySnapshot>> getDataFromDb(String category) async{
-    return await FirebaseFirestore.instance.collection(category).snapshots();
+  // Get products from category
+  Future<Stream<QuerySnapshot>> getDataFromDb(String category) async {
+    return _firestore.collection(category).snapshots();
   }
 
-  Future usersData(Map<String,dynamic> userInfoAuth, String id) async{
-    await FirebaseFirestore.instance.collection("users").doc(id).set(userInfoAuth);
+  // Save user data
+  Future usersData(
+      Map<String, dynamic> userInfoAuth, String id) async {
+    await _firestore
+        .collection("users")
+        .doc(id)
+        .set(userInfoAuth);
   }
 
-
-  Future cartData(Map<String,dynamic> userInfoAuth) async{
-    await FirebaseFirestore.instance.collection("cart").add(userInfoAuth);
+  // Add item to cart
+  Future cartData(
+      Map<String, dynamic> userInfoAuth) async {
+    await _firestore
+        .collection("cart")
+        .add(userInfoAuth);
   }
 
-  Future <Stream<QuerySnapshot>> getDataFromCartDb(String id) async{
-    return await FirebaseFirestore.instance.collection("cart").where("Id",isEqualTo:id).snapshots();
+  // Get cart items ONLY for the current user
+  Future<Stream<QuerySnapshot>> getDataFromCartDb(
+      String id) async {
+    return _firestore
+        .collection("cart")
+        .where("id", isEqualTo: id)
+        .snapshots();
   }
 
-  Future bookOrderData(Map<String,dynamic> userInfoAuth) async{
-    await FirebaseFirestore.instance.collection("orders").add(userInfoAuth);
+  // Add order
+  Future bookOrderData(
+      Map<String, dynamic> userInfoAuth) async {
+    await _firestore
+        .collection("orders")
+        .add(userInfoAuth);
   }
 
-  Future <Stream<QuerySnapshot>> getDataFromOrderDb(String id) async{
-    return await FirebaseFirestore.instance.collection("orders").where("orderId",isEqualTo:id).snapshots();
+  // Get user's orders
+  Future<Stream<QuerySnapshot>> getDataFromOrderDb(
+      String id) async {
+    return _firestore
+        .collection("orders")
+        .where("orderId", isEqualTo: id)
+        .snapshots();
   }
 
-  Future deleteCart(String id) async{
-    await FirebaseFirestore.instance.collection("cart").doc(id).delete();
+  // Delete cart item
+  Future deleteCart(String id) async {
+    await _firestore
+        .collection("cart")
+        .doc(id)
+        .delete();
   }
 
-  Future <Stream<QuerySnapshot>> getOrderForAdmin() async{
-    return await FirebaseFirestore.instance.collection("orders").snapshots();
+  // Get all orders for admin
+  Future<Stream<QuerySnapshot>> getOrderForAdmin() async {
+    return _firestore
+        .collection("orders")
+        .snapshots();
   }
 
-   updateStatus(String id) async{
-    return await FirebaseFirestore.instance.collection("orders").doc(id).update({"Status":"Delivered"});
+  // Update order status
+  Future updateStatus(String id) async {
+    return await _firestore
+        .collection("orders")
+        .doc(id)
+        .update({
+      "Status": "Delivered",
+    });
   }
-
-
-
-
 }
+

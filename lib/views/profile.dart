@@ -4,6 +4,7 @@ import 'package:food_delivery_app/views/welcome_screen.dart';
 import 'package:sizer/sizer.dart';
 
 import '../controller/shared_pref_helper.dart';
+
 class Profile extends StatefulWidget {
   const Profile({super.key});
 
@@ -12,7 +13,6 @@ class Profile extends StatefulWidget {
 }
 
 class _ProfileState extends State<Profile> {
-
   String? userId;
   String? userName;
   String? userContact;
@@ -31,7 +31,6 @@ class _ProfileState extends State<Profile> {
     setState(() {});
   }
 
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -45,25 +44,28 @@ class _ProfileState extends State<Profile> {
                   height: 20.h,
                   decoration: const BoxDecoration(
                     color: Colors.amber,
-                    borderRadius: BorderRadius.vertical(bottom: Radius.elliptical(100, 50)),
+                    borderRadius: BorderRadius.vertical(
+                      bottom: Radius.elliptical(100, 50),
+                    ),
                   ),
                 ),
 
-              Container(
-                margin: const EdgeInsets.only(left: 140,top: 100),
-                width: 30.w,
-                height: 14.h,
+                Container(
+                  margin: const EdgeInsets.only(left: 140, top: 80),
+                  width: 30.w,
+                  height: 14.h,
 
-                decoration: const BoxDecoration(
-                  shape: BoxShape.circle,
-                  image: DecorationImage(image: AssetImage("assets/images/profile.png"),fit: BoxFit.cover)
-
+                  decoration: const BoxDecoration(
+                    shape: BoxShape.circle,
+                    image: DecorationImage(
+                      image: AssetImage("assets/images/profile.png"),
+                      fit: BoxFit.cover,
+                    ),
+                  ),
                 ),
-              )
-
               ],
             ),
-            SizedBox(height: 2.h,),
+            SizedBox(height: 2.h),
 
             //Name
             Material(
@@ -80,22 +82,21 @@ class _ProfileState extends State<Profile> {
                   child: Row(
                     children: [
                       Icon(Icons.person),
-                      SizedBox(width: 4.w,),
+                      SizedBox(width: 4.w),
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           const Text("Name"),
                           Text(userName.toString()),
-
                         ],
-                      )
+                      ),
                     ],
                   ),
                 ),
               ),
             ),
-            SizedBox(height: 3.h,),
+            SizedBox(height: 3.h),
             //Email
             Material(
               elevation: 7.0,
@@ -111,22 +112,18 @@ class _ProfileState extends State<Profile> {
                   child: Row(
                     children: [
                       Icon(Icons.email),
-                      SizedBox(width: 4.w,),
+                      SizedBox(width: 4.w),
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text("Email"),
-                          Text("".toString()),
-
-                        ],
-                      )
+                        children: [Text("Email"), Text("".toString())],
+                      ),
                     ],
                   ),
                 ),
               ),
             ),
-            SizedBox(height: 3.h,),
+            SizedBox(height: 3.h),
             //Delete Account
             Material(
               elevation: 7.0,
@@ -142,21 +139,18 @@ class _ProfileState extends State<Profile> {
                   child: Row(
                     children: [
                       Icon(Icons.book_outlined),
-                      SizedBox(width: 4.w,),
+                      SizedBox(width: 4.w),
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text("Terms & Conditions"),
-
-                        ],
-                      )
+                        children: [Text("Terms & Conditions")],
+                      ),
                     ],
                   ),
                 ),
               ),
             ),
-            SizedBox(height: 3.h,),
+            SizedBox(height: 3.h),
             //Delete Account
             Material(
               elevation: 7.0,
@@ -172,29 +166,60 @@ class _ProfileState extends State<Profile> {
                   child: Row(
                     children: [
                       Icon(Icons.delete),
-                      SizedBox(width: 4.w,),
+                      SizedBox(width: 4.w),
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text("Delete Account"),
-
-                        ],
-                      )
+                        children: [Text("Delete Account")],
+                      ),
                     ],
                   ),
                 ),
               ),
             ),
-            SizedBox(height: 3.h,),
+
+            SizedBox(height: 3.h),
+            //Delete Account
+            Material(
+              elevation: 7.0,
+              borderRadius: BorderRadius.circular(10),
+              child: Container(
+                width: 90.w,
+                height: 8.h,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Row(
+                    children: [
+                      Icon(Icons.comment_outlined),
+                      SizedBox(width: 4.w),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [Text("Complaints")],
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+
+            SizedBox(height: 3.h),
             //Logout
             Material(
               elevation: 7.0,
               borderRadius: BorderRadius.circular(10),
               child: GestureDetector(
-                onTap: (){
+                onTap: () {
                   FirebaseAuth.instance.signOut();
-                  Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const WelcomeScreen()));
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const WelcomeScreen(),
+                    ),
+                  );
                 },
                 child: Container(
                   width: 90.w,
@@ -207,15 +232,12 @@ class _ProfileState extends State<Profile> {
                     child: Row(
                       children: [
                         Icon(Icons.logout),
-                        SizedBox(width: 4.w,),
+                        SizedBox(width: 4.w),
                         const Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Text("Logout"),
-
-                          ],
-                        )
+                          children: [Text("Logout")],
+                        ),
                       ],
                     ),
                   ),

@@ -45,17 +45,15 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Text(
-                      "FOODIES",
-                      style: TextStyle(
-                        fontSize: 30.sp,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black87,
-                        letterSpacing: 1.2,
-                        fontFamily: 'Playwrite',
+                    Center(
+                      child: Image.asset(
+                        'assets/images/foodies_logo.png',
+                        width: 70.w,
+                        height: 14.h,
+                        fit: BoxFit.contain,
                       ),
                     ),
-                    SizedBox(height: 4.h),
+                    SizedBox(height: 2.h),
                     Container(
                       padding: EdgeInsets.all(2.w),
                       decoration: BoxDecoration(
@@ -72,8 +70,8 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                       child: ClipOval(
                         child: Image.asset(
                           "assets/images/logo.png",
-                          width: 34.w,
-                          height: 34.w,
+                          width: 70.w,
+                          height: 70.w,
                           fit: BoxFit.cover,
                         ),
                       ),
@@ -149,7 +147,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                       child: Text(
                         "Already have an account? Login",
                         style: TextStyle(
-                          fontSize: 14.sp,
+                          fontSize: 16.sp,
                           color: Colors.black54,
                           decoration: TextDecoration.underline,
                         ),
