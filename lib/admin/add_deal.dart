@@ -1,10 +1,11 @@
-import 'dart:io';
-
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+
+import 'package:firebase_storage/firebase_storage.dart';
+
 import 'package:image_picker/image_picker.dart';
 import 'package:sizer/sizer.dart';
+import 'dart:io';
 
 class AddDeal extends StatefulWidget {
   const AddDeal({super.key});
@@ -14,30 +15,73 @@ class AddDeal extends StatefulWidget {
 }
 
 class _AddDealState extends State<AddDeal> {
+  // ------------------------------------------------------------
+  // Controllers
+  // ------------------------------------------------------------
+
   final TextEditingController dealNameController = TextEditingController();
+  final TextEditingController descriptionController =
+      TextEditingController();
+  final TextEditingController dealPriceController =
+      TextEditingController();
 
-  final TextEditingController descriptionController = TextEditingController();
+  // ------------------------------------------------------------
+  // Scroll
+  // ------------------------------------------------------------
 
-  final TextEditingController dealPriceController = TextEditingController();
+  final ScrollController scrollController = ScrollController();
+
+  // ------------------------------------------------------------
+  // State
+  // ------------------------------------------------------------
 
   File? selectedImage;
 
   bool isActive = true;
   bool isSaving = false;
 
-  /// Stores selected products
+  /// Selected products
   ///
-  /// Example:
   /// {
-  ///   productId: abc123,
-  ///   itemName: Burger,
-  ///   price: 350,
-  ///   imageUrl: ...,
-  ///   quantity: 2
+  ///   productId: {
+  ///     productId: abc123,
+  ///     itemName: Burger,
+  ///     price: 350,
+  ///     imageUrl: ...,
+  ///     quantity: 2
+  ///   }
   /// }
   final Map<String, Map<String, dynamic>> selectedProducts = {};
 
-  /// Pick Deal Image
+  // ------------------------------------------------------------
+  // Price
+  // ------------------------------------------------------------
+
+  double get originalPrice {
+    double total = 0;
+
+    for (final product in selectedProducts.values) {
+      final double price = (product['price'] as num).toDouble();
+      final int quantity = product['quantity'] as int;
+
+      total += price * quantity;
+    }
+
+    return total;
+  }
+
+  double get dealPrice {
+    return double.tryParse(dealPriceController.text.trim()) ?? 0;
+  }
+
+  double get saving {
+    return originalPrice - dealPrice;
+  }
+
+  // ------------------------------------------------------------
+  // Pick Image
+  // ------------------------------------------------------------
+
   Future<void> pickImage() async {
     try {
       final ImagePicker picker = ImagePicker();
@@ -47,52 +91,45 @@ class _AddDealState extends State<AddDeal> {
         imageQuality: 80,
       );
 
-      if (image != null) {
-        setState(() {
-          selectedImage = File(image.path);
-        });
-      }
+      if (image == null) return;
+
+      setState(() {
+        selectedImage = File(image.path);
+      });
     } catch (e) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text("Failed to select image: $e")));
+      if (!mounted) return;
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text("Failed to select image: $e"),
+        ),
+      );
     }
   }
 
-  /// Calculate original price
-  double get originalPrice {
-    double total = 0;
+  // ------------------------------------------------------------
+  // Add Product
+  // ------------------------------------------------------------
 
-    for (final product in selectedProducts.values) {
-      final double price = (product['price'] as num).toDouble();
-
-      final int quantity = product['quantity'] as int;
-
-      total += price * quantity;
-    }
-
-    return total;
-  }
-
-  /// Calculate saving
-  double get saving {
-    final double dealPrice =
-        double.tryParse(dealPriceController.text.trim()) ?? 0;
-
-    return originalPrice - dealPrice;
-  }
-
-  /// Add product
-  void addProduct(String productId, Map<String, dynamic> product) {
+  void addProduct(
+    String productId,
+    Map<String, dynamic> product,
+  ) {
     setState(() {
       if (selectedProducts.containsKey(productId)) {
+        final int currentQuantity =
+            selectedProducts[productId]!['quantity'] as int;
+
         selectedProducts[productId]!['quantity'] =
-            (selectedProducts[productId]!['quantity'] as int) + 1;
+            currentQuantity + 1;
       } else {
         selectedProducts[productId] = {
           'productId': productId,
           'itemName': product['itemName'] ?? 'Unknown Item',
-          'price': double.tryParse(product['itemPrice'].toString()) ?? 0.0,
+          'price': double.tryParse(
+                product['itemPrice'].toString(),
+              ) ??
+              0.0,
           'imageUrl': product['imageUrl'] ?? '',
           'quantity': 1,
         };
@@ -100,30 +137,39 @@ class _AddDealState extends State<AddDeal> {
     });
   }
 
-  /// Remove product
+  // ------------------------------------------------------------
+  // Remove Product
+  // ------------------------------------------------------------
+
   void removeProduct(String productId) {
     setState(() {
       if (!selectedProducts.containsKey(productId)) {
         return;
       }
 
-      final quantity = selectedProducts[productId]!['quantity'];
+      final int quantity =
+          selectedProducts[productId]!['quantity'] as int;
 
       if (quantity > 1) {
-        selectedProducts[productId]!['quantity']--;
+        selectedProducts[productId]!['quantity'] =
+            quantity - 1;
       } else {
         selectedProducts.remove(productId);
       }
     });
   }
 
-  /// Upload image to Firebase Storage
+  // ------------------------------------------------------------
+  // Upload Image
+  // ------------------------------------------------------------
+
   Future<String> uploadDealImage() async {
     if (selectedImage == null) {
       throw Exception("Please select a deal image.");
     }
 
-    final String fileName = "deal_${DateTime.now().millisecondsSinceEpoch}.jpg";
+    final String fileName =
+        "deal_${DateTime.now().millisecondsSinceEpoch}.jpg";
 
     final Reference storageReference = FirebaseStorage.instance
         .ref()
@@ -135,37 +181,48 @@ class _AddDealState extends State<AddDeal> {
     return await storageReference.getDownloadURL();
   }
 
-  /// Save Deal
+  // ------------------------------------------------------------
+  // Save Deal
+  // ------------------------------------------------------------
+
   Future<void> saveDeal() async {
+    // Validate name
     if (dealNameController.text.trim().isEmpty) {
       showMessage("Please enter deal name.");
       return;
     }
 
+    // Validate description
     if (descriptionController.text.trim().isEmpty) {
       showMessage("Please enter deal description.");
       return;
     }
 
+    // Validate image
     if (selectedImage == null) {
       showMessage("Please select deal image.");
       return;
     }
 
+    // Validate products
     if (selectedProducts.isEmpty) {
       showMessage("Please select at least one food item.");
       return;
     }
 
-    final double? dealPrice = double.tryParse(dealPriceController.text.trim());
+    // Validate price
+    final double? enteredDealPrice =
+        double.tryParse(dealPriceController.text.trim());
 
-    if (dealPrice == null) {
+    if (enteredDealPrice == null) {
       showMessage("Please enter a valid deal price.");
       return;
     }
 
-    if (dealPrice >= originalPrice) {
-      showMessage("Deal price should be lower than original price.");
+    if (enteredDealPrice >= originalPrice) {
+      showMessage(
+        "Deal price should be lower than original price.",
+      );
       return;
     }
 
@@ -174,13 +231,12 @@ class _AddDealState extends State<AddDeal> {
     });
 
     try {
-      /// Upload image
+      // Upload image
       final String imageUrl = await uploadDealImage();
 
-      /// Convert selected products to Firestore list
-      final List<Map<String, dynamic>> items = selectedProducts.values.map((
-        product,
-      ) {
+      // Convert selected products
+      final List<Map<String, dynamic>> items =
+          selectedProducts.values.map((product) {
         return {
           'productId': product['productId'],
           'itemName': product['itemName'],
@@ -189,22 +245,15 @@ class _AddDealState extends State<AddDeal> {
         };
       }).toList();
 
-      /// Save deal
+      // Save to Firestore
       await FirebaseFirestore.instance.collection('deals').add({
         'dealName': dealNameController.text.trim(),
-
         'description': descriptionController.text.trim(),
-
         'imageUrl': imageUrl,
-
         'originalPrice': originalPrice,
-
-        'dealPrice': dealPrice,
-
+        'dealPrice': enteredDealPrice,
         'active': isActive,
-
         'items': items,
-
         'createdAt': FieldValue.serverTimestamp(),
       });
 
@@ -213,49 +262,77 @@ class _AddDealState extends State<AddDeal> {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           backgroundColor: Colors.green,
-          content: Text("Deal created successfully!"),
+          content: Text(
+            "Deal created successfully!",
+          ),
         ),
       );
 
-      /// Clear form
-      dealNameController.clear();
-      descriptionController.clear();
-      dealPriceController.clear();
-
-      setState(() {
-        selectedImage = null;
-        selectedProducts.clear();
-        isActive = true;
-      });
+      clearForm();
     } catch (e) {
       if (!mounted) return;
 
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text("Failed to create deal: $e")));
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            "Failed to create deal: $e",
+          ),
+        ),
+      );
     } finally {
-      if (mounted) {
-        setState(() {
-          isSaving = false;
-        });
-      }
+      if (!mounted) return;
+
+      setState(() {
+        isSaving = false;
+      });
     }
   }
 
-  void showMessage(String message) {
-    ScaffoldMessenger.of(
-      context,
-    ).showSnackBar(SnackBar(content: Text(message)));
+  // ------------------------------------------------------------
+  // Clear Form
+  // ------------------------------------------------------------
+
+  void clearForm() {
+    dealNameController.clear();
+    descriptionController.clear();
+    dealPriceController.clear();
+
+    setState(() {
+      selectedImage = null;
+      selectedProducts.clear();
+      isActive = true;
+    });
   }
+
+  // ------------------------------------------------------------
+  // Snackbar
+  // ------------------------------------------------------------
+
+  void showMessage(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+      ),
+    );
+  }
+
+  // ------------------------------------------------------------
+  // Dispose
+  // ------------------------------------------------------------
 
   @override
   void dispose() {
     dealNameController.dispose();
     descriptionController.dispose();
     dealPriceController.dispose();
+    scrollController.dispose();
 
     super.dispose();
   }
+
+  // ------------------------------------------------------------
+  // Build
+  // ------------------------------------------------------------
 
   @override
   Widget build(BuildContext context) {
@@ -263,21 +340,33 @@ class _AddDealState extends State<AddDeal> {
       appBar: AppBar(
         title: const Text(
           "ADD DEAL",
-          style: TextStyle(fontWeight: FontWeight.bold),
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+          ),
         ),
         centerTitle: true,
         backgroundColor: Colors.amber,
       ),
 
       body: SingleChildScrollView(
+        controller: scrollController,
+        keyboardDismissBehavior:
+            ScrollViewKeyboardDismissBehavior.onDrag,
         padding: EdgeInsets.all(4.w),
+
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            /// Deal Name
+            // --------------------------------------------------
+            // Deal Name
+            // --------------------------------------------------
+
             Text(
               "Deal Name",
-              style: TextStyle(fontSize: 14.sp, fontWeight: FontWeight.bold),
+              style: TextStyle(
+                fontSize: 14.sp,
+                fontWeight: FontWeight.bold,
+              ),
             ),
 
             SizedBox(height: 1.h),
@@ -294,10 +383,16 @@ class _AddDealState extends State<AddDeal> {
 
             SizedBox(height: 2.h),
 
-            /// Description
+            // --------------------------------------------------
+            // Description
+            // --------------------------------------------------
+
             Text(
               "Description",
-              style: TextStyle(fontSize: 14.sp, fontWeight: FontWeight.bold),
+              style: TextStyle(
+                fontSize: 14.sp,
+                fontWeight: FontWeight.bold,
+              ),
             ),
 
             SizedBox(height: 1.h),
@@ -306,7 +401,8 @@ class _AddDealState extends State<AddDeal> {
               controller: descriptionController,
               maxLines: 3,
               decoration: InputDecoration(
-                hintText: "Example: 2 Burgers + Pizza + Drinks",
+                hintText:
+                    "Example: 2 Burgers + Pizza + Drinks",
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
                 ),
@@ -315,270 +411,158 @@ class _AddDealState extends State<AddDeal> {
 
             SizedBox(height: 2.h),
 
-            /// Deal Image
+            // --------------------------------------------------
+            // Deal Image
+            // --------------------------------------------------
+
             Text(
               "Deal Image",
-              style: TextStyle(fontSize: 14.sp, fontWeight: FontWeight.bold),
+              style: TextStyle(
+                fontSize: 14.sp,
+                fontWeight: FontWeight.bold,
+              ),
             ),
 
             SizedBox(height: 1.h),
 
             GestureDetector(
-              onTap: pickImage,
+              onTap: isSaving ? null : pickImage,
               child: Container(
                 width: double.infinity,
                 height: 22.h,
+
                 decoration: BoxDecoration(
                   color: Colors.grey.shade200,
                   borderRadius: BorderRadius.circular(15),
-                  border: Border.all(color: Colors.grey),
+                  border: Border.all(
+                    color: Colors.grey,
+                  ),
                 ),
+
                 child: selectedImage == null
                     ? const Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
+                        mainAxisAlignment:
+                            MainAxisAlignment.center,
                         children: [
-                          Icon(Icons.add_a_photo, size: 50),
+                          Icon(
+                            Icons.add_a_photo,
+                            size: 50,
+                          ),
                           SizedBox(height: 10),
-                          Text("Tap to select deal image"),
+                          Text(
+                            "Tap to select deal image",
+                          ),
                         ],
                       )
                     : ClipRRect(
-                        borderRadius: BorderRadius.circular(15),
-                        child: Image.file(selectedImage!, fit: BoxFit.cover),
+                        borderRadius:
+                            BorderRadius.circular(15),
+                        child: Image.file(
+                          selectedImage!,
+                          fit: BoxFit.cover,
+                        ),
                       ),
               ),
             ),
 
             SizedBox(height: 3.h),
 
-            /// Products
+            // --------------------------------------------------
+            // Products
+            // --------------------------------------------------
+
             Text(
               "Select Food Items",
-              style: TextStyle(fontSize: 16.sp, fontWeight: FontWeight.bold),
+              style: TextStyle(
+                fontSize: 16.sp,
+                fontWeight: FontWeight.bold,
+              ),
             ),
 
             SizedBox(height: 1.h),
 
-            StreamBuilder<QuerySnapshot>(
-              stream: FirebaseFirestore.instance
-                  .collection('categoryList')
-                  .orderBy('createdAt', descending: true)
-                  .snapshots(),
-
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const Center(child: CircularProgressIndicator());
-                }
-
-                if (snapshot.hasError) {
-                  return Text("Error: ${snapshot.error}");
-                }
-
-                if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-                  return const Text("No products found.");
-                }
-
-                final products = snapshot.data!.docs;
-
-                return Column(
-                  children: products.map((doc) {
-                    final product = doc.data() as Map<String, dynamic>;
-
-                    final productId = doc.id;
-
-                    final bool selected = selectedProducts.containsKey(
-                      productId,
-                    );
-
-                    final int quantity = selected
-                        ? selectedProducts[productId]!['quantity']
-                        : 0;
-
-                    return Card(
-                      margin: EdgeInsets.only(bottom: 1.h),
-                      child: Padding(
-                        padding: EdgeInsets.all(2.w),
-                        child: Row(
-                          children: [
-                            /// Image
-                            ClipRRect(
-                              borderRadius: BorderRadius.circular(10),
-                              child: Image.network(
-                                product['imageUrl'],
-                                width: 18.w,
-                                height: 18.w,
-                                fit: BoxFit.cover,
-                              ),
-                            ),
-
-                            SizedBox(width: 3.w),
-
-                            /// Name + Price
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    product['itemName'],
-                                    maxLines: 2,
-                                    overflow: TextOverflow.ellipsis,
-                                    style: TextStyle(
-                                      fontSize: 12.sp,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-
-                                  SizedBox(height: 0.5.h),
-
-                                  Text(
-                                    "${product['itemPrice']} PKR",
-                                    style: TextStyle(
-                                      fontSize: 11.sp,
-                                      color: Colors.grey,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-
-                            /// Quantity Controls
-                            if (!selected)
-                              IconButton(
-                                icon: const Icon(
-                                  Icons.add_circle,
-                                  color: Colors.amber,
-                                ),
-                                onPressed: () => addProduct(productId, product),
-                              ),
-
-                            if (selected)
-                              Row(
-                                children: [
-                                  IconButton(
-                                    icon: const Icon(Icons.remove_circle),
-                                    onPressed: () => removeProduct(productId),
-                                  ),
-
-                                  Text(
-                                    "$quantity",
-                                    style: TextStyle(
-                                      fontSize: 13.sp,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-
-                                  IconButton(
-                                    icon: const Icon(
-                                      Icons.add_circle,
-                                      color: Colors.amber,
-                                    ),
-                                    onPressed: () =>
-                                        addProduct(productId, product),
-                                  ),
-                                ],
-                              ),
-                          ],
-                        ),
-                      ),
-                    );
-                  }).toList(),
-                );
-              },
+            ProductList(
+              selectedProducts: selectedProducts,
+              onAdd: addProduct,
+              onRemove: removeProduct,
             ),
 
             SizedBox(height: 3.h),
 
-            /// Price Summary
-            Container(
-              width: double.infinity,
-              padding: EdgeInsets.all(4.w),
-              decoration: BoxDecoration(
-                color: Colors.amber.shade50,
-                borderRadius: BorderRadius.circular(15),
-                border: Border.all(color: Colors.amber),
-              ),
-              child: Column(
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      const Text("Original Price"),
-                      Text(
-                        "${originalPrice.toStringAsFixed(0)} PKR",
-                        style: const TextStyle(fontWeight: FontWeight.bold),
-                      ),
-                    ],
-                  ),
+            // --------------------------------------------------
+            // Price Summary
+            // --------------------------------------------------
 
-                  SizedBox(height: 1.h),
-
-                  /// Deal Price
-                  TextField(
-                    controller: dealPriceController,
-                    keyboardType: TextInputType.number,
-                    onChanged: (_) {
-                      setState(() {});
-                    },
-                    decoration: InputDecoration(
-                      labelText: "Deal Price",
-                      suffixText: "PKR",
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                    ),
-                  ),
-
-                  SizedBox(height: 1.h),
-
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      const Text("You Save"),
-                      Text(
-                        "${saving.toStringAsFixed(0)} PKR",
-                        style: const TextStyle(
-                          color: Colors.green,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
+            PriceSummary(
+              originalPrice: originalPrice,
+              dealPriceController: dealPriceController,
+              saving: saving,
             ),
 
             SizedBox(height: 2.h),
 
-            /// Active switch
+            // --------------------------------------------------
+            // Active Switch
+            // --------------------------------------------------
+
             SwitchListTile(
-              title: const Text("Deal Active"),
-              subtitle: const Text("Show this deal to customers"),
+              contentPadding: EdgeInsets.zero,
+
+              title: const Text(
+                "Deal Active",
+              ),
+
+              subtitle: const Text(
+                "Show this deal to customers",
+              ),
+
               value: isActive,
+
               activeColor: Colors.amber,
-              onChanged: (value) {
-                setState(() {
-                  isActive = value;
-                });
-              },
+
+              onChanged: isSaving
+                  ? null
+                  : (value) {
+                      setState(() {
+                        isActive = value;
+                      });
+                    },
             ),
 
             SizedBox(height: 2.h),
 
-            /// Save
+            // --------------------------------------------------
+            // Save Button
+            // --------------------------------------------------
+
             SizedBox(
               width: double.infinity,
               height: 7.h,
+
               child: ElevatedButton(
-                onPressed: isSaving ? null : saveDeal,
+                onPressed:
+                    isSaving ? null : saveDeal,
+
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.amber,
                   foregroundColor: Colors.black,
+
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(15),
+                    borderRadius:
+                        BorderRadius.circular(15),
                   ),
                 ),
+
                 child: isSaving
-                    ? const CircularProgressIndicator(color: Colors.black)
+                    ? const SizedBox(
+                        width: 24,
+                        height: 24,
+                        child:
+                            CircularProgressIndicator(
+                          color: Colors.black,
+                          strokeWidth: 3,
+                        ),
+                      )
                     : Text(
                         "CREATE DEAL",
                         style: TextStyle(
@@ -592,6 +576,436 @@ class _AddDealState extends State<AddDeal> {
             SizedBox(height: 3.h),
           ],
         ),
+      ),
+    );
+  }
+}
+
+// ============================================================
+// PRODUCT LIST
+// ============================================================
+
+class ProductList extends StatelessWidget {
+  final Map<String, Map<String, dynamic>> selectedProducts;
+
+  final void Function(
+    String productId,
+    Map<String, dynamic> product,
+  ) onAdd;
+
+  final void Function(String productId) onRemove;
+
+  const ProductList({
+    super.key,
+    required this.selectedProducts,
+    required this.onAdd,
+    required this.onRemove,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return StreamBuilder<QuerySnapshot>(
+      stream: FirebaseFirestore.instance
+          .collection('categoryList')
+          .orderBy(
+            'createdAt',
+            descending: true,
+          )
+          .snapshots(),
+
+      builder: (context, snapshot) {
+        if (snapshot.connectionState ==
+            ConnectionState.waiting) {
+          return const Center(
+            child: CircularProgressIndicator(),
+          );
+        }
+
+        if (snapshot.hasError) {
+          return Text(
+            "Error: ${snapshot.error}",
+          );
+        }
+
+        if (!snapshot.hasData ||
+            snapshot.data!.docs.isEmpty) {
+          return const Text(
+            "No products found.",
+          );
+        }
+
+        final products = snapshot.data!.docs;
+
+        return Column(
+          children: products.map((doc) {
+            final product =
+                doc.data() as Map<String, dynamic>;
+
+            final String productId = doc.id;
+
+            return ProductCard(
+              key: ValueKey(productId),
+
+              productId: productId,
+
+              product: product,
+
+              selectedProduct:
+                  selectedProducts[productId],
+
+              onAdd: () {
+                onAdd(
+                  productId,
+                  product,
+                );
+              },
+
+              onRemove: () {
+                onRemove(productId);
+              },
+            );
+          }).toList(),
+        );
+      },
+    );
+  }
+}
+
+// ============================================================
+// PRODUCT CARD
+// ============================================================
+
+class ProductCard extends StatelessWidget {
+  final String productId;
+
+  final Map<String, dynamic> product;
+
+  final Map<String, dynamic>? selectedProduct;
+
+  final VoidCallback onAdd;
+
+  final VoidCallback onRemove;
+
+  const ProductCard({
+    super.key,
+    required this.productId,
+    required this.product,
+    required this.selectedProduct,
+    required this.onAdd,
+    required this.onRemove,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final bool selected =
+        selectedProduct != null;
+
+    final int quantity = selected
+        ? selectedProduct!['quantity'] as int
+        : 0;
+
+    final String imageUrl =
+        product['imageUrl'] ?? '';
+
+    final String itemName =
+        product['itemName'] ?? 'Unknown Item';
+
+    final String itemPrice =
+        product['itemPrice']?.toString() ?? '0';
+
+    return Card(
+      margin: EdgeInsets.only(
+        bottom: 1.h,
+      ),
+
+      child: Padding(
+        padding: EdgeInsets.all(2.w),
+
+        child: Row(
+          children: [
+            // ------------------------------------------------
+            // Image
+            // ------------------------------------------------
+
+            ClipRRect(
+              borderRadius:
+                  BorderRadius.circular(10),
+
+              child: imageUrl.isEmpty
+                  ? Container(
+                      width: 18.w,
+                      height: 18.w,
+                      color: Colors.grey.shade300,
+                      child: const Icon(
+                        Icons.fastfood,
+                      ),
+                    )
+                  : Image.network(
+                      imageUrl,
+                      width: 18.w,
+                      height: 18.w,
+                      fit: BoxFit.cover,
+
+                      errorBuilder:
+                          (
+                            context,
+                            error,
+                            stackTrace,
+                          ) {
+                        return Container(
+                          width: 18.w,
+                          height: 18.w,
+                          color:
+                              Colors.grey.shade300,
+                          child: const Icon(
+                            Icons.broken_image,
+                          ),
+                        );
+                      },
+                    ),
+            ),
+
+            SizedBox(width: 3.w),
+
+            // ------------------------------------------------
+            // Name + Price
+            // ------------------------------------------------
+
+            Expanded(
+              child: Column(
+                crossAxisAlignment:
+                    CrossAxisAlignment.start,
+
+                children: [
+                  Text(
+                    itemName,
+                    maxLines: 2,
+                    overflow:
+                        TextOverflow.ellipsis,
+
+                    style: TextStyle(
+                      fontSize: 12.sp,
+                      fontWeight:
+                          FontWeight.bold,
+                    ),
+                  ),
+
+                  SizedBox(height: 0.5.h),
+
+                  Text(
+                    "$itemPrice PKR",
+
+                    style: TextStyle(
+                      fontSize: 11.sp,
+                      color: Colors.grey,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+
+            // ------------------------------------------------
+            // Quantity
+            // ------------------------------------------------
+
+            if (!selected)
+              IconButton(
+                icon: const Icon(
+                  Icons.add_circle,
+                  color: Colors.amber,
+                ),
+
+                onPressed: onAdd,
+              ),
+
+            if (selected)
+              Row(
+                mainAxisSize:
+                    MainAxisSize.min,
+
+                children: [
+                  IconButton(
+                    icon: const Icon(
+                      Icons.remove_circle,
+                    ),
+
+                    onPressed: onRemove,
+                  ),
+
+                  Text(
+                    "$quantity",
+
+                    style: TextStyle(
+                      fontSize: 13.sp,
+                      fontWeight:
+                          FontWeight.bold,
+                    ),
+                  ),
+
+                  IconButton(
+                    icon: const Icon(
+                      Icons.add_circle,
+                      color: Colors.amber,
+                    ),
+
+                    onPressed: onAdd,
+                  ),
+                ],
+              ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+// ============================================================
+// PRICE SUMMARY
+// ============================================================
+
+class PriceSummary extends StatefulWidget {
+  final double originalPrice;
+
+  final TextEditingController dealPriceController;
+
+  final double saving;
+
+  const PriceSummary({
+    super.key,
+    required this.originalPrice,
+    required this.dealPriceController,
+    required this.saving,
+  });
+
+  @override
+  State<PriceSummary> createState() =>
+      _PriceSummaryState();
+}
+
+class _PriceSummaryState
+    extends State<PriceSummary> {
+  double dealPrice = 0;
+
+  @override
+  void initState() {
+    super.initState();
+
+    dealPrice =
+        double.tryParse(
+              widget.dealPriceController.text,
+            ) ??
+            0;
+  }
+
+  void updatePrice(String value) {
+    setState(() {
+      dealPrice =
+          double.tryParse(value.trim()) ??
+              0;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final double saving =
+        widget.originalPrice - dealPrice;
+
+    return Container(
+      width: double.infinity,
+
+      padding: EdgeInsets.all(4.w),
+
+      decoration: BoxDecoration(
+        color: Colors.amber.shade50,
+        borderRadius:
+            BorderRadius.circular(15),
+        border: Border.all(
+          color: Colors.amber,
+        ),
+      ),
+
+      child: Column(
+        children: [
+          // ------------------------------------------------
+          // Original Price
+          // ------------------------------------------------
+
+          Row(
+            mainAxisAlignment:
+                MainAxisAlignment.spaceBetween,
+
+            children: [
+              const Text(
+                "Original Price",
+              ),
+
+              Text(
+                "${widget.originalPrice.toStringAsFixed(0)} PKR",
+
+                style: const TextStyle(
+                  fontWeight:
+                      FontWeight.bold,
+                ),
+              ),
+            ],
+          ),
+
+          SizedBox(height: 1.h),
+
+          // ------------------------------------------------
+          // Deal Price
+          // ------------------------------------------------
+
+          TextField(
+            controller:
+                widget.dealPriceController,
+
+            keyboardType:
+                TextInputType.number,
+
+            onChanged: updatePrice,
+
+            decoration: InputDecoration(
+              labelText: "Deal Price",
+              suffixText: "PKR",
+
+              border:
+                  OutlineInputBorder(
+                borderRadius:
+                    BorderRadius.circular(
+                  10,
+                ),
+              ),
+            ),
+          ),
+
+          SizedBox(height: 1.h),
+
+          // ------------------------------------------------
+          // Saving
+          // ------------------------------------------------
+
+          Row(
+            mainAxisAlignment:
+                MainAxisAlignment.spaceBetween,
+
+            children: [
+              const Text(
+                "You Save",
+              ),
+
+              Text(
+                "${saving.toStringAsFixed(0)} PKR",
+
+                style: const TextStyle(
+                  color: Colors.green,
+                  fontWeight:
+                      FontWeight.bold,
+                ),
+              ),
+            ],
+          ),
+        ],
       ),
     );
   }

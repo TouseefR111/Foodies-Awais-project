@@ -18,11 +18,20 @@ class _CartScreenState extends State<CartScreen> {
   String? userId;
   String? userName;
   String? userContact;
+  String? userAddress;
 
-  bool isPlacingOrder = false; // Added for loading state
+  bool isPlacingOrder = false;
+
+  final TextEditingController addressController = TextEditingController();
+  final TextEditingController phoneController = TextEditingController();
+
+  // ------------------------------------------------------------
+  // SPICE LABEL
+  // ------------------------------------------------------------
 
   String _getSpiceLabel(dynamic level) {
     if (level == null) return "Medium";
+
     switch (level) {
       case 1:
         return "Mild";
@@ -39,8 +48,13 @@ class _CartScreenState extends State<CartScreen> {
     }
   }
 
+  // ------------------------------------------------------------
+  // OIL LABEL
+  // ------------------------------------------------------------
+
   String _getOilLabel(dynamic level) {
     if (level == null) return "Medium Oil";
+
     switch (level) {
       case 1:
         return "No Oil";
@@ -57,64 +71,124 @@ class _CartScreenState extends State<CartScreen> {
     }
   }
 
+  // ------------------------------------------------------------
+  // INIT
+  // ------------------------------------------------------------
+
   @override
   void initState() {
     super.initState();
     getShareId();
   }
 
-  /// Fetch User ID from Shared Preferences
+  // ------------------------------------------------------------
+  // GET USER INFORMATION
+  // ------------------------------------------------------------
+
   Future<void> getShareId() async {
     userId = await SharedPrefHelper().getUserId();
     userName = await SharedPrefHelper().getUserName();
     userContact = await SharedPrefHelper().getUserContact();
-    setState(() {});
+
+    // Get saved address from Firestore
+    if (userId != null && userId!.isNotEmpty) {
+      try {
+        DocumentSnapshot userDoc = await FirebaseFirestore.instance
+            .collection('users')
+            .doc(userId)
+            .get();
+
+        if (userDoc.exists) {
+          final data = userDoc.data() as Map<String, dynamic>?;
+
+          if (data != null) {
+            userAddress = data['userAddress'];
+
+            // If phone exists in Firestore, use it
+            if (data['userContact'] != null &&
+                data['userContact'].toString().isNotEmpty) {
+              userContact = data['userContact'].toString();
+            }
+          }
+        }
+      } catch (e) {
+        debugPrint('Failed to load user details: $e');
+      }
+    }
+
+    if (mounted) {
+      setState(() {});
+    }
   }
 
-  /// Delete Cart Item
+  // ------------------------------------------------------------
+  // DELETE CART ITEM
+  // ------------------------------------------------------------
+
   Future<void> deleteCartItem(String cartItemId) async {
     try {
       await FirebaseFirestore.instance
           .collection('cart')
           .doc(cartItemId)
           .delete();
+
+      if (!mounted) return;
+
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Item removed from cart successfully')),
       );
     } catch (e) {
+      if (!mounted) return;
+
       ScaffoldMessenger.of(
         context,
       ).showSnackBar(SnackBar(content: Text('Failed to remove item: $e')));
     }
   }
 
-  /// Calculate Total Price
+  // ------------------------------------------------------------
+  // CALCULATE TOTAL
+  // ------------------------------------------------------------
+
   double calculateTotal(List<QueryDocumentSnapshot> cartItems) {
     double total = 0.0;
+
     for (var item in cartItems) {
       final data = item.data() as Map<String, dynamic>;
+
       total += (data['totalPrice'] as num).toDouble();
     }
+
     return total;
   }
 
-  /// Get Current Location
+  // ------------------------------------------------------------
+  // GET CURRENT LOCATION
+  // ------------------------------------------------------------
+
   Future<Position?> _getCurrentLocation() async {
     try {
       bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
+
       if (!serviceEnabled) {
+        if (!mounted) return null;
+
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Location services are disabled.')),
         );
+
         return null;
       }
 
       LocationPermission permission = await Geolocator.checkPermission();
+
       if (permission == LocationPermission.denied) {
         permission = await Geolocator.requestPermission();
       }
 
       if (permission == LocationPermission.deniedForever) {
+        if (!mounted) return null;
+
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text(
@@ -122,14 +196,19 @@ class _CartScreenState extends State<CartScreen> {
             ),
           ),
         );
+
         await Geolocator.openAppSettings();
+
         return null;
       }
 
       if (permission == LocationPermission.denied) {
+        if (!mounted) return null;
+
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Location permission denied.')),
         );
+
         return null;
       }
 
@@ -137,32 +216,209 @@ class _CartScreenState extends State<CartScreen> {
         desiredAccuracy: LocationAccuracy.high,
       );
     } catch (e) {
+      if (!mounted) return null;
+
       ScaffoldMessenger.of(
         context,
       ).showSnackBar(SnackBar(content: Text('Failed to get location: $e')));
+
       return null;
     }
   }
 
-  /// Place Order
-  Future<void> placeOrder(List<QueryDocumentSnapshot> cartItems) async {
+  // ------------------------------------------------------------
+  // SHOW DELIVERY DETAILS DIALOG
+  // ------------------------------------------------------------
+
+  Future<void> showOrderDetailsDialog(
+    List<QueryDocumentSnapshot> cartItems,
+  ) async {
+    // Fill fields with saved information
+    addressController.text = userAddress ?? '';
+    phoneController.text = userContact ?? '';
+
+    final result = await showDialog<bool>(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text(
+            'Delivery Details',
+            style: TextStyle(fontWeight: FontWeight.bold),
+          ),
+
+          content: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                // ADDRESS
+                TextField(
+                  controller: addressController,
+                  maxLines: 3,
+                  textInputAction: TextInputAction.newline,
+                  decoration: const InputDecoration(
+                    labelText: 'Delivery Address',
+                    hintText: 'House number, street, area, city',
+                    border: OutlineInputBorder(),
+                    prefixIcon: Icon(Icons.location_on),
+                  ),
+                ),
+
+                const SizedBox(height: 15),
+
+                // PHONE
+                TextField(
+                  controller: phoneController,
+                  keyboardType: TextInputType.phone,
+                  decoration: const InputDecoration(
+                    labelText: 'Phone Number',
+                    hintText: '03XXXXXXXXX',
+                    border: OutlineInputBorder(),
+                    prefixIcon: Icon(Icons.phone),
+                  ),
+                ),
+
+                const SizedBox(height: 10),
+
+                const Text(
+                  'Your details will be saved for your next order.',
+                  style: TextStyle(fontSize: 12, color: Colors.grey),
+                ),
+              ],
+            ),
+          ),
+
+          actions: [
+            // CANCEL
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context, false);
+              },
+              child: const Text('Cancel'),
+            ),
+
+            // CONFIRM
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(backgroundColor: Colors.amber),
+              onPressed: () {
+                final address = addressController.text.trim();
+
+                final phone = phoneController.text.trim();
+
+                if (address.isEmpty) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('Please enter your delivery address'),
+                    ),
+                  );
+
+                  return;
+                }
+
+                if (phone.isEmpty) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('Please enter your phone number'),
+                    ),
+                  );
+
+                  return;
+                }
+
+                Navigator.pop(context, true);
+              },
+              child: const Text(
+                'Confirm Order',
+                style: TextStyle(
+                  color: Colors.black,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+          ],
+        );
+      },
+    );
+
+    if (result == true) {
+      await placeOrder(
+        cartItems,
+        address: addressController.text.trim(),
+        phone: phoneController.text.trim(),
+      );
+    }
+  }
+
+  // ------------------------------------------------------------
+  // SAVE CUSTOMER DETAILS
+  // ------------------------------------------------------------
+
+  Future<void> saveCustomerDetails({
+    required String address,
+    required String phone,
+  }) async {
+    if (userId == null || userId!.isEmpty) {
+      return;
+    }
+
+    try {
+      await FirebaseFirestore.instance.collection('users').doc(userId).set({
+        'userAddress': address,
+        'userContact': phone,
+        'updatedAt': FieldValue.serverTimestamp(),
+      }, SetOptions(merge: true));
+
+      // Update local variables too
+      userAddress = address;
+      userContact = phone;
+    } catch (e) {
+      debugPrint('Failed to save customer details: $e');
+    }
+  }
+
+  // ------------------------------------------------------------
+  // PLACE ORDER
+  // ------------------------------------------------------------
+
+  Future<void> placeOrder(
+    List<QueryDocumentSnapshot> cartItems, {
+    required String address,
+    required String phone,
+  }) async {
     if (cartItems.isEmpty) return;
 
     setState(() {
-      isPlacingOrder = true; // Start loading
+      isPlacingOrder = true;
     });
 
     try {
+      // --------------------------------------------------------
+      // GET LOCATION
+      // --------------------------------------------------------
+
       final location = await _getCurrentLocation();
 
       if (location == null) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Failed to fetch location. Please try again.'),
-          ),
-        );
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Failed to fetch location. Please try again.'),
+            ),
+          );
+        }
+
         return;
       }
+
+      // --------------------------------------------------------
+      // SAVE CUSTOMER DETAILS
+      // --------------------------------------------------------
+
+      await saveCustomerDetails(address: address, phone: phone);
+
+      // --------------------------------------------------------
+      // CREATE ORDER ITEMS
+      // --------------------------------------------------------
 
       final orderItems = cartItems.map((item) {
         final data = item.data() as Map<String, dynamic>;
@@ -184,25 +440,57 @@ class _CartScreenState extends State<CartScreen> {
         };
       }).toList();
 
+      // --------------------------------------------------------
+      // SAVE ORDER TO FIRESTORE
+      // --------------------------------------------------------
+
       await FirebaseFirestore.instance.collection('orders').add({
         'userId': userId,
-        'items': orderItems,
-        'overallTotal': overallTotal,
+
         'userName': userName,
-        'userContact': userContact,
+
+        // Customer phone
+        'userContact': phone,
+
+        // Customer delivery address
+        'userAddress': address,
+
+        // Products
+        'items': orderItems,
+
+        // Total
+        'overallTotal': overallTotal,
+
+        // GPS location
         'location': {
           'latitude': location.latitude,
           'longitude': location.longitude,
         },
+
+        // Order status
         'status': 'Pending',
+
+        // Order date/time
         'timestamp': FieldValue.serverTimestamp(),
       });
 
+      // --------------------------------------------------------
+      // DELETE CART ITEMS
+      // --------------------------------------------------------
+
       final batch = FirebaseFirestore.instance.batch();
+
       for (var item in cartItems) {
         batch.delete(item.reference);
       }
+
       await batch.commit();
+
+      // --------------------------------------------------------
+      // SUCCESS
+      // --------------------------------------------------------
+
+      if (!mounted) return;
 
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
@@ -214,15 +502,35 @@ class _CartScreenState extends State<CartScreen> {
         ),
       );
     } catch (e) {
+      if (!mounted) return;
+
       ScaffoldMessenger.of(
         context,
       ).showSnackBar(SnackBar(content: Text('Failed to place order: $e')));
     } finally {
-      setState(() {
-        isPlacingOrder = false; // Stop loading
-      });
+      if (mounted) {
+        setState(() {
+          isPlacingOrder = false;
+        });
+      }
     }
   }
+
+  // ------------------------------------------------------------
+  // DISPOSE CONTROLLERS
+  // ------------------------------------------------------------
+
+  @override
+  void dispose() {
+    addressController.dispose();
+    phoneController.dispose();
+
+    super.dispose();
+  }
+
+  // ------------------------------------------------------------
+  // BUILD
+  // ------------------------------------------------------------
 
   @override
   Widget build(BuildContext context) {
@@ -234,52 +542,88 @@ class _CartScreenState extends State<CartScreen> {
         ),
         backgroundColor: Colors.amber,
         centerTitle: true,
-        // iconTheme: IconThemeData(color: Colors.black),
       ),
+
       body: StreamBuilder<QuerySnapshot>(
         stream: FirebaseFirestore.instance
             .collection('cart')
             .where('id', isEqualTo: userId)
             .snapshots(),
+
         builder: (context, snapshot) {
+          // ----------------------------------------------------
+          // LOADING
+          // ----------------------------------------------------
+
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
           }
+
+          // ----------------------------------------------------
+          // ERROR
+          // ----------------------------------------------------
 
           if (snapshot.hasError) {
             return Center(child: Text('Error: ${snapshot.error}'));
           }
 
+          // ----------------------------------------------------
+          // EMPTY CART
+          // ----------------------------------------------------
+
           if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
             return const Center(child: Text('Your cart is empty!'));
           }
 
+          // ----------------------------------------------------
+          // CART ITEMS
+          // ----------------------------------------------------
+
           final cartItems = snapshot.data!.docs;
+
           overallTotal = calculateTotal(cartItems);
 
           return Column(
             children: [
+              // ------------------------------------------------
+              // CART LIST
+              // ------------------------------------------------
               Expanded(
                 child: ListView.builder(
                   itemCount: cartItems.length,
+
                   itemBuilder: (context, index) {
                     final item =
                         cartItems[index].data() as Map<String, dynamic>;
 
                     return Card(
                       color: Colors.amberAccent,
+
                       margin: EdgeInsets.symmetric(
                         horizontal: 3.w,
                         vertical: 1.h,
                       ),
+
                       elevation: 3,
+
                       child: ListTile(
+                        // --------------------------------------
+                        // IMAGE
+                        // --------------------------------------
                         leading: Image.network(
                           item['image'],
                           width: 15.w,
                           height: 15.w,
                           fit: BoxFit.cover,
+
+                          errorBuilder: (context, error, stackTrace) {
+                            return const Icon(Icons.fastfood, size: 40);
+                          },
                         ),
+
+                        // --------------------------------------
+                        // TITLE
+                        // --------------------------------------
                         title: Row(
                           children: [
                             Expanded(
@@ -293,16 +637,19 @@ class _CartScreenState extends State<CartScreen> {
                               ),
                             ),
 
+                            // DEAL LABEL
                             if (item['isDeal'] == true)
                               Container(
                                 padding: const EdgeInsets.symmetric(
                                   horizontal: 8,
                                   vertical: 4,
                                 ),
+
                                 decoration: BoxDecoration(
                                   color: Colors.red,
                                   borderRadius: BorderRadius.circular(10),
                                 ),
+
                                 child: const Text(
                                   "DEAL",
                                   style: TextStyle(
@@ -315,8 +662,12 @@ class _CartScreenState extends State<CartScreen> {
                           ],
                         ),
 
+                        // --------------------------------------
+                        // DETAILS
+                        // --------------------------------------
                         subtitle: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
+
                           children: [
                             Text(
                               'Quantity: ${item['quantity']}',
@@ -328,6 +679,7 @@ class _CartScreenState extends State<CartScreen> {
                               style: const TextStyle(color: Colors.black),
                             ),
 
+                            // DEAL
                             if (item['isDeal'] == true)
                               Text(
                                 "Special Deal Package",
@@ -337,18 +689,25 @@ class _CartScreenState extends State<CartScreen> {
                                 ),
                               ),
 
+                            // SPICE/OIL
                             if (item['isDeal'] != true &&
                                 item['spiceLevel'] != null &&
                                 item['oilLevel'] != null)
                               Text(
                                 'Spice: ${_getSpiceLabel(item['spiceLevel'])} | '
                                 'Oil: ${_getOilLabel(item['oilLevel'])}',
+
                                 style: const TextStyle(color: Colors.black),
                               ),
                           ],
                         ),
+
+                        // --------------------------------------
+                        // DELETE
+                        // --------------------------------------
                         trailing: IconButton(
                           icon: const Icon(Icons.delete, color: Colors.black),
+
                           onPressed: () => deleteCartItem(cartItems[index].id),
                         ),
                       ),
@@ -356,8 +715,13 @@ class _CartScreenState extends State<CartScreen> {
                   },
                 ),
               ),
+
+              // ------------------------------------------------
+              // TOTAL
+              // ------------------------------------------------
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+
                 children: [
                   Text(
                     "Total :",
@@ -366,8 +730,9 @@ class _CartScreenState extends State<CartScreen> {
                       fontWeight: FontWeight.bold,
                     ),
                   ),
+
                   Text(
-                    "${overallTotal} Pkr",
+                    "${overallTotal.toStringAsFixed(0)} Pkr",
                     style: TextStyle(
                       fontSize: 14.sp,
                       fontWeight: FontWeight.bold,
@@ -375,26 +740,48 @@ class _CartScreenState extends State<CartScreen> {
                   ),
                 ],
               ),
+
               const Divider(),
+
+              // ------------------------------------------------
+              // PLACE ORDER BUTTON
+              // ------------------------------------------------
               Padding(
                 padding: EdgeInsets.all(3.w),
-                child: ElevatedButton(
-                  onPressed: isPlacingOrder
-                      ? null
-                      : () => placeOrder(cartItems),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.amber,
-                    disabledBackgroundColor: Colors.amberAccent,
-                  ),
-                  child: isPlacingOrder
-                      ? const CircularProgressIndicator(color: Colors.black)
-                      : Text(
-                          'Place Order',
-                          style: TextStyle(
-                            fontSize: 14.sp,
-                            color: Colors.black,
+
+                child: SizedBox(
+                  width: double.infinity,
+
+                  child: ElevatedButton(
+                    onPressed: isPlacingOrder
+                        ? null
+                        : () => showOrderDetailsDialog(cartItems),
+
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.amber,
+
+                      disabledBackgroundColor: Colors.amberAccent,
+
+                      padding: const EdgeInsets.symmetric(vertical: 15),
+                    ),
+
+                    child: isPlacingOrder
+                        ? const SizedBox(
+                            width: 25,
+                            height: 25,
+                            child: CircularProgressIndicator(
+                              color: Colors.black,
+                            ),
+                          )
+                        : Text(
+                            'Place Order',
+                            style: TextStyle(
+                              fontSize: 14.sp,
+                              color: Colors.black,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
-                        ),
+                  ),
                 ),
               ),
             ],

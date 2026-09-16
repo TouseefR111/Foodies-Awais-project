@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:food_delivery_app/admin/add_deal.dart';
 import 'package:food_delivery_app/admin/add_product.dart';
 import 'package:food_delivery_app/admin/all_orders.dart';
+import 'package:food_delivery_app/admin/deal_manage.dart';
 import 'package:food_delivery_app/admin/product_list_screen.dart';
 import 'package:food_delivery_app/views/welcome_screen.dart';
 import 'package:sizer/sizer.dart';
@@ -186,6 +187,51 @@ class _HomeAdminState extends State<HomeAdmin> {
                       ),
                       Text(
                         "Add Deal",
+                        style: TextStyle(
+                          fontSize: 20.sp,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ),
+          SizedBox(height: 4.h),
+
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: 7.w),
+            child: GestureDetector(
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => DealManageScreen()),
+                );
+              },
+              child: Material(
+                elevation: 7.0,
+                borderRadius: BorderRadius.circular(15),
+                child: Container(
+                  width: MediaQuery.of(context).size.width,
+                  height: 12.h,
+                  decoration: BoxDecoration(
+                    color: Colors.deepOrange,
+                    borderRadius: BorderRadius.circular(15),
+                  ),
+                  child: Row(
+                    children: [
+                      const Padding(
+                        padding: EdgeInsets.all(20),
+                        child: Icon(
+                          Icons.local_offer,
+                          color: Colors.white,
+                          size: 55,
+                        ),
+                      ),
+                      Text(
+                        "Manage Deals",
                         style: TextStyle(
                           fontSize: 20.sp,
                           fontWeight: FontWeight.bold,

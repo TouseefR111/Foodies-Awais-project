@@ -470,7 +470,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     child: GestureDetector(
                       onTap: () => selectCategory('Shawarma'),
                       child: categoryButton(
-                        'assets/images/shawarma.jpg',
+                        'assets/images/shawarma.png',
                         selectedCategory == 'Shawarma',
                       ),
                     ),
@@ -521,7 +521,9 @@ class _HomeScreenState extends State<HomeScreen> {
         decoration: BoxDecoration(borderRadius: BorderRadius.circular(20)),
         child: Padding(
           padding: const EdgeInsets.all(8.0),
-          child: Image(image: Svg(imagePath)),
+          child: imagePath.endsWith('.svg')
+              ? Image(image: Svg(imagePath), fit: BoxFit.contain)
+              : Image.asset(imagePath, fit: BoxFit.contain),
         ),
       ),
     );
