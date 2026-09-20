@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:food_delivery_app/auth/signup_screen.dart';
+import 'package:food_delivery_app/views/welcome_screen.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:sizer/sizer.dart';
 
@@ -208,6 +209,20 @@ class _LoginScreenState extends State<LoginScreen>
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.amber.shade400,
+      appBar: AppBar(
+        toolbarHeight: 30,
+        backgroundColor: Colors.amber.shade400,
+        elevation: 0,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: Colors.black),
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const WelcomeScreen()),
+            );
+          },
+        ),
+      ),
 
       body: SafeArea(
         child: Center(
@@ -394,16 +409,29 @@ class _LoginScreenState extends State<LoginScreen>
                               start: 0.50,
                               end: 0.70,
 
-                              child: SizedBox(
+                              child: Container(
                                 width: double.infinity,
                                 height: 7.h,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(14),
+                                  gradient: const LinearGradient(
+                                    colors: [
+                                      Color(0xFFFFD54F),
+                                      Color(0xFFFFA000),
+                                    ],
+                                    begin: Alignment.topLeft,
+                                    end: Alignment.bottomRight,
+                                  ),
+                                ),
 
                                 child: ElevatedButton(
                                   onPressed: isLoad ? null : loginData,
 
                                   style: ElevatedButton.styleFrom(
-                                    backgroundColor: Colors.amberAccent,
-
+                                    backgroundColor: Colors.transparent,
+                                    disabledBackgroundColor: Colors.transparent,
+                                    shadowColor: Colors.transparent,
+                                    elevation: 0,
                                     shape: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(14),
                                     ),

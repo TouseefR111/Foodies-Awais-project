@@ -235,17 +235,26 @@ class _AllOrdersState extends State<AllOrders> {
           style: TextStyle(
             fontSize: 20.sp,
             fontWeight: FontWeight.w800,
-            color: Colors.white,
+            color: Colors.black,
           ),
         ),
 
         centerTitle: true,
 
-        backgroundColor: Colors.black,
+        // Gradient AppBar
+        flexibleSpace: Container(
+          decoration: const BoxDecoration(
+            gradient: const LinearGradient(
+              colors: [Color(0xFFFFD54F), Color(0xFFFFA000)],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+          ),
+        ),
 
         toolbarHeight: 10.h,
 
-        iconTheme: const IconThemeData(color: Colors.white),
+        iconTheme: const IconThemeData(color: Colors.black),
 
         shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.only(

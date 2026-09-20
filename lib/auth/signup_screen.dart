@@ -486,15 +486,26 @@ class _SignupScreenState extends State<SignupScreen>
 
                           begin: const Offset(0, 0.3),
 
-                          child: SizedBox(
+                          child: Container(
                             width: double.infinity,
                             height: 7.h,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(14),
+                              gradient: const LinearGradient(
+                                colors: [Color(0xFFFFD54F), Color(0xFFFFA000)],
+                                begin: Alignment.topLeft,
+                                end: Alignment.bottomRight,
+                              ),
+                            ),
 
                             child: ElevatedButton(
                               onPressed: isLoading ? null : registerData,
 
                               style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.amberAccent,
+                                backgroundColor: Colors.transparent,
+                                disabledBackgroundColor: Colors.transparent,
+                                shadowColor: Colors.transparent,
+                                elevation: 0,
 
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(20),

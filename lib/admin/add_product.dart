@@ -17,7 +17,6 @@ class AddProduct extends StatefulWidget {
 }
 
 class _AddProductState extends State<AddProduct> {
-
   final picker = ImagePicker();
   File? selectedImage;
   String? value;
@@ -28,25 +27,27 @@ class _AddProductState extends State<AddProduct> {
   TextEditingController itemNameController = TextEditingController();
   TextEditingController itemDetailController = TextEditingController();
 
-  List<String> fooditems = ["Burger","Pizza","Soup","Wings","shakes","Shawarma"];
+  List<String> fooditems = [
+    "Burger",
+    "Pizza",
+    "Soup",
+    "Wings",
+    "shakes",
+    "Shawarma",
+  ];
 
   bool isLoad = false;
-  late String downloadUrl;// For tracking selected category
+  late String downloadUrl; // For tracking selected category
   // List of category names
-  final spinkit = const SpinKitPulsingGrid(
-    color: Colors.white,
-    size: 30.0,
-  );
+  final spinkit = const SpinKitPulsingGrid(color: Colors.white, size: 30.0);
 
   Future getImage() async {
     final image = await picker.pickImage(source: ImageSource.gallery);
     setState(() {
       if (image != null) {
         selectedImage = File(image.path);
-      }else{
-        const Center(
-          child: Text("No Image Selected"),
-        );
+      } else {
+        const Center(child: Text("No Image Selected"));
       }
     });
   }
@@ -72,7 +73,9 @@ class _AddProductState extends State<AddProduct> {
 
     try {
       // Firebase Storage Initialization
-      FirebaseStorage storage = FirebaseStorage.instanceFor(bucket: "gs://foodiesapp-6068c.firebasestorage.app");
+      FirebaseStorage storage = FirebaseStorage.instanceFor(
+        bucket: "gs://foodiesapp-6068c.firebasestorage.app",
+      );
       Reference storageRef = storage.ref();
 
       // Create a unique file reference
@@ -132,20 +135,28 @@ class _AddProductState extends State<AddProduct> {
     }
   }
 
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        iconTheme: const IconThemeData(color: Colors.white),
+        iconTheme: const IconThemeData(color: Colors.black87),
         toolbarHeight: 9.h,
-        backgroundColor: Colors.black,
+        // Gradient AppBar
+        flexibleSpace: Container(
+          decoration: const BoxDecoration(
+            gradient: const LinearGradient(
+              colors: [Color(0xFFFFD54F), Color(0xFFFFA000)],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+          ),
+        ),
         title: Text(
           "Add Product",
           style: TextStyle(
             fontWeight: FontWeight.w800,
             fontSize: 20.sp,
-            color: Colors.white,
+            color: Colors.black87,
           ),
         ),
         centerTitle: true,
@@ -176,12 +187,9 @@ class _AddProductState extends State<AddProduct> {
                   child: selectedImage == null
                       ? const Icon(Icons.camera_alt)
                       : ClipRRect(
-                    borderRadius: BorderRadius.circular(20),
-                    child: Image.file(
-                      selectedImage!,
-                      fit: BoxFit.cover,
-                    ),
-                  ),
+                          borderRadius: BorderRadius.circular(20),
+                          child: Image.file(selectedImage!, fit: BoxFit.cover),
+                        ),
                 ),
               ),
             ),
@@ -190,14 +198,24 @@ class _AddProductState extends State<AddProduct> {
             // Item Name
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 4.w),
-              child: _buildTextField("Add item Name", "item Name", itemNameController, TextInputType.text),
+              child: _buildTextField(
+                "Add item Name",
+                "item Name",
+                itemNameController,
+                TextInputType.text,
+              ),
             ),
             SizedBox(height: 3.h),
 
             // Item Price
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 4.w),
-              child: _buildTextField("Add item Price", "item Price", itemPriceController, TextInputType.number),
+              child: _buildTextField(
+                "Add item Price",
+                "item Price",
+                itemPriceController,
+                TextInputType.number,
+              ),
             ),
             SizedBox(height: 3.h),
 
@@ -220,10 +238,10 @@ class _AddProductState extends State<AddProduct> {
               child: DropdownButtonHideUnderline(
                 child: DropdownButton<String>(
                   items: fooditems
-                      .map((item) => DropdownMenuItem(
-                    child: Text(item),
-                    value: item,
-                  ))
+                      .map(
+                        (item) =>
+                            DropdownMenuItem(child: Text(item), value: item),
+                      )
                       .toList(),
                   onChanged: (String? value) {
                     setState(() {
@@ -239,13 +257,42 @@ class _AddProductState extends State<AddProduct> {
 
             // Add Button
             Center(
-              child: ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.black,
-                  minimumSize: Size(40.w, 8.h),
+              child: Container(
+                width: 40.w,
+                height: 7.h,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(14),
+                  gradient: const LinearGradient(
+                    colors: [Color(0xFFFFD54F), Color(0xFFFFA000)],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                  ),
                 ),
-                onPressed: uploadCategoryData,
-                child: isLoad ? spinkit : Text("Add", style: TextStyle(color: Colors.white, fontSize: 16.sp, fontWeight: FontWeight.bold)),
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.transparent,
+                    disabledBackgroundColor: Colors.transparent,
+                    shadowColor: Colors.transparent,
+                    elevation: 0,
+
+                    padding: EdgeInsets.zero,
+
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(14),
+                    ),
+                  ),
+                  onPressed: uploadCategoryData,
+                  child: isLoad
+                      ? spinkit
+                      : Text(
+                          "Add",
+                          style: TextStyle(
+                            color: Colors.black87,
+                            fontSize: 18.sp,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                ),
               ),
             ),
             SizedBox(height: 4.h),
@@ -255,11 +302,20 @@ class _AddProductState extends State<AddProduct> {
     );
   }
 
-  Widget _buildTextField(String label, String hint, TextEditingController controller, TextInputType keyboardType, {int maxLines = 1}) {
+  Widget _buildTextField(
+    String label,
+    String hint,
+    TextEditingController controller,
+    TextInputType keyboardType, {
+    int maxLines = 1,
+  }) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(label, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15.sp)),
+        Text(
+          label,
+          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15.sp),
+        ),
         SizedBox(height: 1.h),
         Container(
           width: MediaQuery.of(context).size.width,

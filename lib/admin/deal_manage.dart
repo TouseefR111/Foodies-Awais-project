@@ -18,10 +18,19 @@ class _DealManageScreenState extends State<DealManageScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Deal Manage', style: TextStyle(color: Colors.white)),
-        backgroundColor: Colors.deepOrangeAccent,
+        title: const Text('Deal Manage', style: TextStyle(color: Colors.black)),
+        // Gradient AppBar
+        flexibleSpace: Container(
+          decoration: const BoxDecoration(
+            gradient: const LinearGradient(
+              colors: [Color(0xFFFFD54F), Color(0xFFFFA000)],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+          ),
+        ),
         centerTitle: true,
-        iconTheme: const IconThemeData(color: Colors.white),
+        iconTheme: const IconThemeData(color: Colors.black),
       ),
       body: StreamBuilder<QuerySnapshot>(
         stream: FirebaseFirestore.instance
