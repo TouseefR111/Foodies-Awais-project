@@ -417,7 +417,7 @@ class _SuperAdminLoginState extends State<SuperAdminLogin>
                         child: Text(
                           "Sign in to manage Foodies",
                           style: GoogleFonts.poppins(
-                            fontSize: 12.sp,
+                            fontSize: 14.sp,
                             fontWeight: FontWeight.w400,
                             color: Colors.black54,
                           ),
@@ -459,7 +459,7 @@ class _SuperAdminLoginState extends State<SuperAdminLogin>
                                 child: Text(
                                   "Email",
                                   style: GoogleFonts.poppins(
-                                    fontSize: 14.sp,
+                                    fontSize: 16.sp,
                                     fontWeight: FontWeight.w600,
                                     color: Colors.black87,
                                   ),
@@ -476,7 +476,7 @@ class _SuperAdminLoginState extends State<SuperAdminLogin>
                                 decoration: InputDecoration(
                                   hintText: "Enter Super Admin email",
                                   hintStyle: GoogleFonts.poppins(
-                                    fontSize: 12.sp,
+                                    fontSize: 14.sp,
                                     color: Colors.grey,
                                   ),
                                   prefixIcon: const Icon(
@@ -510,7 +510,7 @@ class _SuperAdminLoginState extends State<SuperAdminLogin>
                                 child: Text(
                                   "Password",
                                   style: GoogleFonts.poppins(
-                                    fontSize: 14.sp,
+                                    fontSize: 16.sp,
                                     fontWeight: FontWeight.w600,
                                     color: Colors.black87,
                                   ),
@@ -531,7 +531,7 @@ class _SuperAdminLoginState extends State<SuperAdminLogin>
                                 decoration: InputDecoration(
                                   hintText: "Enter password",
                                   hintStyle: GoogleFonts.poppins(
-                                    fontSize: 12.sp,
+                                    fontSize: 14.sp,
                                     color: Colors.grey,
                                   ),
                                   prefixIcon: const Icon(
@@ -605,7 +605,7 @@ class _SuperAdminLoginState extends State<SuperAdminLogin>
                                       : Text(
                                           "LOGIN",
                                           style: GoogleFonts.poppins(
-                                            fontSize: 16.sp,
+                                            fontSize: 18.sp,
                                             fontWeight: FontWeight.w700,
                                             color: Colors.black,
                                             letterSpacing: 1,
@@ -656,7 +656,7 @@ class _SuperAdminLoginState extends State<SuperAdminLogin>
                         ],
                       ),
 
-                      SizedBox(height: 3.h),
+                      SizedBox(height: 1.h),
 
                       // ==================================================
                       // BOTTOM IMAGE
@@ -666,7 +666,7 @@ class _SuperAdminLoginState extends State<SuperAdminLogin>
                         end: 1.0,
                         child: Image.asset(
                           'assets/images/login.png',
-                          height: 20.h,
+                          // height: 20.h,
                           fit: BoxFit.cover,
                           errorBuilder: (context, error, stackTrace) {
                             return const SizedBox.shrink();
@@ -676,18 +676,18 @@ class _SuperAdminLoginState extends State<SuperAdminLogin>
 
                       SizedBox(height: 1.h),
 
-                      animatedItem(
-                        start: 0.70,
-                        end: 1.0,
-                        child: Text(
-                          "Foodies • Super Admin Portal",
-                          style: GoogleFonts.poppins(
-                            fontSize: 12.sp,
-                            color: Colors.black54,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                      ),
+                      // animatedItem(
+                      //   start: 0.70,
+                      //   end: 1.0,
+                      //   child: Text(
+                      //     "Foodies • Super Admin Portal",
+                      //     style: GoogleFonts.poppins(
+                      //       fontSize: 14.sp,
+                      //       color: Colors.black54,
+                      //       fontWeight: FontWeight.w500,
+                      //     ),
+                      //   ),
+                      // ),
                     ],
                   ),
                 ),

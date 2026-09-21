@@ -1,15 +1,8 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:food_delivery_app/admin/admin_login.dart';
-import 'package:food_delivery_app/auth/login_screen.dart';
-import 'package:food_delivery_app/auth/signup_screen.dart';
-import 'package:food_delivery_app/super%20admin/super_admin_login.dart';
-import 'package:food_delivery_app/super%20admin/super_admin_screen.dart';
-import 'package:food_delivery_app/views/cart_screen.dart';
 import 'package:food_delivery_app/views/check_user.dart';
-import 'package:food_delivery_app/views/food_cart.dart';
-import 'package:food_delivery_app/views/my_bottom_nav.dart';
+
 import 'package:food_delivery_app/views/splash.dart';
 import 'package:sizer/sizer.dart';
 
@@ -17,29 +10,40 @@ import 'firebase_options.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-  runApp(const MyApp());
 
+  // System UI
   SystemChrome.setSystemUIOverlayStyle(
-    const SystemUiOverlayStyle(statusBarColor: Colors.transparent),
+    const SystemUiOverlayStyle(
+      statusBarColor: Colors.transparent,
+      statusBarIconBrightness: Brightness.dark,
+    ),
   );
+
+  // Firebase
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return Sizer(
       builder: (context, orientation, deviceType) {
         return MaterialApp(
           debugShowCheckedModeBanner: false,
-          title: 'Flutter Demo',
+
+          title: 'Foodies',
+
           theme: ThemeData(
-            colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+            colorScheme: ColorScheme.fromSeed(
+              seedColor: const Color(0xFFFFA000),
+            ),
             useMaterial3: true,
           ),
+
           home: const CheckUser(),
         );
       },

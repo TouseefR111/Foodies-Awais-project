@@ -217,7 +217,7 @@ class _WelcomeScreenState extends State<WelcomeScreen>
                     Text(
                       title,
                       style: TextStyle(
-                        fontSize: 16.5.sp,
+                        fontSize: 18.sp,
                         fontWeight: FontWeight.bold,
                         color: Colors.black87,
                       ),
@@ -226,13 +226,14 @@ class _WelcomeScreenState extends State<WelcomeScreen>
                     Text(
                       subtitle,
                       style: TextStyle(
-                        fontSize: 10.5.sp,
+                        fontSize: 14.sp,
                         color: Colors.grey.shade600,
                       ),
                     ),
                   ],
                 ),
               ),
+              SizedBox(width: 1.w),
 
               // ARROW
               Container(
@@ -393,7 +394,7 @@ class _WelcomeScreenState extends State<WelcomeScreen>
                             'Choose how you want to continue',
                             textAlign: TextAlign.center,
                             style: TextStyle(
-                              fontSize: 14.sp,
+                              fontSize: 16.sp,
                               color: Colors.black54,
                             ),
                           ),
@@ -473,24 +474,23 @@ class _WelcomeScreenState extends State<WelcomeScreen>
                       ),
                     ),
 
-                    SizedBox(height: 3.h),
+                    SizedBox(height: 1.h),
 
-                    // ==================================================
-                    // BOTTOM TEXT
-                    // ==================================================
-                    FadeTransition(
-                      opacity: _bottomFade,
-                      child: Text(
-                        'Delicious food. Simple ordering.',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          fontSize: 10.5.sp,
-                          color: Colors.black45,
-                          fontStyle: FontStyle.italic,
-                        ),
-                      ),
-                    ),
-
+                    // // ==================================================
+                    // // BOTTOM TEXT
+                    // // ==================================================
+                    // FadeTransition(
+                    //   opacity: _bottomFade,
+                    //   child: Text(
+                    //     'Delicious food. Simple ordering.',
+                    //     textAlign: TextAlign.center,
+                    //     style: TextStyle(
+                    //       fontSize: 14.sp,
+                    //       color: Colors.black45,
+                    //       fontStyle: FontStyle.italic,
+                    //     ),
+                    //   ),
+                    // ),
                     SizedBox(height: 1.h),
                   ],
                 ),
