@@ -123,7 +123,27 @@ class SuperAdminScreen extends StatelessWidget {
       backgroundColor: Colors.grey.shade100,
 
       appBar: AppBar(
-        backgroundColor: Colors.amber,
+        toolbarHeight: 9.h,
+        // Gradient AppBar
+        flexibleSpace: Container(
+          decoration: const BoxDecoration(
+            gradient: const LinearGradient(
+              colors: [Color(0xFFFFD54F), Color(0xFFFFA000)],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+            borderRadius: BorderRadius.only(
+              bottomLeft: Radius.elliptical(70, 55),
+              bottomRight: Radius.elliptical(70, 55),
+            ),
+          ),
+        ),
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.only(
+            bottomLeft: Radius.elliptical(70, 55),
+            bottomRight: Radius.elliptical(70, 55),
+          ),
+        ),
 
         elevation: 0,
 
@@ -217,7 +237,7 @@ class SuperAdminScreen extends StatelessWidget {
                 ),
               ),
 
-              SizedBox(height: 3.h),
+              SizedBox(height: 4.h),
 
               // ==================================================
               // MANAGE ADMINS
@@ -240,6 +260,7 @@ class SuperAdminScreen extends StatelessWidget {
                   );
                 },
               ),
+              SizedBox(height: 2.h),
 
               // ==================================================
               // PERMISSIONS
@@ -262,6 +283,7 @@ class SuperAdminScreen extends StatelessWidget {
                   );
                 },
               ),
+              SizedBox(height: 2.h),
 
               // ==================================================
               // COMPLAINTS
@@ -286,23 +308,23 @@ class SuperAdminScreen extends StatelessWidget {
               // ==================================================
               // SETTINGS
               // ==================================================
-              menuCard(
-                context: context,
+              // menuCard(
+              //   context: context,
 
-                icon: Icons.settings_outlined,
+              //   icon: Icons.settings_outlined,
 
-                title: "Settings",
+              //   title: "Settings",
 
-                subtitle: "Manage Super Admin settings",
+              //   subtitle: "Manage Super Admin settings",
 
-                onTap: () {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text("Settings will be added here"),
-                    ),
-                  );
-                },
-              ),
+              //   onTap: () {
+              //     ScaffoldMessenger.of(context).showSnackBar(
+              //       const SnackBar(
+              //         content: Text("Settings will be added here"),
+              //       ),
+              //     );
+              //   },
+              // ),
             ],
           ),
         ),

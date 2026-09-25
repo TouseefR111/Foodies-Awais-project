@@ -257,7 +257,7 @@ class _HomeScreenState extends State<HomeScreen>
         curve: Curves.easeOut,
 
         child: Material(
-          elevation: isSelected ? 10.0 : 7.0,
+          elevation: isSelected ? 5.0 : 4.0,
 
           color: isSelected ? Colors.amberAccent : Colors.white,
 
@@ -682,7 +682,7 @@ class _ProfessionalFoodCardState extends State<_ProfessionalFoodCard> {
                       overflow: TextOverflow.ellipsis,
 
                       style: TextStyle(
-                        fontSize: 14.5.sp,
+                        fontSize: 16.sp,
                         fontWeight: FontWeight.w700,
 
                         color: const Color(0xff202020),
@@ -706,7 +706,7 @@ class _ProfessionalFoodCardState extends State<_ProfessionalFoodCard> {
                           "Fresh & Delicious",
 
                           style: TextStyle(
-                            fontSize: 9.5.sp,
+                            fontSize: 14.sp,
                             fontWeight: FontWeight.w500,
                             color: Colors.grey.shade500,
                           ),
@@ -740,7 +740,7 @@ class _ProfessionalFoodCardState extends State<_ProfessionalFoodCard> {
                             "${widget.itemPrice} PKR",
 
                             style: TextStyle(
-                              fontSize: 12.5.sp,
+                              fontSize: 14.sp,
                               fontWeight: FontWeight.w800,
 
                               color: const Color(0xffD18B00),

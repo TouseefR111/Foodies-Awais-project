@@ -638,7 +638,7 @@ class _MyOrderState extends State<MyOrder> with SingleTickerProviderStateMixin {
           Text(
             label,
             style: TextStyle(
-              fontSize: 10.sp,
+              fontSize: 12.sp,
               fontWeight: FontWeight.w600,
               color: color,
             ),
@@ -795,7 +795,7 @@ class _MyOrderState extends State<MyOrder> with SingleTickerProviderStateMixin {
                           Text(
                             "Order ID",
                             style: TextStyle(
-                              fontSize: 10.sp,
+                              fontSize: 16.sp,
                               color: Colors.grey.shade600,
                             ),
                           ),
@@ -1010,7 +1010,7 @@ class _MyOrderState extends State<MyOrder> with SingleTickerProviderStateMixin {
                         Text(
                           "Quantity: $quantity",
                           style: TextStyle(
-                            fontSize: 12.sp,
+                            fontSize: 13.sp,
                             color: Colors.grey.shade600,
                           ),
                         ),
@@ -1163,7 +1163,7 @@ class _MyOrderState extends State<MyOrder> with SingleTickerProviderStateMixin {
       // APP BAR
       // ========================================================
       appBar: AppBar(
-        toolbarHeight: 10.h,
+        toolbarHeight: 9.h,
         centerTitle: true,
 
         title: Text(

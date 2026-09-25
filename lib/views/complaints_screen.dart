@@ -418,13 +418,40 @@ class _ComplaintsScreenState extends State<ComplaintsScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text(
-          'Complaints',
-          style: TextStyle(fontWeight: FontWeight.bold),
-        ),
-        backgroundColor: Colors.amber,
-        foregroundColor: Colors.black,
+        toolbarHeight: 9.h,
+        elevation: 0,
         centerTitle: true,
+        automaticallyImplyLeading: false,
+
+        title: Text(
+          'Complaints',
+          style: TextStyle(
+            fontSize: 20.sp,
+            fontWeight: FontWeight.w800,
+            color: Colors.black87,
+            letterSpacing: 0.5,
+          ),
+        ),
+
+        flexibleSpace: Container(
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              colors: [Color(0xFFFFD54F), Color(0xFFFFA000)],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+            borderRadius: BorderRadius.only(
+              bottomLeft: Radius.elliptical(70, 55),
+              bottomRight: Radius.elliptical(70, 55),
+            ),
+          ),
+        ),
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.only(
+            bottomLeft: Radius.elliptical(70, 55),
+            bottomRight: Radius.elliptical(70, 55),
+          ),
+        ),
       ),
 
       body: isLoading
@@ -516,7 +543,7 @@ class _ComplaintsScreenState extends State<ComplaintsScreen> {
                       // ==================================================
                       buildComplaintForm(),
 
-                      SizedBox(height: 4.h),
+                      SizedBox(height: 3.h),
 
                       // ==================================================
                       // MY COMPLAINTS TITLE
@@ -614,7 +641,7 @@ class _ComplaintsScreenState extends State<ComplaintsScreen> {
           ),
         ),
 
-        SizedBox(height: 3.h),
+        SizedBox(height: 2.h),
 
         buildTextField(
           controller: subjectController,
@@ -642,7 +669,7 @@ class _ComplaintsScreenState extends State<ComplaintsScreen> {
           maxLines: 6,
         ),
 
-        SizedBox(height: 3.h),
+        SizedBox(height: 2.h),
 
         SizedBox(
           width: double.infinity,
@@ -685,7 +712,7 @@ class _ComplaintsScreenState extends State<ComplaintsScreen> {
         Center(
           child: Text(
             'Your complaint will be sent to the administration.',
-            style: TextStyle(fontSize: 11.sp, color: Colors.grey),
+            style: TextStyle(fontSize: 14.sp, color: Colors.grey),
             textAlign: TextAlign.center,
           ),
         ),

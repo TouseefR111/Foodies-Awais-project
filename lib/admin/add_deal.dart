@@ -20,10 +20,8 @@ class _AddDealState extends State<AddDeal> {
   // ------------------------------------------------------------
 
   final TextEditingController dealNameController = TextEditingController();
-  final TextEditingController descriptionController =
-      TextEditingController();
-  final TextEditingController dealPriceController =
-      TextEditingController();
+  final TextEditingController descriptionController = TextEditingController();
+  final TextEditingController dealPriceController = TextEditingController();
 
   // ------------------------------------------------------------
   // Scroll
@@ -99,11 +97,9 @@ class _AddDealState extends State<AddDeal> {
     } catch (e) {
       if (!mounted) return;
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text("Failed to select image: $e"),
-        ),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text("Failed to select image: $e")));
     }
   }
 
@@ -111,25 +107,18 @@ class _AddDealState extends State<AddDeal> {
   // Add Product
   // ------------------------------------------------------------
 
-  void addProduct(
-    String productId,
-    Map<String, dynamic> product,
-  ) {
+  void addProduct(String productId, Map<String, dynamic> product) {
     setState(() {
       if (selectedProducts.containsKey(productId)) {
         final int currentQuantity =
             selectedProducts[productId]!['quantity'] as int;
 
-        selectedProducts[productId]!['quantity'] =
-            currentQuantity + 1;
+        selectedProducts[productId]!['quantity'] = currentQuantity + 1;
       } else {
         selectedProducts[productId] = {
           'productId': productId,
           'itemName': product['itemName'] ?? 'Unknown Item',
-          'price': double.tryParse(
-                product['itemPrice'].toString(),
-              ) ??
-              0.0,
+          'price': double.tryParse(product['itemPrice'].toString()) ?? 0.0,
           'imageUrl': product['imageUrl'] ?? '',
           'quantity': 1,
         };
@@ -147,12 +136,10 @@ class _AddDealState extends State<AddDeal> {
         return;
       }
 
-      final int quantity =
-          selectedProducts[productId]!['quantity'] as int;
+      final int quantity = selectedProducts[productId]!['quantity'] as int;
 
       if (quantity > 1) {
-        selectedProducts[productId]!['quantity'] =
-            quantity - 1;
+        selectedProducts[productId]!['quantity'] = quantity - 1;
       } else {
         selectedProducts.remove(productId);
       }
@@ -168,8 +155,7 @@ class _AddDealState extends State<AddDeal> {
       throw Exception("Please select a deal image.");
     }
 
-    final String fileName =
-        "deal_${DateTime.now().millisecondsSinceEpoch}.jpg";
+    final String fileName = "deal_${DateTime.now().millisecondsSinceEpoch}.jpg";
 
     final Reference storageReference = FirebaseStorage.instance
         .ref()
@@ -211,8 +197,9 @@ class _AddDealState extends State<AddDeal> {
     }
 
     // Validate price
-    final double? enteredDealPrice =
-        double.tryParse(dealPriceController.text.trim());
+    final double? enteredDealPrice = double.tryParse(
+      dealPriceController.text.trim(),
+    );
 
     if (enteredDealPrice == null) {
       showMessage("Please enter a valid deal price.");
@@ -220,9 +207,7 @@ class _AddDealState extends State<AddDeal> {
     }
 
     if (enteredDealPrice >= originalPrice) {
-      showMessage(
-        "Deal price should be lower than original price.",
-      );
+      showMessage("Deal price should be lower than original price.");
       return;
     }
 
@@ -235,8 +220,9 @@ class _AddDealState extends State<AddDeal> {
       final String imageUrl = await uploadDealImage();
 
       // Convert selected products
-      final List<Map<String, dynamic>> items =
-          selectedProducts.values.map((product) {
+      final List<Map<String, dynamic>> items = selectedProducts.values.map((
+        product,
+      ) {
         return {
           'productId': product['productId'],
           'itemName': product['itemName'],
@@ -262,9 +248,7 @@ class _AddDealState extends State<AddDeal> {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           backgroundColor: Colors.green,
-          content: Text(
-            "Deal created successfully!",
-          ),
+          content: Text("Deal created successfully!"),
         ),
       );
 
@@ -272,13 +256,9 @@ class _AddDealState extends State<AddDeal> {
     } catch (e) {
       if (!mounted) return;
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            "Failed to create deal: $e",
-          ),
-        ),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text("Failed to create deal: $e")));
     } finally {
       if (!mounted) return;
 
@@ -309,11 +289,9 @@ class _AddDealState extends State<AddDeal> {
   // ------------------------------------------------------------
 
   void showMessage(String message) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(message),
-      ),
-    );
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(SnackBar(content: Text(message)));
   }
 
   // ------------------------------------------------------------
@@ -338,20 +316,37 @@ class _AddDealState extends State<AddDeal> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        toolbarHeight: 9.h,
         title: const Text(
           "ADD DEAL",
-          style: TextStyle(
-            fontWeight: FontWeight.bold,
-          ),
+          style: TextStyle(fontWeight: FontWeight.bold),
         ),
         centerTitle: true,
-        backgroundColor: Colors.amber,
+        // Gradient AppBar
+        flexibleSpace: Container(
+          decoration: const BoxDecoration(
+            gradient: const LinearGradient(
+              colors: [Color(0xFFFFD54F), Color(0xFFFFA000)],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+            borderRadius: BorderRadius.only(
+              bottomLeft: Radius.elliptical(70, 55),
+              bottomRight: Radius.elliptical(70, 55),
+            ),
+          ),
+        ),
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.only(
+            bottomLeft: Radius.elliptical(70, 55),
+            bottomRight: Radius.elliptical(70, 55),
+          ),
+        ),
       ),
 
       body: SingleChildScrollView(
         controller: scrollController,
-        keyboardDismissBehavior:
-            ScrollViewKeyboardDismissBehavior.onDrag,
+        keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
         padding: EdgeInsets.all(4.w),
 
         child: Column(
@@ -360,13 +355,9 @@ class _AddDealState extends State<AddDeal> {
             // --------------------------------------------------
             // Deal Name
             // --------------------------------------------------
-
             Text(
               "Deal Name",
-              style: TextStyle(
-                fontSize: 14.sp,
-                fontWeight: FontWeight.bold,
-              ),
+              style: TextStyle(fontSize: 14.sp, fontWeight: FontWeight.bold),
             ),
 
             SizedBox(height: 1.h),
@@ -386,13 +377,9 @@ class _AddDealState extends State<AddDeal> {
             // --------------------------------------------------
             // Description
             // --------------------------------------------------
-
             Text(
               "Description",
-              style: TextStyle(
-                fontSize: 14.sp,
-                fontWeight: FontWeight.bold,
-              ),
+              style: TextStyle(fontSize: 14.sp, fontWeight: FontWeight.bold),
             ),
 
             SizedBox(height: 1.h),
@@ -401,8 +388,7 @@ class _AddDealState extends State<AddDeal> {
               controller: descriptionController,
               maxLines: 3,
               decoration: InputDecoration(
-                hintText:
-                    "Example: 2 Burgers + Pizza + Drinks",
+                hintText: "Example: 2 Burgers + Pizza + Drinks",
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
                 ),
@@ -414,13 +400,9 @@ class _AddDealState extends State<AddDeal> {
             // --------------------------------------------------
             // Deal Image
             // --------------------------------------------------
-
             Text(
               "Deal Image",
-              style: TextStyle(
-                fontSize: 14.sp,
-                fontWeight: FontWeight.bold,
-              ),
+              style: TextStyle(fontSize: 14.sp, fontWeight: FontWeight.bold),
             ),
 
             SizedBox(height: 1.h),
@@ -434,33 +416,21 @@ class _AddDealState extends State<AddDeal> {
                 decoration: BoxDecoration(
                   color: Colors.grey.shade200,
                   borderRadius: BorderRadius.circular(15),
-                  border: Border.all(
-                    color: Colors.grey,
-                  ),
+                  border: Border.all(color: Colors.grey),
                 ),
 
                 child: selectedImage == null
                     ? const Column(
-                        mainAxisAlignment:
-                            MainAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Icon(
-                            Icons.add_a_photo,
-                            size: 50,
-                          ),
+                          Icon(Icons.add_a_photo, size: 50),
                           SizedBox(height: 10),
-                          Text(
-                            "Tap to select deal image",
-                          ),
+                          Text("Tap to select deal image"),
                         ],
                       )
                     : ClipRRect(
-                        borderRadius:
-                            BorderRadius.circular(15),
-                        child: Image.file(
-                          selectedImage!,
-                          fit: BoxFit.cover,
-                        ),
+                        borderRadius: BorderRadius.circular(15),
+                        child: Image.file(selectedImage!, fit: BoxFit.cover),
                       ),
               ),
             ),
@@ -470,13 +440,9 @@ class _AddDealState extends State<AddDeal> {
             // --------------------------------------------------
             // Products
             // --------------------------------------------------
-
             Text(
               "Select Food Items",
-              style: TextStyle(
-                fontSize: 16.sp,
-                fontWeight: FontWeight.bold,
-              ),
+              style: TextStyle(fontSize: 16.sp, fontWeight: FontWeight.bold),
             ),
 
             SizedBox(height: 1.h),
@@ -492,7 +458,6 @@ class _AddDealState extends State<AddDeal> {
             // --------------------------------------------------
             // Price Summary
             // --------------------------------------------------
-
             PriceSummary(
               originalPrice: originalPrice,
               dealPriceController: dealPriceController,
@@ -504,17 +469,12 @@ class _AddDealState extends State<AddDeal> {
             // --------------------------------------------------
             // Active Switch
             // --------------------------------------------------
-
             SwitchListTile(
               contentPadding: EdgeInsets.zero,
 
-              title: const Text(
-                "Deal Active",
-              ),
+              title: const Text("Deal Active"),
 
-              subtitle: const Text(
-                "Show this deal to customers",
-              ),
+              subtitle: const Text("Show this deal to customers"),
 
               value: isActive,
 
@@ -534,22 +494,19 @@ class _AddDealState extends State<AddDeal> {
             // --------------------------------------------------
             // Save Button
             // --------------------------------------------------
-
             SizedBox(
               width: double.infinity,
               height: 7.h,
 
               child: ElevatedButton(
-                onPressed:
-                    isSaving ? null : saveDeal,
+                onPressed: isSaving ? null : saveDeal,
 
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.amber,
                   foregroundColor: Colors.black,
 
                   shape: RoundedRectangleBorder(
-                    borderRadius:
-                        BorderRadius.circular(15),
+                    borderRadius: BorderRadius.circular(15),
                   ),
                 ),
 
@@ -557,8 +514,7 @@ class _AddDealState extends State<AddDeal> {
                     ? const SizedBox(
                         width: 24,
                         height: 24,
-                        child:
-                            CircularProgressIndicator(
+                        child: CircularProgressIndicator(
                           color: Colors.black,
                           strokeWidth: 3,
                         ),
@@ -588,10 +544,7 @@ class _AddDealState extends State<AddDeal> {
 class ProductList extends StatelessWidget {
   final Map<String, Map<String, dynamic>> selectedProducts;
 
-  final void Function(
-    String productId,
-    Map<String, dynamic> product,
-  ) onAdd;
+  final void Function(String productId, Map<String, dynamic> product) onAdd;
 
   final void Function(String productId) onRemove;
 
@@ -607,39 +560,27 @@ class ProductList extends StatelessWidget {
     return StreamBuilder<QuerySnapshot>(
       stream: FirebaseFirestore.instance
           .collection('categoryList')
-          .orderBy(
-            'createdAt',
-            descending: true,
-          )
+          .orderBy('createdAt', descending: true)
           .snapshots(),
 
       builder: (context, snapshot) {
-        if (snapshot.connectionState ==
-            ConnectionState.waiting) {
-          return const Center(
-            child: CircularProgressIndicator(),
-          );
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(child: CircularProgressIndicator());
         }
 
         if (snapshot.hasError) {
-          return Text(
-            "Error: ${snapshot.error}",
-          );
+          return Text("Error: ${snapshot.error}");
         }
 
-        if (!snapshot.hasData ||
-            snapshot.data!.docs.isEmpty) {
-          return const Text(
-            "No products found.",
-          );
+        if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+          return const Text("No products found.");
         }
 
         final products = snapshot.data!.docs;
 
         return Column(
           children: products.map((doc) {
-            final product =
-                doc.data() as Map<String, dynamic>;
+            final product = doc.data() as Map<String, dynamic>;
 
             final String productId = doc.id;
 
@@ -650,14 +591,10 @@ class ProductList extends StatelessWidget {
 
               product: product,
 
-              selectedProduct:
-                  selectedProducts[productId],
+              selectedProduct: selectedProducts[productId],
 
               onAdd: () {
-                onAdd(
-                  productId,
-                  product,
-                );
+                onAdd(productId, product);
               },
 
               onRemove: () {
@@ -697,26 +634,18 @@ class ProductCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final bool selected =
-        selectedProduct != null;
+    final bool selected = selectedProduct != null;
 
-    final int quantity = selected
-        ? selectedProduct!['quantity'] as int
-        : 0;
+    final int quantity = selected ? selectedProduct!['quantity'] as int : 0;
 
-    final String imageUrl =
-        product['imageUrl'] ?? '';
+    final String imageUrl = product['imageUrl'] ?? '';
 
-    final String itemName =
-        product['itemName'] ?? 'Unknown Item';
+    final String itemName = product['itemName'] ?? 'Unknown Item';
 
-    final String itemPrice =
-        product['itemPrice']?.toString() ?? '0';
+    final String itemPrice = product['itemPrice']?.toString() ?? '0';
 
     return Card(
-      margin: EdgeInsets.only(
-        bottom: 1.h,
-      ),
+      margin: EdgeInsets.only(bottom: 1.h),
 
       child: Padding(
         padding: EdgeInsets.all(2.w),
@@ -726,19 +655,15 @@ class ProductCard extends StatelessWidget {
             // ------------------------------------------------
             // Image
             // ------------------------------------------------
-
             ClipRRect(
-              borderRadius:
-                  BorderRadius.circular(10),
+              borderRadius: BorderRadius.circular(10),
 
               child: imageUrl.isEmpty
                   ? Container(
                       width: 18.w,
                       height: 18.w,
                       color: Colors.grey.shade300,
-                      child: const Icon(
-                        Icons.fastfood,
-                      ),
+                      child: const Icon(Icons.fastfood),
                     )
                   : Image.network(
                       imageUrl,
@@ -746,20 +671,12 @@ class ProductCard extends StatelessWidget {
                       height: 18.w,
                       fit: BoxFit.cover,
 
-                      errorBuilder:
-                          (
-                            context,
-                            error,
-                            stackTrace,
-                          ) {
+                      errorBuilder: (context, error, stackTrace) {
                         return Container(
                           width: 18.w,
                           height: 18.w,
-                          color:
-                              Colors.grey.shade300,
-                          child: const Icon(
-                            Icons.broken_image,
-                          ),
+                          color: Colors.grey.shade300,
+                          child: const Icon(Icons.broken_image),
                         );
                       },
                     ),
@@ -770,23 +687,19 @@ class ProductCard extends StatelessWidget {
             // ------------------------------------------------
             // Name + Price
             // ------------------------------------------------
-
             Expanded(
               child: Column(
-                crossAxisAlignment:
-                    CrossAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
 
                 children: [
                   Text(
                     itemName,
                     maxLines: 2,
-                    overflow:
-                        TextOverflow.ellipsis,
+                    overflow: TextOverflow.ellipsis,
 
                     style: TextStyle(
                       fontSize: 12.sp,
-                      fontWeight:
-                          FontWeight.bold,
+                      fontWeight: FontWeight.bold,
                     ),
                   ),
 
@@ -795,10 +708,7 @@ class ProductCard extends StatelessWidget {
                   Text(
                     "$itemPrice PKR",
 
-                    style: TextStyle(
-                      fontSize: 11.sp,
-                      color: Colors.grey,
-                    ),
+                    style: TextStyle(fontSize: 11.sp, color: Colors.grey),
                   ),
                 ],
               ),
@@ -807,27 +717,20 @@ class ProductCard extends StatelessWidget {
             // ------------------------------------------------
             // Quantity
             // ------------------------------------------------
-
             if (!selected)
               IconButton(
-                icon: const Icon(
-                  Icons.add_circle,
-                  color: Colors.amber,
-                ),
+                icon: const Icon(Icons.add_circle, color: Colors.amber),
 
                 onPressed: onAdd,
               ),
 
             if (selected)
               Row(
-                mainAxisSize:
-                    MainAxisSize.min,
+                mainAxisSize: MainAxisSize.min,
 
                 children: [
                   IconButton(
-                    icon: const Icon(
-                      Icons.remove_circle,
-                    ),
+                    icon: const Icon(Icons.remove_circle),
 
                     onPressed: onRemove,
                   ),
@@ -837,16 +740,12 @@ class ProductCard extends StatelessWidget {
 
                     style: TextStyle(
                       fontSize: 13.sp,
-                      fontWeight:
-                          FontWeight.bold,
+                      fontWeight: FontWeight.bold,
                     ),
                   ),
 
                   IconButton(
-                    icon: const Icon(
-                      Icons.add_circle,
-                      color: Colors.amber,
-                    ),
+                    icon: const Icon(Icons.add_circle, color: Colors.amber),
 
                     onPressed: onAdd,
                   ),
@@ -878,37 +777,28 @@ class PriceSummary extends StatefulWidget {
   });
 
   @override
-  State<PriceSummary> createState() =>
-      _PriceSummaryState();
+  State<PriceSummary> createState() => _PriceSummaryState();
 }
 
-class _PriceSummaryState
-    extends State<PriceSummary> {
+class _PriceSummaryState extends State<PriceSummary> {
   double dealPrice = 0;
 
   @override
   void initState() {
     super.initState();
 
-    dealPrice =
-        double.tryParse(
-              widget.dealPriceController.text,
-            ) ??
-            0;
+    dealPrice = double.tryParse(widget.dealPriceController.text) ?? 0;
   }
 
   void updatePrice(String value) {
     setState(() {
-      dealPrice =
-          double.tryParse(value.trim()) ??
-              0;
+      dealPrice = double.tryParse(value.trim()) ?? 0;
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    final double saving =
-        widget.originalPrice - dealPrice;
+    final double saving = widget.originalPrice - dealPrice;
 
     return Container(
       width: double.infinity,
@@ -917,11 +807,8 @@ class _PriceSummaryState
 
       decoration: BoxDecoration(
         color: Colors.amber.shade50,
-        borderRadius:
-            BorderRadius.circular(15),
-        border: Border.all(
-          color: Colors.amber,
-        ),
+        borderRadius: BorderRadius.circular(15),
+        border: Border.all(color: Colors.amber),
       ),
 
       child: Column(
@@ -929,23 +816,16 @@ class _PriceSummaryState
           // ------------------------------------------------
           // Original Price
           // ------------------------------------------------
-
           Row(
-            mainAxisAlignment:
-                MainAxisAlignment.spaceBetween,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
 
             children: [
-              const Text(
-                "Original Price",
-              ),
+              const Text("Original Price"),
 
               Text(
                 "${widget.originalPrice.toStringAsFixed(0)} PKR",
 
-                style: const TextStyle(
-                  fontWeight:
-                      FontWeight.bold,
-                ),
+                style: const TextStyle(fontWeight: FontWeight.bold),
               ),
             ],
           ),
@@ -955,13 +835,10 @@ class _PriceSummaryState
           // ------------------------------------------------
           // Deal Price
           // ------------------------------------------------
-
           TextField(
-            controller:
-                widget.dealPriceController,
+            controller: widget.dealPriceController,
 
-            keyboardType:
-                TextInputType.number,
+            keyboardType: TextInputType.number,
 
             onChanged: updatePrice,
 
@@ -969,12 +846,8 @@ class _PriceSummaryState
               labelText: "Deal Price",
               suffixText: "PKR",
 
-              border:
-                  OutlineInputBorder(
-                borderRadius:
-                    BorderRadius.circular(
-                  10,
-                ),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(10),
               ),
             ),
           ),
@@ -984,23 +857,18 @@ class _PriceSummaryState
           // ------------------------------------------------
           // Saving
           // ------------------------------------------------
-
           Row(
-            mainAxisAlignment:
-                MainAxisAlignment.spaceBetween,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
 
             children: [
-              const Text(
-                "You Save",
-              ),
+              const Text("You Save"),
 
               Text(
                 "${saving.toStringAsFixed(0)} PKR",
 
                 style: const TextStyle(
                   color: Colors.green,
-                  fontWeight:
-                      FontWeight.bold,
+                  fontWeight: FontWeight.bold,
                 ),
               ),
             ],

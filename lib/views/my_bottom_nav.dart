@@ -1,6 +1,7 @@
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:food_delivery_app/views/cart_screen.dart';
+import 'package:food_delivery_app/views/complaints_screen.dart';
 import 'package:food_delivery_app/views/home_screen.dart';
 import 'package:food_delivery_app/views/my_order.dart';
 import 'package:food_delivery_app/views/profile.dart';
@@ -20,6 +21,7 @@ class _MyBottomNavState extends State<MyBottomNav> {
   late HomeScreen homeScreen;
   late CartScreen cartScreen;
   late MyOrder myOrder;
+  late ComplaintsScreen complaintsScreen;
   late Profile profile;
 
   @override
@@ -29,101 +31,85 @@ class _MyBottomNavState extends State<MyBottomNav> {
     homeScreen = const HomeScreen();
     cartScreen = const CartScreen();
     myOrder = const MyOrder();
+    complaintsScreen = const ComplaintsScreen();
     profile = const Profile();
 
-    pages = [homeScreen, cartScreen, myOrder, profile];
+    pages = [homeScreen, cartScreen, myOrder, complaintsScreen, profile];
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      extendBody: true,
+      body: IndexedStack(index: currentTabIndex, children: pages),
 
-      // ==========================================================
-      // BODY
-      // ==========================================================
-      body: pages[currentTabIndex],
-
-      // ==========================================================
-      // BOTTOM NAVIGATION
-      // ==========================================================
-      bottomNavigationBar: Container(
-        margin: const EdgeInsets.only(left: 14, right: 14, bottom: 10),
-
-        height: 65,
-
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(28),
-
-          gradient: const LinearGradient(
-            colors: [Color(0xFFFFD54F), Color(0xFFFFA000)],
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-          ),
-
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.18),
-              blurRadius: 18,
-              offset: const Offset(0, 7),
+      bottomNavigationBar: SafeArea(
+        top: false,
+        child: Container(
+          height: 72,
+          margin: const EdgeInsets.only(left: 14, right: 14, bottom: 4),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(28),
+            gradient: const LinearGradient(
+              colors: [Color(0xFFFFD54F), Color(0xFFFFA000)],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
             ),
-          ],
-        ),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.18),
+                blurRadius: 18,
+                offset: const Offset(0, 7),
+              ),
+            ],
+          ),
+          clipBehavior: Clip.hardEdge,
 
-        // IMPORTANT:
-        // Prevent the selected button from visually
-        // escaping the navigation container.
-        clipBehavior: Clip.hardEdge,
+          child: Transform.translate(
+            offset: const Offset(0, 7),
 
-        child: CurvedNavigationBar(
-          index: currentTabIndex,
+            child: CurvedNavigationBar(
+              index: currentTabIndex,
 
-          // Transparent so our gradient remains visible
-          color: Colors.transparent,
+              color: Colors.transparent,
+              backgroundColor: Colors.transparent,
 
-          backgroundColor: Colors.transparent,
+              height: 60,
 
-          // Smaller navigation height
-          height: 60,
+              buttonBackgroundColor: Colors.white,
 
-          // White selected button
-          buttonBackgroundColor: Colors.white,
+              animationDuration: const Duration(milliseconds: 300),
 
-          animationDuration: const Duration(milliseconds: 300),
+              animationCurve: Curves.easeInOut,
 
-          animationCurve: Curves.easeInOut,
+              onTap: (int index) {
+                setState(() {
+                  currentTabIndex = index;
+                });
+              },
 
-          onTap: (int index) {
-            setState(() {
-              currentTabIndex = index;
-            });
-          },
+              items: const [
+                Icon(Icons.home_rounded, size: 23, color: Colors.black87),
 
-          items: [
-            _buildNavIcon(Icons.home_rounded, 0),
+                Icon(
+                  Icons.shopping_cart_rounded,
+                  size: 23,
+                  color: Colors.black87,
+                ),
 
-            _buildNavIcon(Icons.shopping_cart_rounded, 1),
+                Icon(
+                  Icons.receipt_long_rounded,
+                  size: 23,
+                  color: Colors.black87,
+                ),
 
-            _buildNavIcon(Icons.receipt_long_rounded, 2),
+                Icon(Icons.forum_rounded, size: 23, color: Colors.black87),
 
-            _buildNavIcon(Icons.person_rounded, 3),
-          ],
+                Icon(Icons.person_rounded, size: 23, color: Colors.black87),
+              ],
+            ),
+          ),
         ),
       ),
-    );
-  }
-
-  // ============================================================
-  // NAVIGATION ICON
-  // ============================================================
-
-  Widget _buildNavIcon(IconData icon, int index) {
-    final bool isSelected = currentTabIndex == index;
-
-    return Icon(
-      icon,
-      size: isSelected ? 23 : 23,
-      color: isSelected ? const Color(0xFFFF9800) : Colors.black87,
     );
   }
 }

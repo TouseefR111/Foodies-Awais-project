@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:sizer/sizer.dart';
 
 class Complaints extends StatefulWidget {
   const Complaints({super.key});
@@ -325,12 +326,33 @@ class _ComplaintsState extends State<Complaints> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        toolbarHeight: 9.h,
+        // Gradient AppBar
+        flexibleSpace: Container(
+          decoration: const BoxDecoration(
+            gradient: const LinearGradient(
+              colors: [Color(0xFFFFD54F), Color(0xFFFFA000)],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+            borderRadius: BorderRadius.only(
+              bottomLeft: Radius.elliptical(70, 55),
+              bottomRight: Radius.elliptical(70, 55),
+            ),
+          ),
+        ),
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.only(
+            bottomLeft: Radius.elliptical(70, 55),
+            bottomRight: Radius.elliptical(70, 55),
+          ),
+        ),
         title: const Text(
           'Complaints',
           style: TextStyle(fontWeight: FontWeight.bold),
         ),
-        backgroundColor: Colors.black,
-        foregroundColor: Colors.white,
+        // backgroundColor: Colors.black,
+        // foregroundColor: Colors.white,
         centerTitle: true,
       ),
 

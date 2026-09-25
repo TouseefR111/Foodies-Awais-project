@@ -17,6 +17,7 @@ class _ProductListScreenState extends State<ProductListScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        toolbarHeight: 9.h,
         title: const Text(
           'All Product List',
           style: TextStyle(color: Colors.black),
@@ -29,6 +30,16 @@ class _ProductListScreenState extends State<ProductListScreen> {
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
             ),
+            borderRadius: BorderRadius.only(
+              bottomLeft: Radius.elliptical(70, 55),
+              bottomRight: Radius.elliptical(70, 55),
+            ),
+          ),
+        ),
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.only(
+            bottomLeft: Radius.elliptical(70, 55),
+            bottomRight: Radius.elliptical(70, 55),
           ),
         ),
         centerTitle: true,

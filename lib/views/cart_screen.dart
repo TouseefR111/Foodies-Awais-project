@@ -1134,14 +1134,15 @@ class _CartScreenState extends State<CartScreen> {
       // APP BAR
       // ========================================================
       appBar: AppBar(
+        toolbarHeight: 9.h,
         centerTitle: true,
         elevation: 0,
 
         title: Text(
-          'MY CART',
+          'My Cart',
           style: TextStyle(
-            fontSize: 18.sp,
-            fontWeight: FontWeight.bold,
+            fontSize: 20.sp,
+            fontWeight: FontWeight.w800,
             color: Colors.black87,
             letterSpacing: 0.8,
           ),

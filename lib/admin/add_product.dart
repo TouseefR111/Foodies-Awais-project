@@ -149,6 +149,16 @@ class _AddProductState extends State<AddProduct> {
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
             ),
+            borderRadius: BorderRadius.only(
+              bottomLeft: Radius.elliptical(70, 55),
+              bottomRight: Radius.elliptical(70, 55),
+            ),
+          ),
+        ),
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.only(
+            bottomLeft: Radius.elliptical(70, 55),
+            bottomRight: Radius.elliptical(70, 55),
           ),
         ),
         title: Text(
@@ -165,15 +175,16 @@ class _AddProductState extends State<AddProduct> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            SizedBox(height: 2.h),
             // Image Selector
             Padding(
-              padding: EdgeInsets.only(left: 2.w),
+              padding: EdgeInsets.symmetric(horizontal: 4.w),
               child: Text(
                 "Add item picture",
                 style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15.sp),
               ),
             ),
-            SizedBox(height: 3.h),
+            SizedBox(height: 2.h),
             Center(
               child: GestureDetector(
                 onTap: getImage,
@@ -193,7 +204,7 @@ class _AddProductState extends State<AddProduct> {
                 ),
               ),
             ),
-            SizedBox(height: 3.h),
+            SizedBox(height: 2.h),
 
             // Item Name
             Padding(
@@ -205,7 +216,7 @@ class _AddProductState extends State<AddProduct> {
                 TextInputType.text,
               ),
             ),
-            SizedBox(height: 3.h),
+            SizedBox(height: 2.h),
 
             // Item Price
             Padding(
@@ -217,7 +228,7 @@ class _AddProductState extends State<AddProduct> {
                 TextInputType.number,
               ),
             ),
-            SizedBox(height: 3.h),
+            SizedBox(height: 2.h),
 
             // Item Description
             Padding(
@@ -230,7 +241,7 @@ class _AddProductState extends State<AddProduct> {
                 maxLines: 6,
               ),
             ),
-            SizedBox(height: 3.h),
+            SizedBox(height: 2.h),
 
             // Category Selector
             Padding(
@@ -253,7 +264,7 @@ class _AddProductState extends State<AddProduct> {
                 ),
               ),
             ),
-            SizedBox(height: 4.h),
+            SizedBox(height: 2.h),
 
             // Add Button
             Center(

@@ -249,6 +249,10 @@ class _AllOrdersState extends State<AllOrders> {
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
             ),
+            borderRadius: BorderRadius.only(
+              bottomLeft: Radius.elliptical(70, 55),
+              bottomRight: Radius.elliptical(70, 55),
+            ),
           ),
         ),
 
@@ -376,7 +380,7 @@ class _AllOrdersState extends State<AllOrders> {
                               "Order ID: $orderId",
 
                               style: TextStyle(
-                                fontSize: 12.sp,
+                                fontSize: 14.sp,
 
                                 fontWeight: FontWeight.bold,
 
@@ -404,7 +408,7 @@ class _AllOrdersState extends State<AllOrders> {
                         "Customer: $customerName",
 
                         style: TextStyle(
-                          fontSize: 12.sp,
+                          fontSize: 16.sp,
 
                           fontWeight: FontWeight.bold,
                         ),
@@ -428,7 +432,7 @@ class _AllOrdersState extends State<AllOrders> {
                               "Phone: $phone",
 
                               style: TextStyle(
-                                fontSize: 11.sp,
+                                fontSize: 14.sp,
 
                                 color: Colors.black,
                               ),
@@ -459,7 +463,7 @@ class _AllOrdersState extends State<AllOrders> {
                               "Delivery Address:\n$customerAddress",
 
                               style: TextStyle(
-                                fontSize: 11.sp,
+                                fontSize: 13.sp,
 
                                 color: Colors.black,
 
@@ -502,7 +506,7 @@ class _AllOrdersState extends State<AllOrders> {
                         "Total Price: ${order['overallTotal']} PKR",
 
                         style: TextStyle(
-                          fontSize: 12.sp,
+                          fontSize: 13.sp,
 
                           fontWeight: FontWeight.bold,
                         ),
@@ -517,7 +521,7 @@ class _AllOrdersState extends State<AllOrders> {
                         "Items:",
 
                         style: TextStyle(
-                          fontSize: 12.sp,
+                          fontSize: 14.sp,
 
                           fontWeight: FontWeight.bold,
                         ),
@@ -553,7 +557,7 @@ class _AllOrdersState extends State<AllOrders> {
                           child: Text(
                             itemText,
 
-                            style: TextStyle(fontSize: 10.sp, height: 1.3),
+                            style: TextStyle(fontSize: 13.sp, height: 1.3),
                           ),
                         );
                       }).toList(),
@@ -585,7 +589,7 @@ class _AllOrdersState extends State<AllOrders> {
                               "${gpsSnapshot.data ?? 'Not available'}",
 
                               style: TextStyle(
-                                fontSize: 10.sp,
+                                fontSize: 13.sp,
 
                                 color: Colors.grey,
                               ),
@@ -631,7 +635,7 @@ class _AllOrdersState extends State<AllOrders> {
                           style: TextStyle(
                             color: Colors.white,
 
-                            fontSize: 13.sp,
+                            fontSize: 14.sp,
 
                             fontWeight: FontWeight.bold,
                           ),

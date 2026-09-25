@@ -18,6 +18,7 @@ class _DealManageScreenState extends State<DealManageScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        toolbarHeight: 9.h,
         title: const Text('Deal Manage', style: TextStyle(color: Colors.black)),
         // Gradient AppBar
         flexibleSpace: Container(
@@ -27,6 +28,16 @@ class _DealManageScreenState extends State<DealManageScreen> {
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
             ),
+            borderRadius: BorderRadius.only(
+              bottomLeft: Radius.elliptical(70, 55),
+              bottomRight: Radius.elliptical(70, 55),
+            ),
+          ),
+        ),
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.only(
+            bottomLeft: Radius.elliptical(70, 55),
+            bottomRight: Radius.elliptical(70, 55),
           ),
         ),
         centerTitle: true,
