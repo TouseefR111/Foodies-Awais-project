@@ -5,6 +5,7 @@ import 'package:food_delivery_app/admin/home_admin.dart';
 import 'package:food_delivery_app/views/welcome_screen.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:sizer/sizer.dart';
+import 'package:food_delivery_app/admin/admin_chat.dart';
 
 class AdminLogin extends StatefulWidget {
   const AdminLogin({super.key});
@@ -100,6 +101,149 @@ class _AdminLoginState extends State<AdminLogin>
         ).animate(animation),
         child: child,
       ),
+    );
+  }
+
+  Future<void> _showDeactivatedDialog({
+    required String reason,
+    required Timestamp? deactivatedAt,
+    required String adminDocumentId,
+    required String adminName,
+    required String adminId,
+  }) async {
+    if (!mounted) return;
+
+    String dateText = '';
+
+    if (deactivatedAt != null) {
+      final date = deactivatedAt.toDate();
+
+      dateText =
+          '${date.day.toString().padLeft(2, '0')}/'
+          '${date.month.toString().padLeft(2, '0')}/'
+          '${date.year} '
+          '${date.hour.toString().padLeft(2, '0')}:'
+          '${date.minute.toString().padLeft(2, '0')}';
+    }
+
+    await showDialog<void>(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) {
+        return AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(18),
+          ),
+          title: Row(
+            children: [
+              Icon(Icons.block, color: Colors.orange.shade700, size: 28),
+              const SizedBox(width: 10),
+              const Expanded(
+                child: Text(
+                  'Account Deactivated',
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
+              ),
+            ],
+          ),
+          content: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text(
+                  'Your admin account has been deactivated by the Super Admin.',
+                  style: TextStyle(fontSize: 15, height: 1.4),
+                ),
+
+                const SizedBox(height: 18),
+
+                const Text(
+                  'Reason:',
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
+                ),
+
+                const SizedBox(height: 7),
+
+                Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: Colors.orange.shade50,
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(color: Colors.orange.shade200),
+                  ),
+                  child: Text(
+                    reason.isNotEmpty ? reason : 'No reason was provided.',
+                    style: const TextStyle(fontSize: 14, height: 1.4),
+                  ),
+                ),
+
+                if (dateText.isNotEmpty) ...[
+                  const SizedBox(height: 16),
+                  Text(
+                    'Deactivated on: $dateText',
+                    style: TextStyle(fontSize: 13, color: Colors.grey.shade700),
+                  ),
+                ],
+
+                const SizedBox(height: 18),
+
+                const Text(
+                  'If you believe your account should be reactivated, '
+                  'you can contact the Super Admin.',
+                  style: TextStyle(fontSize: 14, height: 1.4),
+                ),
+              ],
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text(
+                'Close',
+                style: TextStyle(
+                  color: Colors.grey.shade700,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ),
+
+            ElevatedButton.icon(
+              onPressed: () {
+                Navigator.of(context).pop();
+
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => AdminChat(
+                      adminDocumentId: adminDocumentId,
+                      adminName: adminName,
+                      adminId: adminId,
+                    ),
+                  ),
+                );
+              },
+              icon: const Icon(Icons.chat, color: Colors.black),
+              label: const Text(
+                'Contact Super Admin',
+                style: TextStyle(
+                  color: Colors.black,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFFFFC107),
+                elevation: 0,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
+              ),
+            ),
+          ],
+        );
+      },
     );
   }
 
@@ -201,12 +345,23 @@ class _AdminLoginState extends State<AdminLogin>
           isload = false;
         });
 
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text(
-              "Your admin account is inactive. Please contact the Super Admin.",
-            ),
-          ),
+        final String deactivationReason =
+            data['deactivationReason']?.toString().trim() ?? '';
+
+        final Timestamp? deactivatedAt = data['deactivatedAt'] is Timestamp
+            ? data['deactivatedAt'] as Timestamp
+            : null;
+
+        final String adminName = data['name']?.toString() ?? 'Admin';
+
+        final String adminId = data['id']?.toString() ?? '';
+
+        await _showDeactivatedDialog(
+          reason: deactivationReason,
+          deactivatedAt: deactivatedAt,
+          adminDocumentId: adminDocumentId,
+          adminName: adminName,
+          adminId: adminId,
         );
 
         return;

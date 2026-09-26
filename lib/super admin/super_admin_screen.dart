@@ -4,6 +4,7 @@ import 'package:food_delivery_app/super%20admin/admin_permissions.dart';
 import 'package:food_delivery_app/super%20admin/complaints.dart';
 import 'package:food_delivery_app/super%20admin/manage_admin.dart';
 import 'package:food_delivery_app/super%20admin/super_admin_login.dart';
+import 'package:food_delivery_app/super admin/super_admin_chat.dart';
 
 import 'package:google_fonts/google_fonts.dart';
 import 'package:sizer/sizer.dart';
@@ -303,6 +304,84 @@ class SuperAdminScreen extends StatelessWidget {
                     MaterialPageRoute(builder: (context) => const Complaints()),
                   );
                 },
+              ),
+
+              // ============================================================
+              // ADMIN CHATS
+              // ============================================================
+              Card(
+                elevation: 4,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(16),
+                ),
+                child: InkWell(
+                  borderRadius: BorderRadius.circular(16),
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => SuperAdminChat()),
+                    );
+                  },
+                  child: Padding(
+                    padding: const EdgeInsets.all(18),
+                    child: Row(
+                      children: [
+                        Container(
+                          width: 52,
+                          height: 52,
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                              colors: [Color(0xFFFFD54F), Color(0xFFFFA000)],
+                              begin: Alignment.topLeft,
+                              end: Alignment.bottomRight,
+                            ),
+
+                            borderRadius: BorderRadius.circular(14),
+                          ),
+                          child: Icon(
+                            Icons.chat_outlined,
+                            color: Colors.black87,
+                            size: 28,
+                          ),
+                        ),
+
+                        const SizedBox(width: 15),
+
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'Admin Chats',
+                                style: GoogleFonts.poppins(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w700,
+                                  color: Colors.black,
+                                ),
+                              ),
+
+                              const SizedBox(height: 4),
+
+                              Text(
+                                'Chat with inactive admins',
+                                style: GoogleFonts.poppins(
+                                  fontSize: 12,
+                                  color: Colors.grey.shade600,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+
+                        const Icon(
+                          Icons.arrow_forward_ios,
+                          size: 17,
+                          color: Colors.grey,
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
               ),
 
               // ==================================================

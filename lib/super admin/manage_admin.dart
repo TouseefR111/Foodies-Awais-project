@@ -1,5 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+
 import 'package:flutter/material.dart';
+
 import 'package:google_fonts/google_fonts.dart';
 
 class ManageAdmin extends StatefulWidget {
@@ -19,11 +22,14 @@ class _ManageAdminState extends State<ManageAdmin> {
   @override
   void dispose() {
     searchController.dispose();
+
     super.dispose();
   }
 
   // ==========================================================
+
   // SHOW MESSAGE
+
   // ==========================================================
 
   void showMessage(String message, {Color backgroundColor = Colors.black87}) {
@@ -35,22 +41,29 @@ class _ManageAdminState extends State<ManageAdmin> {
       SnackBar(
         content: Text(
           message,
+
           style: GoogleFonts.poppins(color: Colors.white, fontSize: 14),
         ),
+
         backgroundColor: backgroundColor,
+
         behavior: SnackBarBehavior.floating,
       ),
     );
   }
 
   // ==========================================================
+
   // ADD ADMIN
+
   // ==========================================================
 
   Future<void> addAdmin() async {
     final result = await showDialog<bool>(
       context: context,
+
       barrierDismissible: false,
+
       builder: (dialogContext) {
         return const AddAdminDialog();
       },
@@ -61,13 +74,16 @@ class _ManageAdminState extends State<ManageAdmin> {
 
       showMessage(
         'Admin added successfully.',
+
         backgroundColor: Colors.green.shade700,
       );
     }
   }
 
   // ==========================================================
+
   // EDIT ADMIN PERMISSIONS
+
   // ==========================================================
 
   Future<void> editPermissions(
@@ -77,7 +93,9 @@ class _ManageAdminState extends State<ManageAdmin> {
 
     final bool? result = await showDialog<bool>(
       context: context,
+
       barrierDismissible: false,
+
       builder: (dialogContext) {
         return EditAdminDialog(documentId: document.id, data: data);
       },
@@ -86,13 +104,16 @@ class _ManageAdminState extends State<ManageAdmin> {
     if (result == true && mounted) {
       showMessage(
         'Admin permissions updated successfully.',
+
         backgroundColor: Colors.green.shade700,
       );
     }
   }
 
   // ==========================================================
+
   // DELETE ADMIN
+
   // ==========================================================
 
   Future<void> deleteAdmin(
@@ -104,39 +125,52 @@ class _ManageAdminState extends State<ManageAdmin> {
 
     final bool? confirmed = await showDialog<bool>(
       context: context,
+
       builder: (dialogContext) {
         return AlertDialog(
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(20),
           ),
+
           title: Text(
             'Delete Admin?',
+
             style: GoogleFonts.poppins(fontWeight: FontWeight.w700),
           ),
+
           content: Text(
             'Are you sure you want to delete $name?',
+
             style: GoogleFonts.poppins(fontSize: 14),
           ),
+
           actions: [
             TextButton(
               onPressed: () {
                 Navigator.of(dialogContext).pop(false);
               },
+
               child: Text(
                 'Cancel',
+
                 style: GoogleFonts.poppins(color: Colors.grey.shade700),
               ),
             ),
+
             ElevatedButton(
               onPressed: () {
                 Navigator.of(dialogContext).pop(true);
               },
+
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.red,
+
                 foregroundColor: Colors.white,
               ),
+
               child: Text(
                 'Delete',
+
                 style: GoogleFonts.poppins(fontWeight: FontWeight.w600),
               ),
             ),
@@ -156,6 +190,7 @@ class _ManageAdminState extends State<ManageAdmin> {
 
       showMessage(
         'Admin deleted successfully.',
+
         backgroundColor: Colors.green.shade700,
       );
     } catch (e) {
@@ -163,83 +198,367 @@ class _ManageAdminState extends State<ManageAdmin> {
 
       showMessage(
         'Unable to delete admin.',
+
         backgroundColor: Colors.red.shade700,
       );
     }
   }
 
   // ==========================================================
+
   // CHANGE ACTIVE STATUS
+
   // ==========================================================
 
   Future<void> changeAdminStatus(
     DocumentSnapshot<Map<String, dynamic>> document,
     bool currentStatus,
   ) async {
-    try {
-      await _firestore.collection('Admin').doc(document.id).update({
-        'active': !currentStatus,
-      });
+    if (!currentStatus) {
+      try {
+        final User? currentUser = FirebaseAuth.instance.currentUser;
+        final String activatedBy =
+            currentUser?.email ?? currentUser?.uid ?? 'Super Admin';
+        await _firestore.collection('Admin').doc(document.id).update({
+          'active': true,
+          'reactivatedAt': FieldValue.serverTimestamp(),
+          'reactivatedBy': activatedBy,
+        });
+        if (!mounted) return;
+        showMessage(
+          'Admin activated successfully.',
+          backgroundColor: Colors.green.shade700,
+        );
+      } catch (e) {
+        if (!mounted) return;
+        showMessage(
+          'Unable to activate admin.',
+          backgroundColor: Colors.red.shade700,
+        );
+      }
+      return;
+    }
 
-      if (!mounted) return;
+    final TextEditingController reasonController = TextEditingController();
+    final String adminName =
+        document.data()?['name']?.toString() ?? 'this admin';
 
+    final bool? confirmed = await showDialog<bool>(
+      context: context,
+      barrierDismissible: false,
+      builder: (dialogContext) {
+        bool isSaving = false;
+        return StatefulBuilder(
+          builder: (dialogContext, setDialogState) {
+            return AlertDialog(
+              backgroundColor: Colors.white,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(24),
+              ),
+              titlePadding: const EdgeInsets.fromLTRB(24, 24, 24, 10),
+              contentPadding: const EdgeInsets.fromLTRB(24, 8, 24, 10),
+              actionsPadding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
+              title: Row(
+                children: [
+                  Container(
+                    width: 46,
+                    height: 46,
+                    decoration: BoxDecoration(
+                      color: Colors.orange.withOpacity(0.12),
+                      shape: BoxShape.circle,
+                    ),
+                    child: Icon(
+                      Icons.block_outlined,
+                      color: Colors.orange.shade700,
+                      size: 25,
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Text(
+                      'Deactivate Admin',
+                      style: GoogleFonts.poppins(
+                        fontSize: 18,
+                        fontWeight: FontWeight.w700,
+                        color: Colors.black87,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              content: SingleChildScrollView(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'You are about to deactivate $adminName.',
+                      style: GoogleFonts.poppins(
+                        fontSize: 13,
+                        color: Colors.black87,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      'Please provide a reason. The admin will be able to see this reason and contact the Super Admin.',
+                      style: GoogleFonts.poppins(
+                        fontSize: 12,
+                        color: Colors.grey.shade600,
+                        height: 1.5,
+                      ),
+                    ),
+                    const SizedBox(height: 18),
+                    Text(
+                      'Reason',
+                      style: GoogleFonts.poppins(
+                        fontSize: 13,
+                        fontWeight: FontWeight.w600,
+                        color: Colors.black87,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    TextField(
+                      controller: reasonController,
+                      maxLines: 4,
+                      maxLength: 500,
+                      textInputAction: TextInputAction.newline,
+                      enabled: !isSaving,
+                      decoration: InputDecoration(
+                        hintText: 'Enter the reason for deactivation...',
+                        hintStyle: GoogleFonts.poppins(
+                          fontSize: 12,
+                          color: Colors.grey.shade500,
+                        ),
+                        filled: true,
+                        fillColor: Colors.grey.shade100,
+                        prefixIcon: Padding(
+                          padding: const EdgeInsets.only(
+                            left: 12,
+                            right: 8,
+                            top: 12,
+                          ),
+                          child: Icon(
+                            Icons.edit_note_outlined,
+                            color: Colors.grey.shade600,
+                          ),
+                        ),
+                        prefixIconConstraints: const BoxConstraints(
+                          minWidth: 45,
+                          minHeight: 45,
+                        ),
+                        contentPadding: const EdgeInsets.all(14),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(14),
+                          borderSide: BorderSide.none,
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(14),
+                          borderSide: BorderSide(color: Colors.grey.shade200),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(14),
+                          borderSide: const BorderSide(
+                            color: Color(0xFFFFC107),
+                            width: 1.5,
+                          ),
+                        ),
+                      ),
+                      style: GoogleFonts.poppins(
+                        fontSize: 13,
+                        color: Colors.black87,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              actions: [
+                TextButton(
+                  onPressed: isSaving
+                      ? null
+                      : () => Navigator.of(dialogContext).pop(false),
+                  child: Text(
+                    'Cancel',
+                    style: GoogleFonts.poppins(
+                      color: Colors.grey.shade700,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
+                ElevatedButton(
+                  onPressed: isSaving
+                      ? null
+                      : () async {
+                          final String reason = reasonController.text.trim();
+                          if (reason.isEmpty) {
+                            ScaffoldMessenger.of(dialogContext).showSnackBar(
+                              SnackBar(
+                                content: Text(
+                                  'Please enter a reason for deactivation.',
+                                  style: GoogleFonts.poppins(
+                                    color: Colors.white,
+                                  ),
+                                ),
+                                backgroundColor: Colors.orange.shade700,
+                                behavior: SnackBarBehavior.floating,
+                              ),
+                            );
+                            return;
+                          }
+                          if (reason.length < 5) {
+                            ScaffoldMessenger.of(dialogContext).showSnackBar(
+                              SnackBar(
+                                content: Text(
+                                  'Please provide a more detailed reason.',
+                                  style: GoogleFonts.poppins(
+                                    color: Colors.white,
+                                  ),
+                                ),
+                                backgroundColor: Colors.orange.shade700,
+                                behavior: SnackBarBehavior.floating,
+                              ),
+                            );
+                            return;
+                          }
+                          setDialogState(() => isSaving = true);
+                          try {
+                            final User? currentUser =
+                                FirebaseAuth.instance.currentUser;
+                            final String deactivatedBy =
+                                currentUser?.email ??
+                                currentUser?.uid ??
+                                'Super Admin';
+                            await _firestore
+                                .collection('Admin')
+                                .doc(document.id)
+                                .update({
+                                  'active': false,
+                                  'deactivationReason': reason,
+                                  'deactivatedAt': FieldValue.serverTimestamp(),
+                                  'deactivatedBy': deactivatedBy,
+                                });
+                            if (!dialogContext.mounted) return;
+                            Navigator.of(dialogContext).pop(true);
+                          } catch (e) {
+                            setDialogState(() => isSaving = false);
+                            if (!dialogContext.mounted) return;
+                            ScaffoldMessenger.of(dialogContext).showSnackBar(
+                              SnackBar(
+                                content: Text(
+                                  'Unable to deactivate admin.',
+                                  style: GoogleFonts.poppins(
+                                    color: Colors.white,
+                                  ),
+                                ),
+                                backgroundColor: Colors.red.shade700,
+                                behavior: SnackBarBehavior.floating,
+                              ),
+                            );
+                          }
+                        },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.orange.shade700,
+                    foregroundColor: Colors.white,
+                    elevation: 0,
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 18,
+                      vertical: 12,
+                    ),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                  child: isSaving
+                      ? const SizedBox(
+                          width: 20,
+                          height: 20,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            color: Colors.white,
+                          ),
+                        )
+                      : Text(
+                          'Deactivate',
+                          style: GoogleFonts.poppins(
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                ),
+              ],
+            );
+          },
+        );
+      },
+    );
+
+    reasonController.dispose();
+
+    if (confirmed == true && mounted) {
       showMessage(
-        currentStatus ? 'Admin deactivated.' : 'Admin activated.',
-        backgroundColor: currentStatus
-            ? Colors.orange.shade700
-            : Colors.green.shade700,
-      );
-    } catch (e) {
-      if (!mounted) return;
-
-      showMessage(
-        'Unable to change admin status.',
-        backgroundColor: Colors.red.shade700,
+        'Admin deactivated successfully.',
+        backgroundColor: Colors.orange.shade700,
       );
     }
   }
-
   // ==========================================================
+
   // INPUT DECORATION
+
   // ==========================================================
 
   InputDecoration inputDecoration(String hint, IconData icon) {
     return InputDecoration(
       hintText: hint,
+
       hintStyle: GoogleFonts.poppins(fontSize: 13, color: Colors.grey),
+
       prefixIcon: Icon(icon, color: Colors.black54),
+
       filled: true,
+
       fillColor: Colors.grey.shade100,
+
       border: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12),
+
         borderSide: BorderSide.none,
       ),
+
       focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12),
+
         borderSide: const BorderSide(color: Color(0xFFFFC107), width: 1.5),
       ),
     );
   }
 
   // ==========================================================
+
   // PERMISSION CHIP
+
   // ==========================================================
 
   Widget permissionChip(String title, bool enabled) {
     return Container(
       margin: const EdgeInsets.only(right: 6, bottom: 6),
+
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+
       decoration: BoxDecoration(
         color: enabled
             ? Colors.green.withOpacity(0.10)
             : Colors.grey.withOpacity(0.10),
+
         borderRadius: BorderRadius.circular(20),
       ),
+
       child: Text(
         title,
+
         style: GoogleFonts.poppins(
           fontSize: 11,
+
           fontWeight: FontWeight.w600,
+
           color: enabled ? Colors.green.shade700 : Colors.grey.shade600,
         ),
       ),
@@ -247,7 +566,9 @@ class _ManageAdminState extends State<ManageAdmin> {
   }
 
   // ==========================================================
+
   // ADMIN CARD
+
   // ==========================================================
 
   Widget adminCard(DocumentSnapshot<Map<String, dynamic>> document) {
@@ -271,23 +592,31 @@ class _ManageAdminState extends State<ManageAdmin> {
 
     return Container(
       margin: const EdgeInsets.only(bottom: 15),
+
       padding: const EdgeInsets.all(16),
+
       decoration: BoxDecoration(
         color: Colors.white,
+
         borderRadius: BorderRadius.circular(20),
+
         border: Border.all(
           color: active
               ? Colors.green.withOpacity(0.20)
               : Colors.red.withOpacity(0.20),
         ),
+
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.06),
+
             blurRadius: 12,
+
             offset: const Offset(0, 5),
           ),
         ],
       ),
+
       child: Column(
         children: [
           Row(
@@ -295,16 +624,22 @@ class _ManageAdminState extends State<ManageAdmin> {
               // AVATAR
               Container(
                 width: 55,
+
                 height: 55,
+
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
+
                   color: active
                       ? const Color(0xFFFFC107)
                       : Colors.grey.shade300,
                 ),
+
                 child: const Icon(
                   Icons.person,
+
                   color: Colors.black87,
+
                   size: 30,
                 ),
               ),
@@ -315,30 +650,44 @@ class _ManageAdminState extends State<ManageAdmin> {
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
+
                   children: [
                     Text(
                       name,
+
                       maxLines: 1,
+
                       overflow: TextOverflow.ellipsis,
+
                       style: GoogleFonts.poppins(
                         fontSize: 16,
+
                         fontWeight: FontWeight.w700,
                       ),
                     ),
+
                     const SizedBox(height: 3),
+
                     Text(
                       'ID: $id',
+
                       style: GoogleFonts.poppins(
                         fontSize: 12,
+
                         color: Colors.grey.shade600,
                       ),
                     ),
+
                     Text(
                       email,
+
                       maxLines: 1,
+
                       overflow: TextOverflow.ellipsis,
+
                       style: GoogleFonts.poppins(
                         fontSize: 12,
+
                         color: Colors.grey.shade600,
                       ),
                     ),
@@ -350,19 +699,26 @@ class _ManageAdminState extends State<ManageAdmin> {
               Container(
                 padding: const EdgeInsets.symmetric(
                   horizontal: 10,
+
                   vertical: 6,
                 ),
+
                 decoration: BoxDecoration(
                   color: active
                       ? Colors.green.withOpacity(0.12)
                       : Colors.red.withOpacity(0.12),
+
                   borderRadius: BorderRadius.circular(20),
                 ),
+
                 child: Text(
                   active ? 'ACTIVE' : 'INACTIVE',
+
                   style: GoogleFonts.poppins(
                     fontSize: 9,
+
                     fontWeight: FontWeight.w700,
+
                     color: active ? Colors.green.shade700 : Colors.red.shade700,
                   ),
                 ),
@@ -375,11 +731,15 @@ class _ManageAdminState extends State<ManageAdmin> {
           // PERMISSIONS
           Align(
             alignment: Alignment.centerLeft,
+
             child: Wrap(
               children: [
                 permissionChip('Orders', canManageOrders),
+
                 permissionChip('Products', canManageProducts),
+
                 permissionChip('Users', canManageUsers),
+
                 permissionChip('Complaints', canViewComplaints),
               ],
             ),
@@ -395,11 +755,15 @@ class _ManageAdminState extends State<ManageAdmin> {
                   onPressed: () {
                     editPermissions(document);
                   },
+
                   icon: const Icon(Icons.edit_outlined, size: 18),
+
                   label: Text(
                     'Edit',
+
                     style: GoogleFonts.poppins(
                       fontSize: 11,
+
                       fontWeight: FontWeight.w600,
                     ),
                   ),
@@ -413,16 +777,23 @@ class _ManageAdminState extends State<ManageAdmin> {
                   onPressed: () {
                     changeAdminStatus(document, active);
                   },
+
                   icon: Icon(
                     active ? Icons.block_outlined : Icons.check_circle_outline,
+
                     size: 18,
+
                     color: active ? Colors.orange : Colors.green,
                   ),
+
                   label: Text(
                     active ? 'Deactivate' : 'Activate',
+
                     style: GoogleFonts.poppins(
                       fontSize: 10,
+
                       fontWeight: FontWeight.w600,
+
                       color: active
                           ? Colors.orange.shade700
                           : Colors.green.shade700,
@@ -438,16 +809,23 @@ class _ManageAdminState extends State<ManageAdmin> {
                   onPressed: () {
                     deleteAdmin(document);
                   },
+
                   icon: const Icon(
                     Icons.delete_outline,
+
                     size: 18,
+
                     color: Colors.red,
                   ),
+
                   label: Text(
                     'Delete',
+
                     style: GoogleFonts.poppins(
                       fontSize: 11,
+
                       fontWeight: FontWeight.w600,
+
                       color: Colors.red,
                     ),
                   ),
@@ -461,7 +839,9 @@ class _ManageAdminState extends State<ManageAdmin> {
   }
 
   // ==========================================================
+
   // BUILD
+
   // ==========================================================
 
   @override
@@ -471,13 +851,19 @@ class _ManageAdminState extends State<ManageAdmin> {
 
       appBar: AppBar(
         backgroundColor: const Color(0xFFFFC107),
+
         elevation: 0,
+
         centerTitle: true,
+
         title: Text(
           'Manage Admins',
+
           style: GoogleFonts.poppins(
             fontSize: 18,
+
             fontWeight: FontWeight.w700,
+
             color: Colors.black,
           ),
         ),
@@ -485,7 +871,9 @@ class _ManageAdminState extends State<ManageAdmin> {
 
       floatingActionButton: FloatingActionButton(
         onPressed: addAdmin,
+
         backgroundColor: Colors.black,
+
         child: const Icon(Icons.add, color: Colors.white),
       ),
 
@@ -494,22 +882,31 @@ class _ManageAdminState extends State<ManageAdmin> {
           // SEARCH AREA
           Container(
             width: double.infinity,
+
             color: const Color(0xFFFFC107),
+
             padding: const EdgeInsets.fromLTRB(20, 0, 20, 18),
+
             child: TextField(
               controller: searchController,
+
               onChanged: (value) {
                 setState(() {
                   searchText = value.trim().toLowerCase();
                 });
               },
+
               decoration: InputDecoration(
                 hintText: 'Search admins...',
+
                 hintStyle: GoogleFonts.poppins(
                   fontSize: 13,
+
                   color: Colors.grey.shade600,
                 ),
+
                 prefixIcon: const Icon(Icons.search, color: Colors.black54),
+
                 suffixIcon: searchText.isNotEmpty
                     ? IconButton(
                         onPressed: () {
@@ -519,13 +916,18 @@ class _ManageAdminState extends State<ManageAdmin> {
                             searchText = '';
                           });
                         },
+
                         icon: const Icon(Icons.clear),
                       )
                     : null,
+
                 filled: true,
+
                 fillColor: Colors.white,
+
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(15),
+
                   borderSide: BorderSide.none,
                 ),
               ),
@@ -542,11 +944,15 @@ class _ManageAdminState extends State<ManageAdmin> {
                   return Center(
                     child: Padding(
                       padding: const EdgeInsets.all(25),
+
                       child: Text(
                         'Error loading admins:\n${snapshot.error}',
+
                         textAlign: TextAlign.center,
+
                         style: GoogleFonts.poppins(
                           fontSize: 13,
+
                           color: Colors.red,
                         ),
                       ),
@@ -578,20 +984,28 @@ class _ManageAdminState extends State<ManageAdmin> {
                   return Center(
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
+
                       children: [
                         Icon(
                           Icons.people_outline,
+
                           size: 75,
+
                           color: Colors.grey.shade400,
                         ),
+
                         const SizedBox(height: 15),
+
                         Text(
                           searchText.isEmpty
                               ? 'No admins found'
                               : 'No matching admins',
+
                           style: GoogleFonts.poppins(
                             fontSize: 16,
+
                             fontWeight: FontWeight.w600,
+
                             color: Colors.grey.shade600,
                           ),
                         ),
@@ -602,7 +1016,9 @@ class _ManageAdminState extends State<ManageAdmin> {
 
                 return ListView.builder(
                   padding: const EdgeInsets.fromLTRB(16, 20, 16, 100),
+
                   itemCount: filteredDocuments.length,
+
                   itemBuilder: (context, index) {
                     return adminCard(filteredDocuments[index]);
                   },
@@ -617,7 +1033,9 @@ class _ManageAdminState extends State<ManageAdmin> {
 }
 
 // ============================================================================
+
 // ADD ADMIN DIALOG
+
 // ============================================================================
 
 class AddAdminDialog extends StatefulWidget {
@@ -655,36 +1073,52 @@ class _AddAdminDialogState extends State<AddAdminDialog> {
   @override
   void dispose() {
     nameController.dispose();
+
     idController.dispose();
+
     emailController.dispose();
+
     passwordController.dispose();
+
     super.dispose();
   }
 
   // ==========================================================
+
   // INPUT DECORATION
+
   // ==========================================================
 
   InputDecoration inputDecoration(String hint, IconData icon) {
     return InputDecoration(
       hintText: hint,
+
       hintStyle: GoogleFonts.poppins(fontSize: 13, color: Colors.grey),
+
       prefixIcon: Icon(icon, color: Colors.black54),
+
       filled: true,
+
       fillColor: Colors.grey.shade100,
+
       border: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12),
+
         borderSide: BorderSide.none,
       ),
+
       focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12),
+
         borderSide: const BorderSide(color: Color(0xFFFFC107), width: 1.5),
       ),
     );
   }
 
   // ==========================================================
+
   // SAVE ADMIN
+
   // ==========================================================
 
   Future<void> saveAdmin() async {
@@ -710,7 +1144,9 @@ class _AddAdminDialogState extends State<AddAdminDialog> {
 
     try {
       // ========================================================
+
       // CHECK DUPLICATE ID
+
       // ========================================================
 
       final QuerySnapshot<Map<String, dynamic>> idResult = await _firestore
@@ -734,7 +1170,9 @@ class _AddAdminDialogState extends State<AddAdminDialog> {
       }
 
       // ========================================================
+
       // CHECK DUPLICATE EMAIL
+
       // ========================================================
 
       final QuerySnapshot<Map<String, dynamic>> emailResult = await _firestore
@@ -758,30 +1196,49 @@ class _AddAdminDialogState extends State<AddAdminDialog> {
       }
 
       // ========================================================
+
       // CREATE ADMIN DOCUMENT
+
       // ========================================================
 
       await _firestore.collection('Admin').add({
         'name': name,
+
         'id': id,
+
         'email': email,
+
         'password': password,
+
         'role': 'admin',
+
         'active': active,
+
         'canManageOrders': canManageOrders,
+
         'canManageProducts': canManageProducts,
+
         'canManageUsers': canManageUsers,
+
         'canViewComplaints': canViewComplaints,
+
         'createdAt': FieldValue.serverTimestamp(),
       });
 
       // ========================================================
+
       // IMPORTANT
+
       //
+
       // We do NOT show a SnackBar here.
+
       // We do NOT call anything on the parent.
+
       //
+
       // We simply close this dialog.
+
       // ========================================================
 
       if (!mounted) return;
@@ -801,7 +1258,9 @@ class _AddAdminDialogState extends State<AddAdminDialog> {
   }
 
   // ==========================================================
+
   // BUILD
+
   // ==========================================================
 
   @override
@@ -811,25 +1270,33 @@ class _AddAdminDialogState extends State<AddAdminDialog> {
 
       title: Text(
         'Add Admin',
+
         style: GoogleFonts.poppins(fontSize: 20, fontWeight: FontWeight.w700),
       ),
 
       content: SizedBox(
         width: 500,
+
         child: SingleChildScrollView(
           child: Form(
             key: formKey,
+
             child: Column(
               mainAxisSize: MainAxisSize.min,
+
               children: [
                 // NAME
                 TextFormField(
                   controller: nameController,
+
                   enabled: !isSaving,
+
                   decoration: inputDecoration(
                     'Admin Name',
+
                     Icons.person_outline,
                   ),
+
                   validator: (value) {
                     if (value == null || value.trim().isEmpty) {
                       return 'Enter admin name';
@@ -844,8 +1311,11 @@ class _AddAdminDialogState extends State<AddAdminDialog> {
                 // ID
                 TextFormField(
                   controller: idController,
+
                   enabled: !isSaving,
+
                   decoration: inputDecoration('Admin ID', Icons.badge_outlined),
+
                   validator: (value) {
                     if (value == null || value.trim().isEmpty) {
                       return 'Enter admin ID';
@@ -860,9 +1330,13 @@ class _AddAdminDialogState extends State<AddAdminDialog> {
                 // EMAIL
                 TextFormField(
                   controller: emailController,
+
                   enabled: !isSaving,
+
                   keyboardType: TextInputType.emailAddress,
+
                   decoration: inputDecoration('Email', Icons.email_outlined),
+
                   validator: (value) {
                     if (value == null || value.trim().isEmpty) {
                       return 'Enter email';
@@ -881,9 +1355,13 @@ class _AddAdminDialogState extends State<AddAdminDialog> {
                 // PASSWORD
                 TextFormField(
                   controller: passwordController,
+
                   enabled: !isSaving,
+
                   obscureText: true,
+
                   decoration: inputDecoration('Password', Icons.lock_outline),
+
                   validator: (value) {
                     if (value == null || value.trim().isEmpty) {
                       return 'Enter password';
@@ -902,15 +1380,21 @@ class _AddAdminDialogState extends State<AddAdminDialog> {
                 // ACTIVE
                 SwitchListTile(
                   contentPadding: EdgeInsets.zero,
+
                   title: Text(
                     'Active',
+
                     style: GoogleFonts.poppins(
                       fontSize: 14,
+
                       fontWeight: FontWeight.w600,
                     ),
                   ),
+
                   value: active,
+
                   activeColor: Colors.green,
+
                   onChanged: isSaving
                       ? null
                       : (value) {
@@ -924,10 +1408,13 @@ class _AddAdminDialogState extends State<AddAdminDialog> {
 
                 Align(
                   alignment: Alignment.centerLeft,
+
                   child: Text(
                     'Permissions',
+
                     style: GoogleFonts.poppins(
                       fontSize: 15,
+
                       fontWeight: FontWeight.w700,
                     ),
                   ),
@@ -937,12 +1424,17 @@ class _AddAdminDialogState extends State<AddAdminDialog> {
 
                 CheckboxListTile(
                   contentPadding: EdgeInsets.zero,
+
                   title: Text(
                     'Manage Orders',
+
                     style: GoogleFonts.poppins(fontSize: 13),
                   ),
+
                   value: canManageOrders,
+
                   activeColor: Colors.black,
+
                   onChanged: isSaving
                       ? null
                       : (value) {
@@ -954,12 +1446,17 @@ class _AddAdminDialogState extends State<AddAdminDialog> {
 
                 CheckboxListTile(
                   contentPadding: EdgeInsets.zero,
+
                   title: Text(
                     'Manage Products',
+
                     style: GoogleFonts.poppins(fontSize: 13),
                   ),
+
                   value: canManageProducts,
+
                   activeColor: Colors.black,
+
                   onChanged: isSaving
                       ? null
                       : (value) {
@@ -971,12 +1468,17 @@ class _AddAdminDialogState extends State<AddAdminDialog> {
 
                 CheckboxListTile(
                   contentPadding: EdgeInsets.zero,
+
                   title: Text(
                     'Manage Users',
+
                     style: GoogleFonts.poppins(fontSize: 13),
                   ),
+
                   value: canManageUsers,
+
                   activeColor: Colors.black,
+
                   onChanged: isSaving
                       ? null
                       : (value) {
@@ -988,12 +1490,17 @@ class _AddAdminDialogState extends State<AddAdminDialog> {
 
                 CheckboxListTile(
                   contentPadding: EdgeInsets.zero,
+
                   title: Text(
                     'View Complaints',
+
                     style: GoogleFonts.poppins(fontSize: 13),
                   ),
+
                   value: canViewComplaints,
+
                   activeColor: Colors.black,
+
                   onChanged: isSaving
                       ? null
                       : (value) {
@@ -1015,10 +1522,13 @@ class _AddAdminDialogState extends State<AddAdminDialog> {
               : () {
                   Navigator.of(context).pop(false);
                 },
+
           child: Text(
             'Cancel',
+
             style: GoogleFonts.poppins(
               color: Colors.grey.shade700,
+
               fontWeight: FontWeight.w600,
             ),
           ),
@@ -1026,21 +1536,28 @@ class _AddAdminDialogState extends State<AddAdminDialog> {
 
         ElevatedButton(
           onPressed: isSaving ? null : saveAdmin,
+
           style: ElevatedButton.styleFrom(
             backgroundColor: Colors.black,
+
             foregroundColor: Colors.white,
           ),
+
           child: isSaving
               ? const SizedBox(
                   width: 20,
+
                   height: 20,
+
                   child: CircularProgressIndicator(
                     strokeWidth: 2,
+
                     color: Colors.white,
                   ),
                 )
               : Text(
                   'Add Admin',
+
                   style: GoogleFonts.poppins(fontWeight: FontWeight.w600),
                 ),
         ),
@@ -1050,16 +1567,21 @@ class _AddAdminDialogState extends State<AddAdminDialog> {
 }
 
 // ============================================================================
+
 // EDIT ADMIN DIALOG
+
 // ============================================================================
 
 class EditAdminDialog extends StatefulWidget {
   final String documentId;
+
   final Map<String, dynamic> data;
 
   const EditAdminDialog({
     super.key,
+
     required this.documentId,
+
     required this.data,
   });
 
@@ -1071,9 +1593,13 @@ class _EditAdminDialogState extends State<EditAdminDialog> {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   late bool active;
+
   late bool canManageOrders;
+
   late bool canManageProducts;
+
   late bool canManageUsers;
+
   late bool canViewComplaints;
 
   bool isSaving = false;
@@ -1094,7 +1620,9 @@ class _EditAdminDialogState extends State<EditAdminDialog> {
   }
 
   // ==========================================================
+
   // SAVE PERMISSIONS
+
   // ==========================================================
 
   Future<void> savePermissions() async {
@@ -1107,9 +1635,13 @@ class _EditAdminDialogState extends State<EditAdminDialog> {
     try {
       await _firestore.collection('Admin').doc(widget.documentId).update({
         'active': active,
+
         'canManageOrders': canManageOrders,
+
         'canManageProducts': canManageProducts,
+
         'canManageUsers': canManageUsers,
+
         'canViewComplaints': canViewComplaints,
       });
 
@@ -1136,24 +1668,32 @@ class _EditAdminDialogState extends State<EditAdminDialog> {
 
       title: Text(
         'Admin Permissions',
+
         style: GoogleFonts.poppins(fontSize: 19, fontWeight: FontWeight.w700),
       ),
 
       content: SingleChildScrollView(
         child: Column(
           mainAxisSize: MainAxisSize.min,
+
           children: [
             SwitchListTile(
               contentPadding: EdgeInsets.zero,
+
               title: Text(
                 'Active',
+
                 style: GoogleFonts.poppins(
                   fontSize: 14,
+
                   fontWeight: FontWeight.w600,
                 ),
               ),
+
               value: active,
+
               activeColor: Colors.green,
+
               onChanged: isSaving
                   ? null
                   : (value) {
@@ -1167,12 +1707,17 @@ class _EditAdminDialogState extends State<EditAdminDialog> {
 
             CheckboxListTile(
               contentPadding: EdgeInsets.zero,
+
               title: Text(
                 'Manage Orders',
+
                 style: GoogleFonts.poppins(fontSize: 13),
               ),
+
               value: canManageOrders,
+
               activeColor: Colors.black,
+
               onChanged: isSaving
                   ? null
                   : (value) {
@@ -1184,12 +1729,17 @@ class _EditAdminDialogState extends State<EditAdminDialog> {
 
             CheckboxListTile(
               contentPadding: EdgeInsets.zero,
+
               title: Text(
                 'Manage Products',
+
                 style: GoogleFonts.poppins(fontSize: 13),
               ),
+
               value: canManageProducts,
+
               activeColor: Colors.black,
+
               onChanged: isSaving
                   ? null
                   : (value) {
@@ -1201,12 +1751,17 @@ class _EditAdminDialogState extends State<EditAdminDialog> {
 
             CheckboxListTile(
               contentPadding: EdgeInsets.zero,
+
               title: Text(
                 'Manage Users',
+
                 style: GoogleFonts.poppins(fontSize: 13),
               ),
+
               value: canManageUsers,
+
               activeColor: Colors.black,
+
               onChanged: isSaving
                   ? null
                   : (value) {
@@ -1218,12 +1773,17 @@ class _EditAdminDialogState extends State<EditAdminDialog> {
 
             CheckboxListTile(
               contentPadding: EdgeInsets.zero,
+
               title: Text(
                 'View Complaints',
+
                 style: GoogleFonts.poppins(fontSize: 13),
               ),
+
               value: canViewComplaints,
+
               activeColor: Colors.black,
+
               onChanged: isSaving
                   ? null
                   : (value) {
@@ -1243,29 +1803,38 @@ class _EditAdminDialogState extends State<EditAdminDialog> {
               : () {
                   Navigator.of(context).pop(false);
                 },
+
           child: Text(
             'Cancel',
+
             style: GoogleFonts.poppins(color: Colors.grey.shade700),
           ),
         ),
 
         ElevatedButton(
           onPressed: isSaving ? null : savePermissions,
+
           style: ElevatedButton.styleFrom(
             backgroundColor: Colors.black,
+
             foregroundColor: Colors.white,
           ),
+
           child: isSaving
               ? const SizedBox(
                   width: 20,
+
                   height: 20,
+
                   child: CircularProgressIndicator(
                     strokeWidth: 2,
+
                     color: Colors.white,
                   ),
                 )
               : Text(
                   'Save',
+
                   style: GoogleFonts.poppins(fontWeight: FontWeight.w600),
                 ),
         ),
