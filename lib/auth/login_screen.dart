@@ -111,6 +111,10 @@ class _LoginScreenState extends State<LoginScreen>
   // LOGIN FUNCTION
   // ============================================================
 
+  // Future<void> getData() async {
+  //   // Close keyboard
+  //   FocusScope.of(context).unfocus();
+
   Future<void> loginData() async {
     if (!formKey.currentState!.validate()) {
       return;
@@ -208,6 +212,7 @@ class _LoginScreenState extends State<LoginScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       backgroundColor: Colors.amber.shade400,
       appBar: AppBar(
         toolbarHeight: 30,

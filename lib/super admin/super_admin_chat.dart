@@ -172,6 +172,146 @@ class _SuperAdminChatState extends State<SuperAdminChat> {
   }
 
   // ============================================================
+  // CONFIRM CLEAR CHAT
+  // ============================================================
+
+  Future<bool> confirmChatAction({
+    required String title,
+    required String message,
+    required String confirmText,
+  }) async {
+    final result = await showDialog<bool>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: Text(
+          title,
+          style: GoogleFonts.poppins(fontWeight: FontWeight.w600),
+        ),
+        content: Text(message, style: GoogleFonts.poppins(fontSize: 13)),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(dialogContext, false),
+            child: const Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(dialogContext, true),
+            child: Text(confirmText, style: const TextStyle(color: Colors.red)),
+          ),
+        ],
+      ),
+    );
+
+    return result == true;
+  }
+
+  // ============================================================
+  // DELETE ALL MESSAGES IN BATCHES
+  // ============================================================
+
+  Future<void> deleteAllMessages() async {
+    while (true) {
+      final snapshot = await messagesCollection.limit(400).get();
+
+      if (snapshot.docs.isEmpty) {
+        break;
+      }
+
+      final batch = _firestore.batch();
+
+      for (final doc in snapshot.docs) {
+        batch.delete(doc.reference);
+      }
+
+      await batch.commit();
+    }
+  }
+
+  // ============================================================
+  // CLEAR CHAT
+  // ============================================================
+
+  Future<void> clearChat() async {
+    if (!isConversation) return;
+
+    final confirmed = await confirmChatAction(
+      title: 'Clear Chat?',
+      message:
+          'This will permanently delete all messages in this conversation. '
+          'The chat itself will remain available.',
+      confirmText: 'Clear',
+    );
+
+    if (!confirmed || !mounted) return;
+
+    try {
+      await deleteAllMessages();
+
+      await _firestore
+          .collection('adminChats')
+          .doc(widget.adminDocumentId)
+          .set({
+            'lastMessage': '',
+            'lastMessageAt': null,
+            'lastMessageSender': '',
+            'updatedAt': FieldValue.serverTimestamp(),
+          }, SetOptions(merge: true));
+
+      if (!mounted) return;
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Chat cleared successfully.')),
+      );
+    } catch (e) {
+      if (!mounted) return;
+
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Unable to clear chat: $e')));
+    }
+  }
+
+  // ============================================================
+  // DELETE CHAT
+  // ============================================================
+
+  Future<void> deleteChat() async {
+    if (!isConversation) return;
+
+    final confirmed = await confirmChatAction(
+      title: 'Delete Chat?',
+      message:
+          'This will permanently delete this conversation and all its messages. '
+          'The admin can start a new conversation later.',
+      confirmText: 'Delete',
+    );
+
+    if (!confirmed || !mounted) return;
+
+    try {
+      await deleteAllMessages();
+
+      await _firestore
+          .collection('adminChats')
+          .doc(widget.adminDocumentId)
+          .delete();
+
+      if (!mounted) return;
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Chat deleted successfully.')),
+      );
+
+      Navigator.of(context).pop();
+    } catch (e) {
+      if (!mounted) return;
+
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Unable to delete chat: $e')));
+    }
+  }
+
+  // ============================================================
   // SCROLL TO BOTTOM
   // ============================================================
 
@@ -680,6 +820,41 @@ class _SuperAdminChatState extends State<SuperAdminChat> {
       appBar: AppBar(
         elevation: 0,
         backgroundColor: const Color(0xFFFECB04),
+
+        actions: [
+          PopupMenuButton<String>(
+            icon: const Icon(Icons.more_vert, color: Colors.black),
+            onSelected: (value) {
+              if (value == 'clear') {
+                clearChat();
+              } else if (value == 'delete') {
+                deleteChat();
+              }
+            },
+            itemBuilder: (context) => [
+              const PopupMenuItem<String>(
+                value: 'clear',
+                child: Row(
+                  children: [
+                    Icon(Icons.cleaning_services_outlined),
+                    SizedBox(width: 10),
+                    Text('Clear Chat'),
+                  ],
+                ),
+              ),
+              const PopupMenuItem<String>(
+                value: 'delete',
+                child: Row(
+                  children: [
+                    Icon(Icons.delete_outline, color: Colors.red),
+                    SizedBox(width: 10),
+                    Text('Delete Chat', style: TextStyle(color: Colors.red)),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ],
 
         title: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
