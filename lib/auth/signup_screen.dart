@@ -247,329 +247,350 @@ class _SignupScreenState extends State<SignupScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.amber.shade400,
+      backgroundColor: Colors.transparent,
 
-      body: SafeArea(
-        child: SingleChildScrollView(
-          padding: EdgeInsets.symmetric(horizontal: 5.w, vertical: 3.h),
+      body: Container(
+        height: double.infinity,
+        width: double.infinity,
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [
+              Colors.amber.shade50,
+              Colors.amber.shade200,
+              Colors.amber.shade400,
+            ],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+        ),
+        child: SafeArea(
+          child: SingleChildScrollView(
+            padding: EdgeInsets.symmetric(horizontal: 5.w, vertical: 3.h),
 
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
 
-            children: [
-              SizedBox(height: 2.h),
+              children: [
+                SizedBox(height: 2.h),
 
-              // ==================================================
-              // FOODIES LOGO
-              // ==================================================
-              animatedItem(
-                start: 0.00,
-                end: 0.20,
+                // ==================================================
+                // FOODIES LOGO
+                // ==================================================
+                animatedItem(
+                  start: 0.00,
+                  end: 0.20,
 
-                begin: const Offset(0, -0.25),
+                  begin: const Offset(0, -0.25),
 
-                child: Center(
-                  child: Image.asset(
-                    'assets/images/foodies_logo.png',
-                    width: 70.w,
-                    height: 14.h,
-                    fit: BoxFit.contain,
+                  child: Center(
+                    child: Image.asset(
+                      'assets/images/foodies_logo.png',
+                      width: 70.w,
+                      height: 14.h,
+                      fit: BoxFit.contain,
+                    ),
                   ),
                 ),
-              ),
 
-              SizedBox(height: 2.h),
+                SizedBox(height: 2.h),
 
-              // ==================================================
-              // REGISTER CARD
-              // ==================================================
-              Material(
-                elevation: 7,
+                // ==================================================
+                // REGISTER CARD
+                // ==================================================
+                Material(
+                  elevation: 7,
 
-                borderRadius: BorderRadius.circular(30),
+                  borderRadius: BorderRadius.circular(30),
 
-                child: Container(
-                  width: double.infinity,
+                  child: Container(
+                    width: double.infinity,
 
-                  padding: EdgeInsets.symmetric(vertical: 4.h, horizontal: 5.w),
+                    padding: EdgeInsets.symmetric(
+                      vertical: 4.h,
+                      horizontal: 5.w,
+                    ),
 
-                  decoration: BoxDecoration(
-                    color: Colors.white,
+                    decoration: BoxDecoration(
+                      color: Colors.white,
 
-                    borderRadius: BorderRadius.circular(30),
-                  ),
+                      borderRadius: BorderRadius.circular(30),
+                    ),
 
-                  child: Form(
-                    key: _formKey,
+                    child: Form(
+                      key: _formKey,
 
-                    child: Column(
-                      children: [
-                        // ==================================================
-                        // REGISTER TITLE
-                        // ==================================================
-                        animatedItem(
-                          start: 0.10,
-                          end: 0.30,
-
-                          child: Text(
-                            "Register Yourself",
-
-                            textAlign: TextAlign.center,
-
-                            style: GoogleFonts.poppins(
-                              fontSize: 20.sp,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.black,
-                            ),
-                          ),
-                        ),
-
-                        SizedBox(height: 3.h),
-
-                        // ==================================================
-                        // NAME
-                        // ==================================================
-                        animatedItem(
-                          start: 0.20,
-                          end: 0.40,
-
-                          begin: const Offset(0.25, 0),
-
-                          child: TextFormField(
-                            controller: nameController,
-
-                            decoration: buildDecoration(
-                              hintText: "Name",
-                              prefixIcon: Icons.person,
-                            ),
-
-                            textInputAction: TextInputAction.next,
-
-                            validator: (value) {
-                              if (value == null || value.trim().isEmpty) {
-                                return "Required Name here";
-                              }
-
-                              return null;
-                            },
-                          ),
-                        ),
-
-                        SizedBox(height: 2.h),
-
-                        // ==================================================
-                        // CONTACT
-                        // ==================================================
-                        animatedItem(
-                          start: 0.30,
-                          end: 0.50,
-
-                          begin: const Offset(-0.25, 0),
-
-                          child: TextFormField(
-                            controller: contactController,
-
-                            decoration: buildDecoration(
-                              hintText: "Contact",
-                              prefixIcon: Icons.numbers,
-                            ),
-
-                            textInputAction: TextInputAction.next,
-
-                            keyboardType: TextInputType.number,
-
-                            maxLength: 11,
-
-                            validator: (value) {
-                              if (value == null || value.trim().isEmpty) {
-                                return "Required Contact here";
-                              }
-
-                              return null;
-                            },
-                          ),
-                        ),
-
-                        SizedBox(height: 2.h),
-
-                        // ==================================================
-                        // EMAIL
-                        // ==================================================
-                        animatedItem(
-                          start: 0.40,
-                          end: 0.60,
-
-                          begin: const Offset(0.25, 0),
-
-                          child: TextFormField(
-                            controller: emailController,
-
-                            keyboardType: TextInputType.emailAddress,
-
-                            decoration: buildDecoration(
-                              hintText: "Email",
-                              prefixIcon: Icons.email_outlined,
-                            ),
-
-                            textInputAction: TextInputAction.next,
-
-                            validator: (value) {
-                              if (value == null || value.trim().isEmpty) {
-                                return "Required Email here";
-                              }
-
-                              return null;
-                            },
-                          ),
-                        ),
-
-                        SizedBox(height: 2.h),
-
-                        // ==================================================
-                        // PASSWORD
-                        // ==================================================
-                        animatedItem(
-                          start: 0.50,
-                          end: 0.70,
-
-                          begin: const Offset(-0.25, 0),
-
-                          child: TextFormField(
-                            controller: passwordController,
-
-                            obscureText: myObscureText,
-
-                            decoration: buildDecoration(
-                              hintText: "Password",
-
-                              prefixIcon: Icons.lock,
-
-                              suffixIcon: InkWell(
-                                onTap: () {
-                                  setState(() {
-                                    myObscureText = !myObscureText;
-                                  });
-                                },
-
-                                child: Icon(
-                                  myObscureText
-                                      ? Icons.visibility_off
-                                      : Icons.visibility,
-                                ),
-                              ),
-                            ),
-
-                            textInputAction: TextInputAction.done,
-
-                            validator: (value) {
-                              if (value == null || value.trim().isEmpty) {
-                                return "Required Password here";
-                              }
-
-                              return null;
-                            },
-
-                            onFieldSubmitted: (_) {
-                              registerData();
-                            },
-                          ),
-                        ),
-
-                        SizedBox(height: 4.h),
-
-                        // ==================================================
-                        // SIGN UP BUTTON
-                        // ==================================================
-                        animatedItem(
-                          start: 0.65,
-                          end: 0.82,
-
-                          begin: const Offset(0, 0.3),
-
-                          child: Container(
-                            width: double.infinity,
-                            height: 7.h,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(14),
-                              gradient: const LinearGradient(
-                                colors: [Color(0xFFFFD54F), Color(0xFFFFA000)],
-                                begin: Alignment.topLeft,
-                                end: Alignment.bottomRight,
-                              ),
-                            ),
-
-                            child: ElevatedButton(
-                              onPressed: isLoading ? null : registerData,
-
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.transparent,
-                                disabledBackgroundColor: Colors.transparent,
-                                shadowColor: Colors.transparent,
-                                elevation: 0,
-
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(20),
-                                ),
-                              ),
-
-                              child: isLoading
-                                  ? spinkit
-                                  : Text(
-                                      "Sign up",
-
-                                      style: GoogleFonts.poppins(
-                                        fontSize: 18.sp,
-                                        fontWeight: FontWeight.bold,
-                                        color: Colors.black,
-                                      ),
-                                    ),
-                            ),
-                          ),
-                        ),
-
-                        SizedBox(height: 3.h),
-
-                        // ==================================================
-                        // LOGIN LINK
-                        // ==================================================
-                        animatedItem(
-                          start: 0.78,
-                          end: 1.00,
-
-                          begin: const Offset(0, 0.2),
-
-                          child: GestureDetector(
-                            onTap: () {
-                              Navigator.push(
-                                context,
-
-                                MaterialPageRoute(
-                                  builder: (context) => const LoginScreen(),
-                                ),
-                              );
-                            },
+                      child: Column(
+                        children: [
+                          // ==================================================
+                          // REGISTER TITLE
+                          // ==================================================
+                          animatedItem(
+                            start: 0.10,
+                            end: 0.30,
 
                             child: Text(
-                              "Already have an Account?   Login",
+                              "Register Yourself",
 
                               textAlign: TextAlign.center,
 
                               style: GoogleFonts.poppins(
+                                fontSize: 20.sp,
                                 fontWeight: FontWeight.bold,
-                                fontSize: 16.sp,
                                 color: Colors.black,
                               ),
                             ),
                           ),
-                        ),
-                      ],
+
+                          SizedBox(height: 3.h),
+
+                          // ==================================================
+                          // NAME
+                          // ==================================================
+                          animatedItem(
+                            start: 0.20,
+                            end: 0.40,
+
+                            begin: const Offset(0.25, 0),
+
+                            child: TextFormField(
+                              controller: nameController,
+
+                              decoration: buildDecoration(
+                                hintText: "Name",
+                                prefixIcon: Icons.person,
+                              ),
+
+                              textInputAction: TextInputAction.next,
+
+                              validator: (value) {
+                                if (value == null || value.trim().isEmpty) {
+                                  return "Required Name here";
+                                }
+
+                                return null;
+                              },
+                            ),
+                          ),
+
+                          SizedBox(height: 2.h),
+
+                          // ==================================================
+                          // CONTACT
+                          // ==================================================
+                          animatedItem(
+                            start: 0.30,
+                            end: 0.50,
+
+                            begin: const Offset(-0.25, 0),
+
+                            child: TextFormField(
+                              controller: contactController,
+
+                              decoration: buildDecoration(
+                                hintText: "Contact",
+                                prefixIcon: Icons.numbers,
+                              ),
+
+                              textInputAction: TextInputAction.next,
+
+                              keyboardType: TextInputType.number,
+
+                              maxLength: 11,
+
+                              validator: (value) {
+                                if (value == null || value.trim().isEmpty) {
+                                  return "Required Contact here";
+                                }
+
+                                return null;
+                              },
+                            ),
+                          ),
+
+                          SizedBox(height: 2.h),
+
+                          // ==================================================
+                          // EMAIL
+                          // ==================================================
+                          animatedItem(
+                            start: 0.40,
+                            end: 0.60,
+
+                            begin: const Offset(0.25, 0),
+
+                            child: TextFormField(
+                              controller: emailController,
+
+                              keyboardType: TextInputType.emailAddress,
+
+                              decoration: buildDecoration(
+                                hintText: "Email",
+                                prefixIcon: Icons.email_outlined,
+                              ),
+
+                              textInputAction: TextInputAction.next,
+
+                              validator: (value) {
+                                if (value == null || value.trim().isEmpty) {
+                                  return "Required Email here";
+                                }
+
+                                return null;
+                              },
+                            ),
+                          ),
+
+                          SizedBox(height: 2.h),
+
+                          // ==================================================
+                          // PASSWORD
+                          // ==================================================
+                          animatedItem(
+                            start: 0.50,
+                            end: 0.70,
+
+                            begin: const Offset(-0.25, 0),
+
+                            child: TextFormField(
+                              controller: passwordController,
+
+                              obscureText: myObscureText,
+
+                              decoration: buildDecoration(
+                                hintText: "Password",
+
+                                prefixIcon: Icons.lock,
+
+                                suffixIcon: InkWell(
+                                  onTap: () {
+                                    setState(() {
+                                      myObscureText = !myObscureText;
+                                    });
+                                  },
+
+                                  child: Icon(
+                                    myObscureText
+                                        ? Icons.visibility_off
+                                        : Icons.visibility,
+                                  ),
+                                ),
+                              ),
+
+                              textInputAction: TextInputAction.done,
+
+                              validator: (value) {
+                                if (value == null || value.trim().isEmpty) {
+                                  return "Required Password here";
+                                }
+
+                                return null;
+                              },
+
+                              onFieldSubmitted: (_) {
+                                registerData();
+                              },
+                            ),
+                          ),
+
+                          SizedBox(height: 4.h),
+
+                          // ==================================================
+                          // SIGN UP BUTTON
+                          // ==================================================
+                          animatedItem(
+                            start: 0.65,
+                            end: 0.82,
+
+                            begin: const Offset(0, 0.3),
+
+                            child: Container(
+                              width: double.infinity,
+                              height: 7.h,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(14),
+                                gradient: LinearGradient(
+                                  colors: [
+                                    Colors.amber.shade200,
+                                    Colors.amber.shade400,
+                                  ],
+                                  begin: Alignment.bottomLeft,
+                                  end: Alignment.topRight,
+                                ),
+                              ),
+
+                              child: ElevatedButton(
+                                onPressed: isLoading ? null : registerData,
+
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors.transparent,
+                                  disabledBackgroundColor: Colors.transparent,
+                                  shadowColor: Colors.transparent,
+                                  elevation: 0,
+
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(20),
+                                  ),
+                                ),
+
+                                child: isLoading
+                                    ? spinkit
+                                    : Text(
+                                        "Sign up",
+
+                                        style: GoogleFonts.poppins(
+                                          fontSize: 18.sp,
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.black,
+                                        ),
+                                      ),
+                              ),
+                            ),
+                          ),
+
+                          SizedBox(height: 3.h),
+
+                          // ==================================================
+                          // LOGIN LINK
+                          // ==================================================
+                          animatedItem(
+                            start: 0.78,
+                            end: 1.00,
+
+                            begin: const Offset(0, 0.2),
+
+                            child: GestureDetector(
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+
+                                  MaterialPageRoute(
+                                    builder: (context) => const LoginScreen(),
+                                  ),
+                                );
+                              },
+
+                              child: Text(
+                                "Already have an Account?   Login",
+
+                                textAlign: TextAlign.center,
+
+                                style: GoogleFonts.poppins(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 16.sp,
+                                  color: Colors.black,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ),
-              ),
 
-              SizedBox(height: 3.h),
-            ],
+                SizedBox(height: 3.h),
+              ],
+            ),
           ),
         ),
       ),

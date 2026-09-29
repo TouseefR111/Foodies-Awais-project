@@ -323,387 +323,405 @@ class _SuperAdminLoginState extends State<SuperAdminLogin>
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: false,
-      backgroundColor: const Color(0xFFFECB04),
+      backgroundColor: Colors.transparent,
 
-      body: SafeArea(
-        child: Stack(
-          children: [
-            // ==================================================
-            // BACKGROUND
-            // ==================================================
-            Positioned(
-              top: -8.h,
-              right: -15.w,
-              child: Container(
-                width: 55.w,
-                height: 55.w,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: Colors.white.withOpacity(0.08),
-                ),
-              ),
-            ),
-
-            Positioned(
-              bottom: -10.h,
-              left: -20.w,
-              child: Container(
-                width: 65.w,
-                height: 65.w,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: Colors.white.withOpacity(0.08),
-                ),
-              ),
-            ),
-
-            // ==================================================
-            // MAIN CONTENT
-            // ==================================================
-            Center(
-              child: SingleChildScrollView(
-                physics: const BouncingScrollPhysics(),
-                child: Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 6.w, vertical: 3.h),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      // ==================================================
-                      // FOODIES LOGO
-                      // ==================================================
-                      animatedItem(
-                        start: 0.0,
-                        end: 0.35,
-                        child: Image.asset(
-                          'assets/images/foodies_logo.png',
-                          height: 13.h,
-                          fit: BoxFit.contain,
-                          errorBuilder: (context, error, stackTrace) {
-                            return Text(
-                              "FOODIES",
-                              style: GoogleFonts.poppins(
-                                fontSize: 28.sp,
-                                fontWeight: FontWeight.w800,
-                                color: Colors.black,
-                              ),
-                            );
-                          },
-                        ),
-                      ),
-
-                      SizedBox(height: 2.h),
-
-                      // ==================================================
-                      // SUPER ADMIN TITLE
-                      // ==================================================
-                      animatedItem(
-                        start: 0.15,
-                        end: 0.45,
-                        child: Text(
-                          "Super Admin",
-                          style: GoogleFonts.poppins(
-                            fontSize: 22.sp,
-                            fontWeight: FontWeight.w700,
-                            color: Colors.black,
-                          ),
-                        ),
-                      ),
-
-                      SizedBox(height: 0.5.h),
-
-                      animatedItem(
-                        start: 0.20,
-                        end: 0.50,
-                        child: Text(
-                          "Sign in to manage Foodies",
-                          style: GoogleFonts.poppins(
-                            fontSize: 14.sp,
-                            fontWeight: FontWeight.w400,
-                            color: Colors.black54,
-                          ),
-                        ),
-                      ),
-
-                      SizedBox(height: 3.h),
-
-                      // ==================================================
-                      // LOGIN CARD
-                      // ==================================================
-                      animatedItem(
-                        start: 0.30,
-                        end: 0.75,
-                        child: Container(
-                          width: double.infinity,
-                          padding: EdgeInsets.symmetric(
-                            horizontal: 5.w,
-                            vertical: 3.h,
-                          ),
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(25),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black.withOpacity(0.15),
-                                blurRadius: 20,
-                                offset: const Offset(0, 10),
-                              ),
-                            ],
-                          ),
-                          child: Column(
-                            children: [
-                              // ==================================================
-                              // EMAIL
-                              // ==================================================
-                              Align(
-                                alignment: Alignment.centerLeft,
-                                child: Text(
-                                  "Email",
-                                  style: GoogleFonts.poppins(
-                                    fontSize: 16.sp,
-                                    fontWeight: FontWeight.w600,
-                                    color: Colors.black87,
-                                  ),
-                                ),
-                              ),
-
-                              SizedBox(height: 0.8.h),
-
-                              TextField(
-                                controller: emailController,
-                                keyboardType: TextInputType.emailAddress,
-                                textInputAction: TextInputAction.next,
-                                autocorrect: false,
-                                decoration: InputDecoration(
-                                  hintText: "Enter Super Admin email",
-                                  hintStyle: GoogleFonts.poppins(
-                                    fontSize: 14.sp,
-                                    color: Colors.grey,
-                                  ),
-                                  prefixIcon: const Icon(
-                                    Icons.email_outlined,
-                                    color: Colors.black54,
-                                    size: 23,
-                                  ),
-                                  filled: true,
-                                  fillColor: Colors.grey.shade100,
-                                  border: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(15),
-                                    borderSide: BorderSide.none,
-                                  ),
-                                  focusedBorder: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(15),
-                                    borderSide: const BorderSide(
-                                      color: Color(0xFFFFC107),
-                                      width: 1.5,
-                                    ),
-                                  ),
-                                ),
-                              ),
-
-                              SizedBox(height: 2.h),
-
-                              // ==================================================
-                              // PASSWORD
-                              // ==================================================
-                              Align(
-                                alignment: Alignment.centerLeft,
-                                child: Text(
-                                  "Password",
-                                  style: GoogleFonts.poppins(
-                                    fontSize: 16.sp,
-                                    fontWeight: FontWeight.w600,
-                                    color: Colors.black87,
-                                  ),
-                                ),
-                              ),
-
-                              SizedBox(height: 0.8.h),
-
-                              TextField(
-                                controller: passwordController,
-                                obscureText: obscurePassword,
-                                textInputAction: TextInputAction.done,
-                                onSubmitted: (_) {
-                                  if (!isLoad) {
-                                    loginSuperAdmin();
-                                  }
-                                },
-                                decoration: InputDecoration(
-                                  hintText: "Enter password",
-                                  hintStyle: GoogleFonts.poppins(
-                                    fontSize: 14.sp,
-                                    color: Colors.grey,
-                                  ),
-                                  prefixIcon: const Icon(
-                                    Icons.lock_outline,
-                                    color: Colors.black54,
-                                  ),
-                                  suffixIcon: IconButton(
-                                    onPressed: () {
-                                      setState(() {
-                                        obscurePassword = !obscurePassword;
-                                      });
-                                    },
-                                    icon: Icon(
-                                      obscurePassword
-                                          ? Icons.visibility_off_outlined
-                                          : Icons.visibility_outlined,
-                                      color: Colors.black54,
-                                    ),
-                                  ),
-                                  filled: true,
-                                  fillColor: Colors.grey.shade100,
-                                  border: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(15),
-                                    borderSide: BorderSide.none,
-                                  ),
-                                  focusedBorder: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(15),
-                                    borderSide: const BorderSide(
-                                      color: Color(0xFFFFC107),
-                                      width: 1.5,
-                                    ),
-                                  ),
-                                ),
-                              ),
-
-                              SizedBox(height: 3.h),
-
-                              // ==================================================
-                              // LOGIN BUTTON
-                              // ==================================================
-                              Container(
-                                width: double.infinity,
-                                height: 7.h,
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(14),
-                                  gradient: const LinearGradient(
-                                    colors: [
-                                      Color(0xFFFFD54F),
-                                      Color(0xFFFFA000),
-                                    ],
-                                    begin: Alignment.topLeft,
-                                    end: Alignment.bottomRight,
-                                  ),
-                                ),
-                                child: ElevatedButton(
-                                  onPressed: isLoad ? null : loginSuperAdmin,
-                                  style: ElevatedButton.styleFrom(
-                                    backgroundColor: Colors.transparent,
-                                    disabledBackgroundColor: Colors.transparent,
-                                    shadowColor: Colors.transparent,
-                                    elevation: 0,
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(15),
-                                    ),
-                                  ),
-                                  child: isLoad
-                                      ? const SpinKitThreeBounce(
-                                          color: Colors.white,
-                                          size: 20,
-                                        )
-                                      : Text(
-                                          "LOGIN",
-                                          style: GoogleFonts.poppins(
-                                            fontSize: 18.sp,
-                                            fontWeight: FontWeight.w700,
-                                            color: Colors.black,
-                                            letterSpacing: 1,
-                                          ),
-                                        ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                      SizedBox(height: 2.h),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-
-                        children: [
-                          Text(
-                            "Not an admin? ",
-
-                            style: GoogleFonts.poppins(
-                              fontSize: 14.sp,
-                              color: Colors.black87,
-                            ),
-                          ),
-
-                          GestureDetector(
-                            onTap: () {
-                              Navigator.push(
-                                context,
-
-                                MaterialPageRoute(
-                                  builder: (context) => const WelcomeScreen(),
-                                ),
-                              );
-                            },
-
-                            child: Text(
-                              "Go back to Navigation Screen",
-
-                              style: GoogleFonts.poppins(
-                                fontSize: 14.sp,
-                                fontWeight: FontWeight.bold,
-                                decoration: TextDecoration.underline,
-                                color: Colors.black,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-
-                      SizedBox(height: 1.h),
-
-                      // ==================================================
-                      // BOTTOM IMAGE
-                      // ==================================================
-                      animatedItem(
-                        start: 0.55,
-                        end: 1.0,
-                        child: Image.asset(
-                          'assets/images/login.png',
-                          // height: 20.h,
-                          fit: BoxFit.cover,
-                          errorBuilder: (context, error, stackTrace) {
-                            return const SizedBox.shrink();
-                          },
-                        ),
-                      ),
-
-                      SizedBox(height: 1.h),
-
-                      // animatedItem(
-                      //   start: 0.70,
-                      //   end: 1.0,
-                      //   child: Text(
-                      //     "Foodies • Super Admin Portal",
-                      //     style: GoogleFonts.poppins(
-                      //       fontSize: 14.sp,
-                      //       color: Colors.black54,
-                      //       fontWeight: FontWeight.w500,
-                      //     ),
-                      //   ),
-                      // ),
-                    ],
+      body: Container(
+        height: double.infinity,
+        width: double.infinity,
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [
+              Colors.amber.shade50,
+              Colors.amber.shade200,
+              Colors.amber.shade400,
+            ],
+          ),
+        ),
+        child: SafeArea(
+          child: Stack(
+            children: [
+              // ==================================================
+              // BACKGROUND
+              // ==================================================
+              Positioned(
+                top: -8.h,
+                right: -15.w,
+                child: Container(
+                  width: 55.w,
+                  height: 55.w,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: Colors.white.withOpacity(0.08),
                   ),
                 ),
               ),
-            ),
 
-            // ==================================================
-            // LOADING OVERLAY
-            // ==================================================
-            if (isLoad)
-              Positioned.fill(
-                child: IgnorePointer(
-                  child: Container(color: Colors.black.withOpacity(0.08)),
+              Positioned(
+                bottom: -10.h,
+                left: -20.w,
+                child: Container(
+                  width: 65.w,
+                  height: 65.w,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: Colors.white.withOpacity(0.08),
+                  ),
                 ),
               ),
-          ],
+
+              // ==================================================
+              // MAIN CONTENT
+              // ==================================================
+              Center(
+                child: SingleChildScrollView(
+                  physics: const BouncingScrollPhysics(),
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: 6.w,
+                      vertical: 3.h,
+                    ),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        // ==================================================
+                        // FOODIES LOGO
+                        // ==================================================
+                        animatedItem(
+                          start: 0.0,
+                          end: 0.35,
+                          child: Image.asset(
+                            'assets/images/foodies_logo.png',
+                            height: 13.h,
+                            fit: BoxFit.contain,
+                            errorBuilder: (context, error, stackTrace) {
+                              return Text(
+                                "FOODIES",
+                                style: GoogleFonts.poppins(
+                                  fontSize: 28.sp,
+                                  fontWeight: FontWeight.w800,
+                                  color: Colors.black,
+                                ),
+                              );
+                            },
+                          ),
+                        ),
+
+                        SizedBox(height: 2.h),
+
+                        // ==================================================
+                        // SUPER ADMIN TITLE
+                        // ==================================================
+                        animatedItem(
+                          start: 0.15,
+                          end: 0.45,
+                          child: Text(
+                            "Super Admin",
+                            style: GoogleFonts.poppins(
+                              fontSize: 22.sp,
+                              fontWeight: FontWeight.w700,
+                              color: Colors.black,
+                            ),
+                          ),
+                        ),
+
+                        SizedBox(height: 0.5.h),
+
+                        animatedItem(
+                          start: 0.20,
+                          end: 0.50,
+                          child: Text(
+                            "Sign in to manage Foodies",
+                            style: GoogleFonts.poppins(
+                              fontSize: 14.sp,
+                              fontWeight: FontWeight.w400,
+                              color: Colors.black54,
+                            ),
+                          ),
+                        ),
+
+                        SizedBox(height: 3.h),
+
+                        // ==================================================
+                        // LOGIN CARD
+                        // ==================================================
+                        animatedItem(
+                          start: 0.30,
+                          end: 0.75,
+                          child: Container(
+                            width: double.infinity,
+                            padding: EdgeInsets.symmetric(
+                              horizontal: 5.w,
+                              vertical: 3.h,
+                            ),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(25),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black.withOpacity(0.15),
+                                  blurRadius: 20,
+                                  offset: const Offset(0, 10),
+                                ),
+                              ],
+                            ),
+                            child: Column(
+                              children: [
+                                // ==================================================
+                                // EMAIL
+                                // ==================================================
+                                Align(
+                                  alignment: Alignment.centerLeft,
+                                  child: Text(
+                                    "Email",
+                                    style: GoogleFonts.poppins(
+                                      fontSize: 16.sp,
+                                      fontWeight: FontWeight.w600,
+                                      color: Colors.black87,
+                                    ),
+                                  ),
+                                ),
+
+                                SizedBox(height: 0.8.h),
+
+                                TextField(
+                                  controller: emailController,
+                                  keyboardType: TextInputType.emailAddress,
+                                  textInputAction: TextInputAction.next,
+                                  autocorrect: false,
+                                  decoration: InputDecoration(
+                                    hintText: "Enter Super Admin email",
+                                    hintStyle: GoogleFonts.poppins(
+                                      fontSize: 14.sp,
+                                      color: Colors.grey,
+                                    ),
+                                    prefixIcon: const Icon(
+                                      Icons.email_outlined,
+                                      color: Colors.black54,
+                                      size: 23,
+                                    ),
+                                    filled: true,
+                                    fillColor: Colors.grey.shade100,
+                                    border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(15),
+                                      borderSide: BorderSide.none,
+                                    ),
+                                    focusedBorder: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(15),
+                                      borderSide: const BorderSide(
+                                        color: Color(0xFFFFC107),
+                                        width: 1.5,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+
+                                SizedBox(height: 2.h),
+
+                                // ==================================================
+                                // PASSWORD
+                                // ==================================================
+                                Align(
+                                  alignment: Alignment.centerLeft,
+                                  child: Text(
+                                    "Password",
+                                    style: GoogleFonts.poppins(
+                                      fontSize: 16.sp,
+                                      fontWeight: FontWeight.w600,
+                                      color: Colors.black87,
+                                    ),
+                                  ),
+                                ),
+
+                                SizedBox(height: 0.8.h),
+
+                                TextField(
+                                  controller: passwordController,
+                                  obscureText: obscurePassword,
+                                  textInputAction: TextInputAction.done,
+                                  onSubmitted: (_) {
+                                    if (!isLoad) {
+                                      loginSuperAdmin();
+                                    }
+                                  },
+                                  decoration: InputDecoration(
+                                    hintText: "Enter password",
+                                    hintStyle: GoogleFonts.poppins(
+                                      fontSize: 14.sp,
+                                      color: Colors.grey,
+                                    ),
+                                    prefixIcon: const Icon(
+                                      Icons.lock_outline,
+                                      color: Colors.black54,
+                                    ),
+                                    suffixIcon: IconButton(
+                                      onPressed: () {
+                                        setState(() {
+                                          obscurePassword = !obscurePassword;
+                                        });
+                                      },
+                                      icon: Icon(
+                                        obscurePassword
+                                            ? Icons.visibility_off_outlined
+                                            : Icons.visibility_outlined,
+                                        color: Colors.black54,
+                                      ),
+                                    ),
+                                    filled: true,
+                                    fillColor: Colors.grey.shade100,
+                                    border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(15),
+                                      borderSide: BorderSide.none,
+                                    ),
+                                    focusedBorder: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(15),
+                                      borderSide: const BorderSide(
+                                        color: Color(0xFFFFC107),
+                                        width: 1.5,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+
+                                SizedBox(height: 3.h),
+
+                                // ==================================================
+                                // LOGIN BUTTON
+                                // ==================================================
+                                Container(
+                                  width: double.infinity,
+                                  height: 7.h,
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(14),
+                                    gradient: LinearGradient(
+                                      colors: [
+                                        // Colors.amber.shade50,
+                                        Colors.amber.shade200,
+                                        Colors.amber.shade400,
+                                      ],
+                                      begin: Alignment.topLeft,
+                                      end: Alignment.bottomRight,
+                                    ),
+                                  ),
+                                  child: ElevatedButton(
+                                    onPressed: isLoad ? null : loginSuperAdmin,
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: Colors.transparent,
+                                      disabledBackgroundColor:
+                                          Colors.transparent,
+                                      shadowColor: Colors.transparent,
+                                      elevation: 0,
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(15),
+                                      ),
+                                    ),
+                                    child: isLoad
+                                        ? const SpinKitThreeBounce(
+                                            color: Colors.white,
+                                            size: 20,
+                                          )
+                                        : Text(
+                                            "LOGIN",
+                                            style: GoogleFonts.poppins(
+                                              fontSize: 18.sp,
+                                              fontWeight: FontWeight.w700,
+                                              color: Colors.black,
+                                              letterSpacing: 1,
+                                            ),
+                                          ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                        SizedBox(height: 2.h),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+
+                          children: [
+                            Text(
+                              "Not an admin? ",
+
+                              style: GoogleFonts.poppins(
+                                fontSize: 14.sp,
+                                color: Colors.black87,
+                              ),
+                            ),
+
+                            GestureDetector(
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+
+                                  MaterialPageRoute(
+                                    builder: (context) => const WelcomeScreen(),
+                                  ),
+                                );
+                              },
+
+                              child: Text(
+                                "Go back to Navigation Screen",
+
+                                style: GoogleFonts.poppins(
+                                  fontSize: 14.sp,
+                                  fontWeight: FontWeight.bold,
+                                  decoration: TextDecoration.underline,
+                                  color: Colors.black,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+
+                        SizedBox(height: 1.h),
+
+                        // ==================================================
+                        // BOTTOM IMAGE
+                        // ==================================================
+                        animatedItem(
+                          start: 0.55,
+                          end: 1.0,
+                          child: Image.asset(
+                            'assets/images/login.png',
+                            // height: 20.h,
+                            fit: BoxFit.cover,
+                            errorBuilder: (context, error, stackTrace) {
+                              return const SizedBox.shrink();
+                            },
+                          ),
+                        ),
+
+                        SizedBox(height: 1.h),
+
+                        // animatedItem(
+                        //   start: 0.70,
+                        //   end: 1.0,
+                        //   child: Text(
+                        //     "Foodies • Super Admin Portal",
+                        //     style: GoogleFonts.poppins(
+                        //       fontSize: 14.sp,
+                        //       color: Colors.black54,
+                        //       fontWeight: FontWeight.w500,
+                        //     ),
+                        //   ),
+                        // ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+
+              // ==================================================
+              // LOADING OVERLAY
+              // ==================================================
+              if (isLoad)
+                Positioned.fill(
+                  child: IgnorePointer(
+                    child: Container(color: Colors.black.withOpacity(0.08)),
+                  ),
+                ),
+            ],
+          ),
         ),
       ),
     );

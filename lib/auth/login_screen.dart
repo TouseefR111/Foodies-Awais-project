@@ -213,10 +213,11 @@ class _LoginScreenState extends State<LoginScreen>
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: false,
-      backgroundColor: Colors.amber.shade400,
+      backgroundColor: Colors.transparent,
+      extendBodyBehindAppBar: true,
       appBar: AppBar(
         toolbarHeight: 30,
-        backgroundColor: Colors.amber.shade400,
+        backgroundColor: Colors.transparent,
         elevation: 0,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: Colors.black),
@@ -229,312 +230,329 @@ class _LoginScreenState extends State<LoginScreen>
         ),
       ),
 
-      body: SafeArea(
-        child: Center(
-          child: SingleChildScrollView(
-            padding: EdgeInsets.symmetric(horizontal: 6.w, vertical: 3.h),
+      body: Container(
+        height: double.infinity,
+        width: double.infinity,
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [
+              Colors.amber.shade50,
+              Colors.amber.shade200,
+              Colors.amber.shade400,
+            ],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+        ),
+        child: SafeArea(
+          child: Center(
+            child: SingleChildScrollView(
+              padding: EdgeInsets.symmetric(horizontal: 6.w, vertical: 3.h),
 
-            child: ConstrainedBox(
-              constraints: const BoxConstraints(maxWidth: 600),
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(maxWidth: 600),
 
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  SizedBox(height: 2.h),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    SizedBox(height: 2.h),
 
-                  // ==================================================
-                  // FOODIES LOGO
-                  // ==================================================
-                  animatedItem(
-                    start: 0.00,
-                    end: 0.25,
-                    begin: const Offset(0, -0.25),
+                    // ==================================================
+                    // FOODIES LOGO
+                    // ==================================================
+                    animatedItem(
+                      start: 0.00,
+                      end: 0.25,
+                      begin: const Offset(0, -0.25),
 
-                    child: Center(
-                      child: Image.asset(
-                        'assets/images/foodies_logo.png',
-                        width: 70.w,
-                        height: 14.h,
-                        fit: BoxFit.contain,
-                      ),
-                    ),
-                  ),
-
-                  SizedBox(height: 2.h),
-
-                  // ==================================================
-                  // LOGIN CARD
-                  // ==================================================
-                  Material(
-                    elevation: 6,
-                    borderRadius: BorderRadius.circular(20),
-
-                    child: Container(
-                      width: double.infinity,
-
-                      padding: EdgeInsets.symmetric(
-                        vertical: 3.h,
-                        horizontal: 5.w,
-                      ),
-
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-
-                      child: Form(
-                        key: formKey,
-
-                        child: Column(
-                          children: [
-                            // ==================================================
-                            // LOGIN TITLE
-                            // ==================================================
-                            animatedItem(
-                              start: 0.15,
-                              end: 0.35,
-
-                              child: Text(
-                                "Log In",
-
-                                style: GoogleFonts.poppins(
-                                  fontSize: 20.sp,
-                                  fontWeight: FontWeight.w700,
-                                  color: Colors.black,
-                                ),
-                              ),
-                            ),
-
-                            SizedBox(height: 2.h),
-
-                            // ==================================================
-                            // EMAIL FIELD
-                            // ==================================================
-                            animatedItem(
-                              start: 0.25,
-                              end: 0.45,
-                              begin: const Offset(0.25, 0),
-
-                              child: TextFormField(
-                                controller: emailController,
-
-                                keyboardType: TextInputType.emailAddress,
-
-                                textInputAction: TextInputAction.next,
-
-                                decoration: _inputDecoration(
-                                  hint: "Email",
-                                  icon: Icons.email_outlined,
-                                ),
-
-                                validator: (v) {
-                                  if (v == null || v.trim().isEmpty) {
-                                    return "Email is required";
-                                  }
-
-                                  final email = v.trim();
-
-                                  final emailRegex = RegExp(
-                                    r"^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$",
-                                  );
-
-                                  if (!emailRegex.hasMatch(email)) {
-                                    return "Enter a valid email";
-                                  }
-
-                                  return null;
-                                },
-                              ),
-                            ),
-
-                            SizedBox(height: 2.h),
-
-                            // ==================================================
-                            // PASSWORD FIELD
-                            // ==================================================
-                            animatedItem(
-                              start: 0.35,
-                              end: 0.55,
-                              begin: const Offset(-0.25, 0),
-
-                              child: TextFormField(
-                                controller: passwordController,
-
-                                obscureText: obscureText,
-
-                                textInputAction: TextInputAction.done,
-
-                                decoration: _inputDecoration(
-                                  hint: "Password",
-                                  icon: Icons.lock_outline,
-
-                                  suffix: InkWell(
-                                    onTap: () {
-                                      setState(() {
-                                        obscureText = !obscureText;
-                                      });
-                                    },
-
-                                    child: Padding(
-                                      padding: EdgeInsets.all(0.8.w),
-
-                                      child: Icon(
-                                        obscureText
-                                            ? Icons.visibility_off
-                                            : Icons.visibility,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-
-                                validator: (v) {
-                                  if (v == null || v.trim().isEmpty) {
-                                    return "Password is required";
-                                  }
-
-                                  if (v.trim().length < 6) {
-                                    return "Password must be at least 6 characters";
-                                  }
-
-                                  return null;
-                                },
-
-                                onFieldSubmitted: (_) {
-                                  loginData();
-                                },
-                              ),
-                            ),
-
-                            SizedBox(height: 3.h),
-
-                            // ==================================================
-                            // LOGIN BUTTON
-                            // ==================================================
-                            animatedItem(
-                              start: 0.50,
-                              end: 0.70,
-
-                              child: Container(
-                                width: double.infinity,
-                                height: 7.h,
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(14),
-                                  gradient: const LinearGradient(
-                                    colors: [
-                                      Color(0xFFFFD54F),
-                                      Color(0xFFFFA000),
-                                    ],
-                                    begin: Alignment.topLeft,
-                                    end: Alignment.bottomRight,
-                                  ),
-                                ),
-
-                                child: ElevatedButton(
-                                  onPressed: isLoad ? null : loginData,
-
-                                  style: ElevatedButton.styleFrom(
-                                    backgroundColor: Colors.transparent,
-                                    disabledBackgroundColor: Colors.transparent,
-                                    shadowColor: Colors.transparent,
-                                    elevation: 0,
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(14),
-                                    ),
-                                  ),
-
-                                  child: isLoad
-                                      ? spinkit
-                                      : Text(
-                                          "Log in",
-
-                                          style: GoogleFonts.poppins(
-                                            fontSize: 18.sp,
-                                            fontWeight: FontWeight.bold,
-                                            color: Colors.black87,
-                                          ),
-                                        ),
-                                ),
-                              ),
-                            ),
-
-                            SizedBox(height: 2.h),
-
-                            // ==================================================
-                            // SIGN UP
-                            // ==================================================
-                            animatedItem(
-                              start: 0.65,
-                              end: 0.85,
-
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-
-                                children: [
-                                  Text(
-                                    "Don't have an account? ",
-
-                                    style: GoogleFonts.poppins(
-                                      fontSize: 16.sp,
-                                      color: Colors.black87,
-                                    ),
-                                  ),
-
-                                  GestureDetector(
-                                    onTap: () {
-                                      Navigator.push(
-                                        context,
-
-                                        MaterialPageRoute(
-                                          builder: (context) =>
-                                              const SignupScreen(),
-                                        ),
-                                      );
-                                    },
-
-                                    child: Text(
-                                      "Sign up",
-
-                                      style: GoogleFonts.poppins(
-                                        fontSize: 16.sp,
-                                        fontWeight: FontWeight.bold,
-                                        decoration: TextDecoration.underline,
-                                        color: Colors.black,
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ],
+                      child: Center(
+                        child: Image.asset(
+                          'assets/images/foodies_logo.png',
+                          width: 70.w,
+                          height: 14.h,
+                          fit: BoxFit.contain,
                         ),
                       ),
                     ),
-                  ),
 
-                  SizedBox(height: 2.h),
+                    SizedBox(height: 2.h),
 
-                  // ==================================================
-                  // FOOD IMAGE
-                  // ==================================================
-                  animatedItem(
-                    start: 0.75,
-                    end: 1.00,
-                    begin: const Offset(0, 0.25),
+                    // ==================================================
+                    // LOGIN CARD
+                    // ==================================================
+                    Material(
+                      elevation: 6,
+                      borderRadius: BorderRadius.circular(20),
 
-                    child: SizedBox(
-                      width: double.infinity,
-                      height: 28.h,
+                      child: Container(
+                        width: double.infinity,
 
-                      child: Image.asset(
-                        'assets/images/login.png',
-                        fit: BoxFit.cover,
-                        alignment: Alignment.bottomCenter,
+                        padding: EdgeInsets.symmetric(
+                          vertical: 3.h,
+                          horizontal: 5.w,
+                        ),
+
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+
+                        child: Form(
+                          key: formKey,
+
+                          child: Column(
+                            children: [
+                              // ==================================================
+                              // LOGIN TITLE
+                              // ==================================================
+                              animatedItem(
+                                start: 0.15,
+                                end: 0.35,
+
+                                child: Text(
+                                  "Log In",
+
+                                  style: GoogleFonts.poppins(
+                                    fontSize: 20.sp,
+                                    fontWeight: FontWeight.w700,
+                                    color: Colors.black,
+                                  ),
+                                ),
+                              ),
+
+                              SizedBox(height: 2.h),
+
+                              // ==================================================
+                              // EMAIL FIELD
+                              // ==================================================
+                              animatedItem(
+                                start: 0.25,
+                                end: 0.45,
+                                begin: const Offset(0.25, 0),
+
+                                child: TextFormField(
+                                  controller: emailController,
+
+                                  keyboardType: TextInputType.emailAddress,
+
+                                  textInputAction: TextInputAction.next,
+
+                                  decoration: _inputDecoration(
+                                    hint: "Email",
+                                    icon: Icons.email_outlined,
+                                  ),
+
+                                  validator: (v) {
+                                    if (v == null || v.trim().isEmpty) {
+                                      return "Email is required";
+                                    }
+
+                                    final email = v.trim();
+
+                                    final emailRegex = RegExp(
+                                      r"^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$",
+                                    );
+
+                                    if (!emailRegex.hasMatch(email)) {
+                                      return "Enter a valid email";
+                                    }
+
+                                    return null;
+                                  },
+                                ),
+                              ),
+
+                              SizedBox(height: 2.h),
+
+                              // ==================================================
+                              // PASSWORD FIELD
+                              // ==================================================
+                              animatedItem(
+                                start: 0.35,
+                                end: 0.55,
+                                begin: const Offset(-0.25, 0),
+
+                                child: TextFormField(
+                                  controller: passwordController,
+
+                                  obscureText: obscureText,
+
+                                  textInputAction: TextInputAction.done,
+
+                                  decoration: _inputDecoration(
+                                    hint: "Password",
+                                    icon: Icons.lock_outline,
+
+                                    suffix: InkWell(
+                                      onTap: () {
+                                        setState(() {
+                                          obscureText = !obscureText;
+                                        });
+                                      },
+
+                                      child: Padding(
+                                        padding: EdgeInsets.all(0.8.w),
+
+                                        child: Icon(
+                                          obscureText
+                                              ? Icons.visibility_off
+                                              : Icons.visibility,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+
+                                  validator: (v) {
+                                    if (v == null || v.trim().isEmpty) {
+                                      return "Password is required";
+                                    }
+
+                                    if (v.trim().length < 6) {
+                                      return "Password must be at least 6 characters";
+                                    }
+
+                                    return null;
+                                  },
+
+                                  onFieldSubmitted: (_) {
+                                    loginData();
+                                  },
+                                ),
+                              ),
+
+                              SizedBox(height: 3.h),
+
+                              // ==================================================
+                              // LOGIN BUTTON
+                              // ==================================================
+                              animatedItem(
+                                start: 0.50,
+                                end: 0.70,
+
+                                child: Container(
+                                  width: double.infinity,
+                                  height: 7.h,
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(14),
+                                    gradient: LinearGradient(
+                                      colors: [
+                                        // Colors.amber.shade50,
+                                        Colors.amber.shade200,
+                                        Colors.amber.shade400,
+                                      ],
+                                      begin: Alignment.bottomLeft,
+                                      end: Alignment.topRight,
+                                    ),
+                                  ),
+
+                                  child: ElevatedButton(
+                                    onPressed: isLoad ? null : loginData,
+
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: Colors.transparent,
+                                      disabledBackgroundColor:
+                                          Colors.transparent,
+                                      shadowColor: Colors.transparent,
+                                      elevation: 0,
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(14),
+                                      ),
+                                    ),
+
+                                    child: isLoad
+                                        ? spinkit
+                                        : Text(
+                                            "Log in",
+
+                                            style: GoogleFonts.poppins(
+                                              fontSize: 18.sp,
+                                              fontWeight: FontWeight.bold,
+                                              color: Colors.black87,
+                                            ),
+                                          ),
+                                  ),
+                                ),
+                              ),
+
+                              SizedBox(height: 2.h),
+
+                              // ==================================================
+                              // SIGN UP
+                              // ==================================================
+                              animatedItem(
+                                start: 0.65,
+                                end: 0.85,
+
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+
+                                  children: [
+                                    Text(
+                                      "Don't have an account? ",
+
+                                      style: GoogleFonts.poppins(
+                                        fontSize: 16.sp,
+                                        color: Colors.black87,
+                                      ),
+                                    ),
+
+                                    GestureDetector(
+                                      onTap: () {
+                                        Navigator.push(
+                                          context,
+
+                                          MaterialPageRoute(
+                                            builder: (context) =>
+                                                const SignupScreen(),
+                                          ),
+                                        );
+                                      },
+
+                                      child: Text(
+                                        "Sign up",
+
+                                        style: GoogleFonts.poppins(
+                                          fontSize: 16.sp,
+                                          fontWeight: FontWeight.bold,
+                                          decoration: TextDecoration.underline,
+                                          color: Colors.black,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
                       ),
                     ),
-                  ),
 
-                  SizedBox(height: 1.h),
-                ],
+                    SizedBox(height: 2.h),
+
+                    // ==================================================
+                    // FOOD IMAGE
+                    // ==================================================
+                    animatedItem(
+                      start: 0.75,
+                      end: 1.00,
+                      begin: const Offset(0, 0.25),
+
+                      child: SizedBox(
+                        width: double.infinity,
+                        height: 28.h,
+
+                        child: Image.asset(
+                          'assets/images/login.png',
+                          fit: BoxFit.cover,
+                          alignment: Alignment.bottomCenter,
+                        ),
+                      ),
+                    ),
+
+                    SizedBox(height: 1.h),
+                  ],
+                ),
               ),
             ),
           ),

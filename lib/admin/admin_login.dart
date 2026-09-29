@@ -480,313 +480,328 @@ class _AdminLoginState extends State<AdminLogin>
     return Scaffold(
       resizeToAvoidBottomInset: false,
 
-      backgroundColor: Color(0xFFFECB04),
+      backgroundColor: Colors.transparent,
 
-      body: SafeArea(
-        child: Center(
-          child: SingleChildScrollView(
-            padding: EdgeInsets.symmetric(horizontal: 6.w, vertical: 3.h),
+      body: Container(
+        height: double.infinity,
+        width: double.infinity,
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [
+              Colors.amber.shade50,
+              Colors.amber.shade200,
+              Colors.amber.shade400,
+            ],
+          ),
+        ),
+        child: SafeArea(
+          child: Center(
+            child: SingleChildScrollView(
+              padding: EdgeInsets.symmetric(horizontal: 6.w, vertical: 3.h),
 
-            child: ConstrainedBox(
-              constraints: const BoxConstraints(maxWidth: 600),
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(maxWidth: 600),
 
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
 
-                children: [
-                  SizedBox(height: 2.h),
+                  children: [
+                    SizedBox(height: 2.h),
 
-                  // ==================================================
-                  // FOODIES LOGO
-                  // ==================================================
-                  animatedItem(
-                    start: 0.00,
-                    end: 0.25,
+                    // ==================================================
+                    // FOODIES LOGO
+                    // ==================================================
+                    animatedItem(
+                      start: 0.00,
+                      end: 0.25,
 
-                    begin: const Offset(0, -0.25),
+                      begin: const Offset(0, -0.25),
 
-                    child: Center(
-                      child: Image.asset(
-                        'assets/images/foodies_logo.png',
+                      child: Center(
+                        child: Image.asset(
+                          'assets/images/foodies_logo.png',
 
-                        width: 70.w,
+                          width: 70.w,
 
-                        height: 14.h,
+                          height: 14.h,
 
-                        fit: BoxFit.contain,
+                          fit: BoxFit.contain,
+                        ),
                       ),
                     ),
-                  ),
 
-                  SizedBox(height: 2.h),
+                    SizedBox(height: 2.h),
 
-                  // ==================================================
-                  // LOGIN CARD
-                  // ==================================================
-                  Material(
-                    elevation: 6,
+                    // ==================================================
+                    // LOGIN CARD
+                    // ==================================================
+                    Material(
+                      elevation: 6,
 
-                    borderRadius: BorderRadius.circular(20),
+                      borderRadius: BorderRadius.circular(20),
 
-                    child: Container(
-                      width: double.infinity,
+                      child: Container(
+                        width: double.infinity,
 
-                      padding: EdgeInsets.symmetric(
-                        vertical: 3.h,
-                        horizontal: 5.w,
-                      ),
+                        padding: EdgeInsets.symmetric(
+                          vertical: 3.h,
+                          horizontal: 5.w,
+                        ),
 
-                      decoration: BoxDecoration(
-                        color: Colors.white,
+                        decoration: BoxDecoration(
+                          color: Colors.white,
 
-                        borderRadius: BorderRadius.circular(20),
-                      ),
+                          borderRadius: BorderRadius.circular(20),
+                        ),
 
-                      child: Form(
-                        key: _formKey,
+                        child: Form(
+                          key: _formKey,
 
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
 
-                          children: [
-                            // ==================================================
-                            // TITLE
-                            // ==================================================
-                            animatedItem(
-                              start: 0.15,
-                              end: 0.35,
+                            children: [
+                              // ==================================================
+                              // TITLE
+                              // ==================================================
+                              animatedItem(
+                                start: 0.15,
+                                end: 0.35,
 
-                              child: Text(
-                                "ADMIN LOGIN",
+                                child: Text(
+                                  "ADMIN LOGIN",
 
-                                style: GoogleFonts.poppins(
-                                  fontSize: 20.sp,
+                                  style: GoogleFonts.poppins(
+                                    fontSize: 20.sp,
 
-                                  fontWeight: FontWeight.w700,
+                                    fontWeight: FontWeight.w700,
 
-                                  color: Colors.black,
+                                    color: Colors.black,
+                                  ),
                                 ),
                               ),
-                            ),
 
-                            SizedBox(height: 2.h),
+                              SizedBox(height: 2.h),
 
-                            // ==================================================
-                            // ID FIELD
-                            // ==================================================
-                            animatedItem(
-                              start: 0.25,
-                              end: 0.45,
+                              // ==================================================
+                              // ID FIELD
+                              // ==================================================
+                              animatedItem(
+                                start: 0.25,
+                                end: 0.45,
 
-                              begin: const Offset(0.25, 0),
+                                begin: const Offset(0.25, 0),
 
-                              child: TextFormField(
-                                controller: idcontroller,
+                                child: TextFormField(
+                                  controller: idcontroller,
 
-                                textInputAction: TextInputAction.next,
+                                  textInputAction: TextInputAction.next,
 
-                                decoration: _inputDecoration(
-                                  hint: "Enter ID",
+                                  decoration: _inputDecoration(
+                                    hint: "Enter ID",
 
-                                  icon: Icons.person_outline,
+                                    icon: Icons.person_outline,
+                                  ),
+
+                                  validator: (v) {
+                                    if (v == null || v.trim().isEmpty) {
+                                      return "Please enter ID";
+                                    }
+
+                                    return null;
+                                  },
                                 ),
-
-                                validator: (v) {
-                                  if (v == null || v.trim().isEmpty) {
-                                    return "Please enter ID";
-                                  }
-
-                                  return null;
-                                },
                               ),
-                            ),
 
-                            SizedBox(height: 2.h),
+                              SizedBox(height: 2.h),
 
-                            // ==================================================
-                            // PASSWORD FIELD
-                            // ==================================================
-                            animatedItem(
-                              start: 0.35,
-                              end: 0.55,
+                              // ==================================================
+                              // PASSWORD FIELD
+                              // ==================================================
+                              animatedItem(
+                                start: 0.35,
+                                end: 0.55,
 
-                              begin: const Offset(-0.25, 0),
+                                begin: const Offset(-0.25, 0),
 
-                              child: TextFormField(
-                                controller: passwordcontroller,
+                                child: TextFormField(
+                                  controller: passwordcontroller,
 
-                                obscureText: obscureText,
+                                  obscureText: obscureText,
 
-                                textInputAction: TextInputAction.done,
+                                  textInputAction: TextInputAction.done,
 
-                                decoration: _inputDecoration(
-                                  hint: "Password",
+                                  decoration: _inputDecoration(
+                                    hint: "Password",
 
-                                  icon: Icons.lock_outline,
+                                    icon: Icons.lock_outline,
 
-                                  suffix: InkWell(
-                                    onTap: () {
-                                      setState(() {
-                                        obscureText = !obscureText;
-                                      });
-                                    },
+                                    suffix: InkWell(
+                                      onTap: () {
+                                        setState(() {
+                                          obscureText = !obscureText;
+                                        });
+                                      },
 
-                                    child: Padding(
-                                      padding: EdgeInsets.all(0.8.w),
+                                      child: Padding(
+                                        padding: EdgeInsets.all(0.8.w),
 
-                                      child: Icon(
-                                        obscureText
-                                            ? Icons.visibility_off
-                                            : Icons.visibility,
+                                        child: Icon(
+                                          obscureText
+                                              ? Icons.visibility_off
+                                              : Icons.visibility,
+                                        ),
                                       ),
                                     ),
                                   ),
+
+                                  validator: (v) {
+                                    if (v == null || v.trim().isEmpty) {
+                                      return "Please enter password";
+                                    }
+
+                                    return null;
+                                  },
+
+                                  onFieldSubmitted: (_) {
+                                    if (!isload) {
+                                      getData();
+                                    }
+                                  },
                                 ),
-
-                                validator: (v) {
-                                  if (v == null || v.trim().isEmpty) {
-                                    return "Please enter password";
-                                  }
-
-                                  return null;
-                                },
-
-                                onFieldSubmitted: (_) {
-                                  if (!isload) {
-                                    getData();
-                                  }
-                                },
                               ),
-                            ),
 
-                            SizedBox(height: 3.h),
+                              SizedBox(height: 3.h),
 
-                            // ==================================================
-                            // LOGIN BUTTON
-                            // ==================================================
-                            animatedItem(
-                              start: 0.50,
-                              end: 0.70,
+                              // ==================================================
+                              // LOGIN BUTTON
+                              // ==================================================
+                              animatedItem(
+                                start: 0.50,
+                                end: 0.70,
 
-                              child: Container(
-                                width: double.infinity,
-                                height: 7.h,
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(14),
-                                  gradient: const LinearGradient(
-                                    colors: [
-                                      Color(0xFFFFD54F),
-                                      Color(0xFFFFA000),
-                                    ],
-                                    begin: Alignment.topLeft,
-                                    end: Alignment.bottomRight,
-                                  ),
-                                ),
-
-                                child: ElevatedButton(
-                                  onPressed: isload ? null : getData,
-
-                                  style: ElevatedButton.styleFrom(
-                                    backgroundColor: Colors.transparent,
-                                    disabledBackgroundColor: Colors.transparent,
-                                    shadowColor: Colors.transparent,
-                                    elevation: 0,
-
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(14),
+                                child: Container(
+                                  width: double.infinity,
+                                  height: 7.h,
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(14),
+                                    gradient: LinearGradient(
+                                      colors: [
+                                        // Colors.amber.shade50,
+                                        Colors.amber.shade200,
+                                        Colors.amber.shade400,
+                                      ],
+                                      begin: Alignment.topLeft,
+                                      end: Alignment.bottomRight,
                                     ),
                                   ),
 
-                                  child: isload
-                                      ? spinkit
-                                      : Text(
-                                          "Log in",
+                                  child: ElevatedButton(
+                                    onPressed: isload ? null : getData,
 
-                                          style: GoogleFonts.poppins(
-                                            fontSize: 18.sp,
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: Colors.transparent,
+                                      disabledBackgroundColor:
+                                          Colors.transparent,
+                                      shadowColor: Colors.transparent,
+                                      elevation: 0,
 
-                                            fontWeight: FontWeight.bold,
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(14),
+                                      ),
+                                    ),
 
-                                            color: Colors.black87,
+                                    child: isload
+                                        ? spinkit
+                                        : Text(
+                                            "Log in",
+
+                                            style: GoogleFonts.poppins(
+                                              fontSize: 18.sp,
+
+                                              fontWeight: FontWeight.bold,
+
+                                              color: Colors.black87,
+                                            ),
                                           ),
-                                        ),
+                                  ),
                                 ),
                               ),
-                            ),
 
-                            SizedBox(height: 2.h),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-                  SizedBox(height: 2.h),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-
-                    children: [
-                      Text(
-                        "Not an admin? ",
-
-                        style: GoogleFonts.poppins(
-                          fontSize: 14.sp,
-                          color: Colors.black87,
-                        ),
-                      ),
-
-                      GestureDetector(
-                        onTap: () {
-                          Navigator.push(
-                            context,
-
-                            MaterialPageRoute(
-                              builder: (context) => const WelcomeScreen(),
-                            ),
-                          );
-                        },
-
-                        child: Text(
-                          "Go back to Navigation Screen",
-
-                          style: GoogleFonts.poppins(
-                            fontSize: 14.sp,
-                            fontWeight: FontWeight.bold,
-                            decoration: TextDecoration.underline,
-                            color: Colors.black,
+                              SizedBox(height: 2.h),
+                            ],
                           ),
                         ),
                       ),
-                    ],
-                  ),
+                    ),
+                    SizedBox(height: 2.h),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
 
-                  SizedBox(height: 2.h),
+                      children: [
+                        Text(
+                          "Not an admin? ",
 
-                  // ==================================================
-                  // FOOD IMAGE
-                  // ==================================================
-                  animatedItem(
-                    start: 0.75,
-                    end: 1.00,
+                          style: GoogleFonts.poppins(
+                            fontSize: 14.sp,
+                            color: Colors.black87,
+                          ),
+                        ),
 
-                    begin: const Offset(0, 0.25),
+                        GestureDetector(
+                          onTap: () {
+                            Navigator.push(
+                              context,
 
-                    child: SizedBox(
-                      width: double.infinity,
+                              MaterialPageRoute(
+                                builder: (context) => const WelcomeScreen(),
+                              ),
+                            );
+                          },
 
-                      height: 28.h,
+                          child: Text(
+                            "Go back to Navigation Screen",
 
-                      child: Image.asset(
-                        'assets/images/login.png',
+                            style: GoogleFonts.poppins(
+                              fontSize: 14.sp,
+                              fontWeight: FontWeight.bold,
+                              decoration: TextDecoration.underline,
+                              color: Colors.black,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
 
-                        fit: BoxFit.cover,
+                    SizedBox(height: 2.h),
 
-                        alignment: Alignment.bottomCenter,
+                    // ==================================================
+                    // FOOD IMAGE
+                    // ==================================================
+                    animatedItem(
+                      start: 0.75,
+                      end: 1.00,
+
+                      begin: const Offset(0, 0.25),
+
+                      child: SizedBox(
+                        width: double.infinity,
+
+                        height: 28.h,
+
+                        child: Image.asset(
+                          'assets/images/login.png',
+
+                          fit: BoxFit.cover,
+
+                          alignment: Alignment.bottomCenter,
+                        ),
                       ),
                     ),
-                  ),
 
-                  SizedBox(height: 1.h),
-                ],
+                    SizedBox(height: 1.h),
+                  ],
+                ),
               ),
             ),
           ),

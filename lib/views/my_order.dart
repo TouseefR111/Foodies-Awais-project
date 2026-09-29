@@ -877,8 +877,30 @@ class _MyOrderState extends State<MyOrder> with SingleTickerProviderStateMixin {
                     ],
                   ),
                 ),
+                SizedBox(height: 1.h),
 
-                SizedBox(height: 1.5.h),
+                Row(
+                  children: [
+                    Icon(
+                      Icons.phone_rounded,
+                      color: Colors.green.shade700,
+                      size: 18,
+                    ),
+                    SizedBox(width: 1.w),
+                    Expanded(
+                      child: Text(
+                        order['userContact']?.toString() ?? 'No phone number',
+                        style: TextStyle(
+                          fontSize: 12.sp,
+                          color: Colors.grey.shade700,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+
+                SizedBox(height: 1.h),
 
                 // ==================================================
                 // TOTAL AMOUNT
