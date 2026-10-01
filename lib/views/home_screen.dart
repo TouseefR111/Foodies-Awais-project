@@ -8,6 +8,7 @@ import 'package:food_delivery_app/widgets/heading_text_widget.dart';
 import 'package:food_delivery_app/widgets/sub_heading_text_widget.dart';
 import 'package:food_delivery_app/widgets/user_name_widget.dart';
 import 'package:sizer/sizer.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 import '../controller/shared_pref_helper.dart';
 
@@ -36,12 +37,32 @@ class _HomeScreenState extends State<HomeScreen>
   // ============================================================
 
   Future<void> getShareId() async {
-    userName = await SharedPrefHelper().getUserName();
-    userContact = await SharedPrefHelper().getUserContact();
+    final uid = FirebaseAuth.instance.currentUser?.uid;
+
+    if (uid == null) return;
+
+    final userDoc = await FirebaseFirestore.instance
+        .collection('users')
+        .doc(uid)
+        .get();
+
+    if (!mounted || !userDoc.exists) return;
+
+    final data = userDoc.data()!;
+
+    final name = (data['name'] ?? data['userName'] ?? '').toString();
+
+    final phone = (data['phone'] ?? data['userContact'] ?? '').toString();
+
+    await SharedPrefHelper().saveUserName(name);
+    await SharedPrefHelper().saveUserContact(phone);
 
     if (!mounted) return;
 
-    setState(() {});
+    setState(() {
+      userName = name;
+      userContact = phone;
+    });
   }
 
   // ============================================================
@@ -304,7 +325,23 @@ class _HomeScreenState extends State<HomeScreen>
 
             begin: const Offset(0, -0.30),
 
-            child: UserNameWidget(text: userName?.toUpperCase() ?? "USER"),
+            child: StreamBuilder<DocumentSnapshot<Map<String, dynamic>>>(
+              stream: FirebaseFirestore.instance
+                  .collection('users')
+                  .doc(FirebaseAuth.instance.currentUser?.uid)
+                  .snapshots(),
+              builder: (context, snapshot) {
+                final data = snapshot.data?.data();
+
+                final name =
+                    (data?['name'] ?? data?['userName'] ?? userName ?? '')
+                        .toString();
+
+                return UserNameWidget(
+                  text: name.isEmpty ? 'USER' : name.toUpperCase(),
+                );
+              },
+            ),
           ),
 
           // ====================================================
