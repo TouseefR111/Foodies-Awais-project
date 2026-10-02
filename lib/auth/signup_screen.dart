@@ -259,8 +259,8 @@ class _SignupScreenState extends State<SignupScreen>
               Colors.amber.shade200,
               Colors.amber.shade400,
             ],
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
+           begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
           ),
         ),
         child: SafeArea(

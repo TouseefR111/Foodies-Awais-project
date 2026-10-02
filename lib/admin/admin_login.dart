@@ -492,6 +492,8 @@ class _AdminLoginState extends State<AdminLogin>
               Colors.amber.shade200,
               Colors.amber.shade400,
             ],
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
           ),
         ),
         child: SafeArea(
