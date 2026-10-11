@@ -350,7 +350,7 @@ class _SuperAdminLoginState extends State<SuperAdminLogin>
                 right: -15.w,
                 child: Container(
                   width: 55.w,
-                  height: 55.w,
+                  height: 55.h,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
                     color: Colors.white.withOpacity(0.08),
@@ -380,7 +380,7 @@ class _SuperAdminLoginState extends State<SuperAdminLogin>
                   child: Padding(
                     padding: EdgeInsets.symmetric(
                       horizontal: 6.w,
-                      vertical: 3.h,
+                      // vertical: 3.h,
                     ),
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -636,7 +636,7 @@ class _SuperAdminLoginState extends State<SuperAdminLogin>
                             ),
                           ),
                         ),
-                        SizedBox(height: 2.h),
+                        SizedBox(height: 1.h),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
 
@@ -685,15 +685,17 @@ class _SuperAdminLoginState extends State<SuperAdminLogin>
                           end: 1.0,
                           child: Image.asset(
                             'assets/images/login.png',
-                            // height: 20.h,
+                            height: 35.h,
+                            width: double.infinity,
                             fit: BoxFit.cover,
+                            alignment: Alignment.bottomCenter,
                             errorBuilder: (context, error, stackTrace) {
                               return const SizedBox.shrink();
                             },
                           ),
                         ),
 
-                        SizedBox(height: 1.h),
+                        // SizedBox(height: 1.h),
 
                         // animatedItem(
                         //   start: 0.70,

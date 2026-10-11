@@ -617,80 +617,77 @@ class _ProfessionalFoodCardState extends State<_ProfessionalFoodCard> {
 
           children: [
             // ==================================================
-            // IMAGE AREA
+            // IMAGE AREA - IMPROVED FOOD IMAGE
             // ==================================================
             Container(
               height: 17.h,
               width: double.infinity,
-
               decoration: const BoxDecoration(
-                color: Color(0xffF7F7F7),
-
+                color: Color(0xffFFF9E8),
                 borderRadius: BorderRadius.only(
                   topLeft: Radius.circular(24),
                   topRight: Radius.circular(24),
                 ),
               ),
-
-              child: Stack(
-                children: [
-                  // Food image
-                  Center(
-                    child: Padding(
-                      padding: EdgeInsets.all(1.5.h),
-
-                      child: Hero(
-                        tag: '${widget.itemName}_${widget.imageUrl}',
-
-                        child: Image.network(
-                          widget.imageUrl,
-
-                          height: 15.h,
-                          width: 38.w,
-
-                          fit: BoxFit.contain,
-
-                          errorBuilder: (context, error, stackTrace) {
-                            return Icon(
-                              Icons.fastfood_rounded,
-                              size: 55,
-                              color: Colors.grey.shade400,
-                            );
-                          },
+              child: ClipRRect(
+                borderRadius: const BorderRadius.only(
+                  topLeft: Radius.circular(24),
+                  topRight: Radius.circular(24),
+                ),
+                child: Stack(
+                  children: [
+                    // FOOD IMAGE
+                    Positioned.fill(
+                      child: Center(
+                        child: Padding(
+                          padding: EdgeInsets.all(1.2.h),
+                          child: Hero(
+                            tag: '${widget.itemName}_${widget.imageUrl}',
+                            child: Image.network(
+                              widget.imageUrl,
+                              width: double.infinity,
+                              height: double.infinity,
+                              fit: BoxFit.cover,
+                              alignment: Alignment.center,
+                              errorBuilder: (context, error, stackTrace) {
+                                return Icon(
+                                  Icons.fastfood_rounded,
+                                  size: 55,
+                                  color: Colors.grey.shade400,
+                                );
+                              },
+                            ),
+                          ),
                         ),
                       ),
                     ),
-                  ),
 
-                  // Favorite button
-                  Positioned(
-                    top: 1.h,
-                    right: 2.w,
-
-                    child: Container(
-                      width: 9.w,
-                      height: 9.w,
-
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        shape: BoxShape.circle,
-
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withOpacity(0.08),
-                            blurRadius: 8,
-                          ),
-                        ],
-                      ),
-
-                      child: const Icon(
-                        Icons.favorite_border_rounded,
-                        size: 19,
-                        color: Colors.grey,
+                    // FAVORITE BUTTON
+                    Positioned(
+                      top: 1.h,
+                      right: 2.w,
+                      child: Container(
+                        width: 9.w,
+                        height: 9.w,
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          shape: BoxShape.circle,
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.08),
+                              blurRadius: 8,
+                            ),
+                          ],
+                        ),
+                        child: const Icon(
+                          Icons.favorite_border_rounded,
+                          size: 19,
+                          color: Colors.grey,
+                        ),
                       ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
 

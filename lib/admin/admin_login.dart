@@ -789,7 +789,7 @@ class _AdminLoginState extends State<AdminLogin>
                       child: SizedBox(
                         width: double.infinity,
 
-                        height: 28.h,
+                        height: 35.h,
 
                         child: Image.asset(
                           'assets/images/login.png',
