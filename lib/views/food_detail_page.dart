@@ -218,7 +218,7 @@ class _FoodDetailPageState extends State<FoodDetailPage>
                   Text(
                     "Customize Your Meal",
                     style: TextStyle(
-                      fontSize: 20.sp,
+                      fontSize: 18.sp,
                       fontWeight: FontWeight.w800,
                       color: const Color(0xff202020),
                     ),
@@ -366,7 +366,7 @@ class _FoodDetailPageState extends State<FoodDetailPage>
                         child: Text(
                           _getOilLabel(tempOil),
                           style: TextStyle(
-                            fontSize: 11.sp,
+                            fontSize: 14.sp,
                             fontWeight: FontWeight.w700,
                             color: Colors.amber.shade800,
                           ),
@@ -533,726 +533,797 @@ class _FoodDetailPageState extends State<FoodDetailPage>
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xffF7F7F7),
+      body: Column(
+        children: [
+          // ====================================================
+          // SCROLLABLE CONTENT
+          // ====================================================
+          Expanded(
+            child: SingleChildScrollView(
+              physics: const BouncingScrollPhysics(),
 
-      body: SafeArea(
-        child: Column(
-          children: [
-            // ====================================================
-            // SCROLLABLE CONTENT
-            // ====================================================
-            Expanded(
-              child: SingleChildScrollView(
-                physics: const BouncingScrollPhysics(),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
 
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // ==========================================
 
-                  children: [
-                    // ==========================================
-
-                    // ==========================================
-                    // FOOD IMAGE HEADER - FULL WIDTH
-                    // ==========================================
-                    SizedBox(
+                  // ==========================================
+                  // FOOD IMAGE HEADER - FULL WIDTH
+                  // ==========================================
+                  SafeArea(
+                    bottom: false,
+                    child: SizedBox(
                       height: 38.h,
                       width: double.infinity,
-                      child: Stack(
-                        children: [
-                          // FULL-WIDTH FOOD IMAGE
-                          Positioned.fill(
-                            child: Hero(
-                              tag: '${widget.itemName}_${widget.image}',
-                              child: Image.network(
-                                widget.image,
-                                width: double.infinity,
-                                height: double.infinity,
-                                fit: BoxFit.cover,
-                                alignment: Alignment.center,
-                                errorBuilder: (context, error, stackTrace) {
-                                  return Container(
-                                    color: Colors.amberAccent,
-                                    child: Icon(
-                                      Icons.fastfood_rounded,
-                                      size: 90,
-                                      color: Colors.grey.shade600,
-                                    ),
-                                  );
-                                },
-                              ),
-                            ),
-                          ),
-
-                          // IMAGE OVERLAY
-                          Positioned.fill(
-                            child: IgnorePointer(
-                              child: DecoratedBox(
-                                decoration: BoxDecoration(
-                                  gradient: LinearGradient(
-                                    begin: Alignment.topCenter,
-                                    end: Alignment.bottomCenter,
-                                    colors: [
-                                      Colors.black.withOpacity(0.20),
-                                      Colors.transparent,
-                                      Colors.black.withOpacity(0.10),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-
-                          // BACK BUTTON
-                          Positioned(
-                            top: 1.5.h,
-                            left: 4.w,
-                            child: GestureDetector(
-                              onTap: () => Navigator.pop(context),
-                              child: Container(
-                                width: 11.w,
-                                height: 11.w,
-                                decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  shape: BoxShape.circle,
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: Colors.black.withOpacity(0.10),
-                                      blurRadius: 10,
-                                    ),
-                                  ],
-                                ),
-                                child: const Icon(
-                                  Icons.arrow_back_ios_new_rounded,
-                                  size: 18,
-                                  color: Colors.black,
-                                ),
-                              ),
-                            ),
-                          ),
-
-                          // FAVORITE BUTTON
-                          Positioned(
-                            top: 1.5.h,
-                            right: 4.w,
-                            child: Container(
-                              width: 11.w,
-                              height: 11.w,
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                shape: BoxShape.circle,
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: Colors.black.withOpacity(0.10),
-                                    blurRadius: 10,
-                                  ),
-                                ],
-                              ),
-                              child: const Icon(
-                                Icons.favorite_border_rounded,
-                                size: 21,
-                                color: Colors.black,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-
-                    SizedBox(height: 2.h),
-
-                    // ==========================================
-                    // FOOD INFORMATION
-                    // ==========================================
-                    animatedItem(
-                      start: 0.15,
-                      end: 0.40,
-
                       child: Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 5.w),
-
-                        child: Container(
-                          width: double.infinity,
-
-                          padding: EdgeInsets.all(4.w),
-
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-
-                            borderRadius: BorderRadius.circular(25),
-
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black.withOpacity(0.07),
-                                blurRadius: 15,
-                                offset: const Offset(0, 5),
-                              ),
-                            ],
+                        padding: EdgeInsets.symmetric(horizontal: 3.w),
+                        child: ClipRRect(
+                          borderRadius: const BorderRadius.only(
+                            bottomLeft: Radius.circular(32),
+                            bottomRight: Radius.circular(32),
+                            topLeft: Radius.circular(20),
+                            topRight: Radius.circular(20),
                           ),
-
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-
+                          child: Stack(
+                            fit: StackFit.expand,
                             children: [
-                              // Food name + price
-                              Row(
-                                crossAxisAlignment: CrossAxisAlignment.start,
+                              // FOOD IMAGE
+                              Hero(
+                                tag: '${widget.itemName}_${widget.image}',
+                                child: Image.network(
+                                  widget.image,
+                                  fit: BoxFit.cover,
+                                  alignment: Alignment.center,
+                                  loadingBuilder: (context, child, progress) {
+                                    if (progress == null) return child;
 
-                                children: [
-                                  Expanded(
-                                    child: Text(
-                                      widget.itemName,
-
-                                      maxLines: 2,
-
-                                      overflow: TextOverflow.ellipsis,
-
-                                      style: TextStyle(
-                                        fontSize: 20.sp,
-                                        fontWeight: FontWeight.w800,
-                                        color: const Color(0xff202020),
+                                    return Container(
+                                      color: const Color(0xFFFFF8E7),
+                                      alignment: Alignment.center,
+                                      child: const CircularProgressIndicator(
+                                        color: Color(0xFFFFA000),
+                                        strokeWidth: 3,
                                       ),
-                                    ),
-                                  ),
-
-                                  SizedBox(width: 3.w),
-
-                                  Container(
-                                    padding: EdgeInsets.symmetric(
-                                      horizontal: 3.w,
-                                      vertical: 1.h,
-                                    ),
-
-                                    decoration: BoxDecoration(
-                                      color: Colors.amber.withOpacity(0.15),
-
-                                      borderRadius: BorderRadius.circular(15),
-                                    ),
-
-                                    child: Text(
-                                      "${widget.itemPrice} PKR",
-
-                                      style: TextStyle(
-                                        fontSize: 16.sp,
-                                        fontWeight: FontWeight.w800,
+                                    );
+                                  },
+                                  errorBuilder: (context, error, stackTrace) {
+                                    return Container(
+                                      color: const Color(0xFFFFF8E7),
+                                      alignment: Alignment.center,
+                                      child: Icon(
+                                        Icons.fastfood_rounded,
+                                        size: 70,
                                         color: Colors.amber.shade800,
                                       ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-
-                              SizedBox(height: 1.5.h),
-
-                              // Rating / info row
-                              Row(
-                                children: [
-                                  const Icon(
-                                    Icons.star_rounded,
-                                    color: Colors.amber,
-                                    size: 20,
-                                  ),
-
-                                  SizedBox(width: 1.w),
-
-                                  Text(
-                                    "Fresh & Delicious",
-                                    style: TextStyle(
-                                      fontSize: 14.sp,
-                                      fontWeight: FontWeight.w600,
-                                      color: Colors.grey.shade600,
-                                    ),
-                                  ),
-
-                                  const Spacer(),
-
-                                  Icon(
-                                    Icons.restaurant_rounded,
-                                    size: 17,
-                                    color: Colors.grey.shade500,
-                                  ),
-
-                                  SizedBox(width: 1.w),
-
-                                  Text(
-                                    "Foodies",
-                                    style: TextStyle(
-                                      fontSize: 14.sp,
-                                      color: Colors.grey.shade600,
-                                    ),
-                                  ),
-                                ],
-                              ),
-
-                              SizedBox(height: 2.h),
-
-                              // Description heading
-                              Text(
-                                "About this food",
-                                style: TextStyle(
-                                  fontSize: 16.sp,
-                                  fontWeight: FontWeight.w800,
+                                    );
+                                  },
                                 ),
                               ),
 
-                              SizedBox(height: 0.8.h),
-
-                              Text(
-                                widget.itemDetail,
-                                style: TextStyle(
-                                  fontSize: 14.sp,
-                                  height: 1.5,
-                                  color: Colors.grey.shade700,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
-
-                    SizedBox(height: 2.h),
-
-                    // ==========================================
-                    // CUSTOMIZATION
-                    // ==========================================
-                    animatedItem(
-                      start: 0.30,
-                      end: 0.55,
-
-                      child: Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 5.w),
-
-                        child: Container(
-                          width: double.infinity,
-
-                          padding: EdgeInsets.all(4.w),
-
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-
-                            borderRadius: BorderRadius.circular(25),
-
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black.withOpacity(0.05),
-                                blurRadius: 12,
-                                offset: const Offset(0, 4),
-                              ),
-                            ],
-                          ),
-
-                          child: Column(
-                            children: [
-                              // Heading
-                              Row(
-                                children: [
-                                  Container(
-                                    width: 11.w,
-                                    height: 11.w,
-
+                              // PROFESSIONAL GRADIENT OVERLAY
+                              Positioned.fill(
+                                child: IgnorePointer(
+                                  child: DecoratedBox(
                                     decoration: BoxDecoration(
-                                      color: Colors.amber.withOpacity(0.15),
-                                      shape: BoxShape.circle,
-                                    ),
-
-                                    child: const Icon(
-                                      Icons.tune_rounded,
-                                      color: Colors.amber,
+                                      gradient: LinearGradient(
+                                        begin: Alignment.topCenter,
+                                        end: Alignment.bottomCenter,
+                                        stops: const [0.0, 0.35, 1.0],
+                                        colors: [
+                                          Colors.black.withOpacity(0.28),
+                                          Colors.transparent,
+                                          Colors.black.withOpacity(0.48),
+                                        ],
+                                      ),
                                     ),
                                   ),
-
-                                  SizedBox(width: 3.w),
-
-                                  Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-
-                                    children: [
-                                      Text(
-                                        "Customize your meal",
-                                        style: TextStyle(
-                                          fontSize: 18.sp,
-                                          fontWeight: FontWeight.w800,
-                                        ),
-                                      ),
-
-                                      SizedBox(height: 0.3.h),
-
-                                      Text(
-                                        "Make it just the way you like",
-                                        style: TextStyle(
-                                          fontSize: 14.sp,
-                                          color: Colors.grey.shade600,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ],
+                                ),
                               ),
 
-                              SizedBox(height: 2.h),
-
-                              // Current preferences
-                              Container(
-                                padding: EdgeInsets.symmetric(
-                                  horizontal: 3.w,
-                                  vertical: 1.3.h,
+                              // BACK BUTTON
+                              Positioned(
+                                top: 14,
+                                left: 14,
+                                child: Material(
+                                  color: Colors.white.withOpacity(0.96),
+                                  shape: const CircleBorder(),
+                                  elevation: 5,
+                                  shadowColor: Colors.black26,
+                                  child: InkWell(
+                                    customBorder: const CircleBorder(),
+                                    onTap: () => Navigator.pop(context),
+                                    child: SizedBox(
+                                      width: 46,
+                                      height: 46,
+                                      child: const Icon(
+                                        Icons.arrow_back_ios_new_rounded,
+                                        size: 19,
+                                        color: Color(0xFF222222),
+                                      ),
+                                    ),
+                                  ),
                                 ),
+                              ),
 
-                                decoration: BoxDecoration(
-                                  color: const Color(0xffF8F8F8),
-
-                                  borderRadius: BorderRadius.circular(15),
+                              // FAVORITE BUTTON
+                              Positioned(
+                                top: 14,
+                                right: 14,
+                                child: Material(
+                                  color: Colors.white.withOpacity(0.96),
+                                  shape: const CircleBorder(),
+                                  elevation: 5,
+                                  shadowColor: Colors.black26,
+                                  child: InkWell(
+                                    customBorder: const CircleBorder(),
+                                    onTap: () {
+                                      // Connect your favorite functionality here.
+                                    },
+                                    child: SizedBox(
+                                      width: 46,
+                                      height: 46,
+                                      child: Icon(
+                                        Icons.favorite_border_rounded,
+                                        size: 23,
+                                        color: Colors.red.shade400,
+                                      ),
+                                    ),
+                                  ),
                                 ),
+                              ),
 
+                              // BOTTOM IMAGE LABEL
+                              Positioned(
+                                left: 18,
+                                right: 18,
+                                bottom: 18,
                                 child: Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-
                                   children: [
-                                    Row(
-                                      children: [
-                                        const Icon(
-                                          Icons.local_fire_department,
-                                          size: 18,
-                                          color: Colors.red,
-                                        ),
-
-                                        SizedBox(width: 1.5.w),
-
-                                        Text(
-                                          _getSpiceLabel(spiceLevel),
-
-                                          style: TextStyle(
-                                            fontSize: 14.sp,
-                                            fontWeight: FontWeight.w600,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-
                                     Container(
-                                      width: 1,
-                                      height: 3.h,
-                                      color: Colors.grey.shade300,
-                                    ),
-
-                                    Row(
-                                      children: [
-                                        Icon(
-                                          Icons.opacity_rounded,
-                                          size: 18,
-                                          color: Colors.orange,
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 12,
+                                        vertical: 8,
+                                      ),
+                                      decoration: BoxDecoration(
+                                        gradient: const LinearGradient(
+                                          colors: [
+                                            Color(0xFFFFD54F),
+                                            Color(0xFFFFA000),
+                                          ],
                                         ),
-
-                                        SizedBox(width: 1.5.w),
-
-                                        Text(
-                                          _getOilLabel(oilLevel),
-
-                                          style: TextStyle(
-                                            fontSize: 14.sp,
-                                            fontWeight: FontWeight.w600,
+                                        borderRadius: BorderRadius.circular(20),
+                                      ),
+                                      child: const Row(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          Icon(
+                                            Icons.restaurant_rounded,
+                                            size: 16,
+                                            color: Colors.black87,
                                           ),
-                                        ),
-                                      ],
+                                          SizedBox(width: 6),
+                                          Text(
+                                            'FOODIES SPECIAL',
+                                            style: TextStyle(
+                                              fontSize: 10,
+                                              fontWeight: FontWeight.w800,
+                                              letterSpacing: 0.5,
+                                              color: Colors.black87,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    const Spacer(),
+                                    const Icon(
+                                      Icons.verified_rounded,
+                                      color: Colors.white,
+                                      size: 21,
                                     ),
                                   ],
                                 ),
                               ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
 
-                              SizedBox(height: 1.5.h),
+                  SizedBox(height: 1.h),
 
-                              // Customize button
-                              SizedBox(
-                                width: double.infinity,
-                                height: 5.5.h,
+                  // ==========================================
+                  // FOOD INFORMATION
+                  // ==========================================
+                  animatedItem(
+                    start: 0.15,
+                    end: 0.40,
 
-                                child: OutlinedButton.icon(
-                                  onPressed: _showDietPlanBottomSheet,
+                    child: Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 5.w),
 
-                                  icon: const Icon(
-                                    Icons.restaurant_menu_rounded,
-                                    size: 19,
+                      child: Container(
+                        width: double.infinity,
+
+                        padding: EdgeInsets.all(4.w),
+
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+
+                          borderRadius: BorderRadius.circular(25),
+
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.07),
+                              blurRadius: 15,
+                              offset: const Offset(0, 5),
+                            ),
+                          ],
+                        ),
+
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+
+                          children: [
+                            // Food name + price
+                            Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+
+                              children: [
+                                Expanded(
+                                  child: Text(
+                                    widget.itemName,
+
+                                    maxLines: 2,
+
+                                    overflow: TextOverflow.ellipsis,
+
+                                    style: TextStyle(
+                                      fontSize: 20.sp,
+                                      fontWeight: FontWeight.w800,
+                                      color: const Color(0xff202020),
+                                    ),
+                                  ),
+                                ),
+
+                                SizedBox(width: 3.w),
+
+                                Container(
+                                  padding: EdgeInsets.symmetric(
+                                    horizontal: 3.w,
+                                    vertical: 1.h,
                                   ),
 
-                                  label: Text(
-                                    "Change Preferences",
+                                  decoration: BoxDecoration(
+                                    color: Colors.amber.withOpacity(0.15),
+
+                                    borderRadius: BorderRadius.circular(15),
+                                  ),
+
+                                  child: Text(
+                                    "${widget.itemPrice} PKR",
+
                                     style: TextStyle(
                                       fontSize: 16.sp,
-                                      fontWeight: FontWeight.w700,
-                                    ),
-                                  ),
-
-                                  style: OutlinedButton.styleFrom(
-                                    foregroundColor: Colors.black,
-
-                                    side: const BorderSide(
-                                      color: Colors.amber,
-                                      width: 1.3,
-                                    ),
-
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(15),
+                                      fontWeight: FontWeight.w800,
+                                      color: Colors.amber.shade800,
                                     ),
                                   ),
                                 ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
-
-                    SizedBox(height: 2.h),
-
-                    // ==========================================
-                    // QUANTITY
-                    // ==========================================
-                    animatedItem(
-                      start: 0.45,
-                      end: 0.68,
-
-                      child: Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 5.w),
-
-                        child: Container(
-                          width: double.infinity,
-
-                          padding: EdgeInsets.symmetric(
-                            horizontal: 4.w,
-                            vertical: 1.7.h,
-                          ),
-
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-
-                            borderRadius: BorderRadius.circular(20),
-
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black.withOpacity(0.05),
-                                blurRadius: 12,
-                                offset: const Offset(0, 4),
-                              ),
-                            ],
-                          ),
-
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-
-                            children: [
-                              Text(
-                                "Quantity",
-                                style: TextStyle(
-                                  fontSize: 16.sp,
-                                  fontWeight: FontWeight.w800,
-                                ),
-                              ),
-
-                              Row(
-                                children: [
-                                  quantityButton(
-                                    icon: Icons.remove,
-                                    onTap: () {
-                                      if (a > 1) {
-                                        setState(() {
-                                          a--;
-                                          total -=
-                                              int.tryParse(widget.itemPrice) ??
-                                              0;
-                                        });
-                                      }
-                                    },
-                                  ),
-
-                                  SizedBox(width: 4.w),
-
-                                  AnimatedSwitcher(
-                                    duration: const Duration(milliseconds: 200),
-
-                                    transitionBuilder: (child, animation) {
-                                      return ScaleTransition(
-                                        scale: animation,
-                                        child: child,
-                                      );
-                                    },
-
-                                    child: Text(
-                                      "$a",
-                                      key: ValueKey(a),
-                                      style: TextStyle(
-                                        fontSize: 16.sp,
-                                        fontWeight: FontWeight.w800,
-                                      ),
-                                    ),
-                                  ),
-
-                                  SizedBox(width: 4.w),
-
-                                  quantityButton(
-                                    icon: Icons.add,
-                                    onTap: () {
-                                      setState(() {
-                                        a++;
-
-                                        total +=
-                                            int.tryParse(widget.itemPrice) ?? 0;
-                                      });
-                                    },
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
-
-                    SizedBox(height: 2.h),
-                  ],
-                ),
-              ),
-            ),
-
-            // ====================================================
-            // BOTTOM CART BAR
-            // ====================================================
-            animatedItem(
-              start: 0.60,
-              end: 1.00,
-
-              begin: const Offset(0, 0.30),
-
-              child: Container(
-                width: double.infinity,
-
-                padding: EdgeInsets.only(
-                  left: 5.w,
-                  right: 5.w,
-                  top: 1.5.h,
-                  bottom: MediaQuery.of(context).padding.bottom + 1.5.h,
-                ),
-
-                decoration: BoxDecoration(
-                  color: Colors.white,
-
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.10),
-                      blurRadius: 15,
-                      offset: const Offset(0, -5),
-                    ),
-                  ],
-                ),
-
-                child: Row(
-                  children: [
-                    // Total
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-
-                        children: [
-                          Text(
-                            "Total Amount",
-                            style: TextStyle(
-                              fontSize: 12.sp,
-                              color: Colors.grey.shade600,
-                              fontWeight: FontWeight.w500,
+                              ],
                             ),
-                          ),
 
-                          SizedBox(height: 0.3.h),
+                            SizedBox(height: 1.5.h),
 
-                          AnimatedSwitcher(
-                            duration: const Duration(milliseconds: 250),
+                            // Rating / info row
+                            Row(
+                              children: [
+                                const Icon(
+                                  Icons.star_rounded,
+                                  color: Colors.amber,
+                                  size: 20,
+                                ),
 
-                            transitionBuilder: (child, animation) {
-                              return ScaleTransition(
-                                scale: animation,
-                                child: child,
-                              );
-                            },
+                                SizedBox(width: 1.w),
 
-                            child: Text(
-                              "$total PKR",
-                              key: ValueKey(total),
+                                Text(
+                                  "Fresh & Delicious",
+                                  style: TextStyle(
+                                    fontSize: 14.sp,
+                                    fontWeight: FontWeight.w600,
+                                    color: Colors.grey.shade600,
+                                  ),
+                                ),
 
+                                const Spacer(),
+
+                                Icon(
+                                  Icons.restaurant_rounded,
+                                  size: 17,
+                                  color: Colors.grey.shade500,
+                                ),
+
+                                SizedBox(width: 1.w),
+
+                                Text(
+                                  "Foodies",
+                                  style: TextStyle(
+                                    fontSize: 14.sp,
+                                    color: Colors.grey.shade600,
+                                  ),
+                                ),
+                              ],
+                            ),
+
+                            SizedBox(height: 2.h),
+
+                            // Description heading
+                            Text(
+                              "About this food",
                               style: TextStyle(
-                                fontSize: 17.sp,
-                                fontWeight: FontWeight.w900,
-                                color: Colors.black,
+                                fontSize: 16.sp,
+                                fontWeight: FontWeight.w800,
                               ),
                             ),
-                          ),
-                        ],
+
+                            SizedBox(height: 0.8.h),
+
+                            Text(
+                              widget.itemDetail,
+                              style: TextStyle(
+                                fontSize: 14.sp,
+                                height: 1.5,
+                                color: Colors.grey.shade700,
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
+                  ),
 
-                    SizedBox(width: 3.w),
+                  SizedBox(height: 1.h),
 
-                    // Add to cart
-                    Expanded(
-                      flex: 2,
+                  // ==========================================
+                  // CUSTOMIZATION
+                  // ==========================================
+                  animatedItem(
+                    start: 0.30,
+                    end: 0.55,
 
-                      child: SizedBox(
-                        height: 6.5.h,
+                    child: Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 5.w),
 
-                        child: ElevatedButton(
-                          onPressed: isAddingToCart ? null : addToCart,
+                      child: Container(
+                        width: double.infinity,
 
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.amberAccent,
+                        padding: EdgeInsets.all(4.w),
 
-                            disabledBackgroundColor: Colors.grey.shade300,
+                        decoration: BoxDecoration(
+                          color: Colors.white,
 
-                            elevation: 3,
+                          borderRadius: BorderRadius.circular(25),
 
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(18),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.05),
+                              blurRadius: 12,
+                              offset: const Offset(0, 4),
                             ),
-                          ),
+                          ],
+                        ),
 
-                          child: isAddingToCart
-                              ? const SizedBox(
-                                  width: 24,
-                                  height: 24,
+                        child: Column(
+                          children: [
+                            // Heading
+                            Row(
+                              children: [
+                                Container(
+                                  width: 11.w,
+                                  height: 11.w,
 
-                                  child: CircularProgressIndicator(
-                                    strokeWidth: 2.5,
-                                    color: Colors.black,
+                                  decoration: BoxDecoration(
+                                    color: Colors.amber.withOpacity(0.15),
+                                    shape: BoxShape.circle,
                                   ),
-                                )
-                              : Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
+
+                                  child: const Icon(
+                                    Icons.tune_rounded,
+                                    color: Colors.amber,
+                                  ),
+                                ),
+
+                                SizedBox(width: 3.w),
+
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
 
                                   children: [
-                                    const Icon(
-                                      Icons.shopping_cart_rounded,
-                                      color: Colors.black,
-                                    ),
-
-                                    SizedBox(width: 2.w),
-
                                     Text(
-                                      "Add to Cart",
+                                      "Customize your meal",
                                       style: TextStyle(
                                         fontSize: 18.sp,
                                         fontWeight: FontWeight.w800,
-                                        color: Colors.black,
+                                      ),
+                                    ),
+
+                                    SizedBox(height: 0.3.h),
+
+                                    Text(
+                                      "Make it just the way you like",
+                                      style: TextStyle(
+                                        fontSize: 14.sp,
+                                        color: Colors.grey.shade600,
                                       ),
                                     ),
                                   ],
                                 ),
+                              ],
+                            ),
+
+                            SizedBox(height: 2.h),
+
+                            // Current preferences
+                            Container(
+                              padding: EdgeInsets.symmetric(
+                                horizontal: 3.w,
+                                vertical: 1.3.h,
+                              ),
+
+                              decoration: BoxDecoration(
+                                color: const Color(0xffF8F8F8),
+
+                                borderRadius: BorderRadius.circular(15),
+                              ),
+
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+
+                                children: [
+                                  Row(
+                                    children: [
+                                      const Icon(
+                                        Icons.local_fire_department,
+                                        size: 18,
+                                        color: Colors.red,
+                                      ),
+
+                                      SizedBox(width: 1.5.w),
+
+                                      Text(
+                                        _getSpiceLabel(spiceLevel),
+
+                                        style: TextStyle(
+                                          fontSize: 14.sp,
+                                          fontWeight: FontWeight.w600,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+
+                                  Container(
+                                    width: 1,
+                                    height: 3.h,
+                                    color: Colors.grey.shade300,
+                                  ),
+
+                                  Row(
+                                    children: [
+                                      Icon(
+                                        Icons.opacity_rounded,
+                                        size: 18,
+                                        color: Colors.orange,
+                                      ),
+
+                                      SizedBox(width: 1.5.w),
+
+                                      Text(
+                                        _getOilLabel(oilLevel),
+
+                                        style: TextStyle(
+                                          fontSize: 14.sp,
+                                          fontWeight: FontWeight.w600,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                            ),
+
+                            SizedBox(height: 1.5.h),
+
+                            // Customize button
+                            SizedBox(
+                              width: double.infinity,
+                              height: 5.5.h,
+
+                              child: OutlinedButton.icon(
+                                onPressed: _showDietPlanBottomSheet,
+
+                                icon: const Icon(
+                                  Icons.restaurant_menu_rounded,
+                                  size: 19,
+                                ),
+
+                                label: Text(
+                                  "Change Preferences",
+                                  style: TextStyle(
+                                    fontSize: 14.sp,
+                                    fontWeight: FontWeight.w700,
+                                  ),
+                                ),
+
+                                style: OutlinedButton.styleFrom(
+                                  foregroundColor: Colors.black,
+
+                                  side: const BorderSide(
+                                    color: Colors.amber,
+                                    width: 1.3,
+                                  ),
+
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(15),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
                       ),
                     ),
-                  ],
-                ),
+                  ),
+
+                  SizedBox(height: 1.h),
+
+                  // ==========================================
+                  // QUANTITY
+                  // ==========================================
+                  animatedItem(
+                    start: 0.45,
+                    end: 0.68,
+
+                    child: Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 5.w),
+
+                      child: Container(
+                        width: double.infinity,
+
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 4.w,
+                          vertical: 1.7.h,
+                        ),
+
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+
+                          borderRadius: BorderRadius.circular(20),
+
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.05),
+                              blurRadius: 12,
+                              offset: const Offset(0, 4),
+                            ),
+                          ],
+                        ),
+
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+
+                          children: [
+                            Text(
+                              "Quantity",
+                              style: TextStyle(
+                                fontSize: 16.sp,
+                                fontWeight: FontWeight.w800,
+                              ),
+                            ),
+
+                            Row(
+                              children: [
+                                quantityButton(
+                                  icon: Icons.remove,
+                                  onTap: () {
+                                    if (a > 1) {
+                                      setState(() {
+                                        a--;
+                                        total -=
+                                            int.tryParse(widget.itemPrice) ?? 0;
+                                      });
+                                    }
+                                  },
+                                ),
+
+                                SizedBox(width: 4.w),
+
+                                AnimatedSwitcher(
+                                  duration: const Duration(milliseconds: 200),
+
+                                  transitionBuilder: (child, animation) {
+                                    return ScaleTransition(
+                                      scale: animation,
+                                      child: child,
+                                    );
+                                  },
+
+                                  child: Text(
+                                    "$a",
+                                    key: ValueKey(a),
+                                    style: TextStyle(
+                                      fontSize: 16.sp,
+                                      fontWeight: FontWeight.w800,
+                                    ),
+                                  ),
+                                ),
+
+                                SizedBox(width: 4.w),
+
+                                quantityButton(
+                                  icon: Icons.add,
+                                  onTap: () {
+                                    setState(() {
+                                      a++;
+
+                                      total +=
+                                          int.tryParse(widget.itemPrice) ?? 0;
+                                    });
+                                  },
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+
+                  SizedBox(height: 1.h),
+                ],
               ),
             ),
-          ],
-        ),
+          ),
+
+          // ====================================================
+          // BOTTOM CART BAR
+          // ====================================================
+          animatedItem(
+            start: 0.60,
+            end: 1.00,
+
+            begin: const Offset(0, 0.30),
+
+            child: Container(
+              width: double.infinity,
+
+              padding: EdgeInsets.only(
+                left: 5.w,
+                right: 5.w,
+                top: 1.5.h,
+                bottom: MediaQuery.of(context).padding.bottom + 1.h,
+              ),
+
+              decoration: BoxDecoration(
+                color: Colors.white,
+
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.10),
+                    blurRadius: 15,
+                    offset: const Offset(0, -5),
+                  ),
+                ],
+              ),
+
+              child: Row(
+                children: [
+                  // Total
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+
+                      children: [
+                        Text(
+                          "Total Amount",
+                          style: TextStyle(
+                            fontSize: 14.sp,
+                            color: Colors.grey.shade600,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+
+                        SizedBox(height: 0.3.h),
+
+                        AnimatedSwitcher(
+                          duration: const Duration(milliseconds: 250),
+
+                          transitionBuilder: (child, animation) {
+                            return ScaleTransition(
+                              scale: animation,
+                              child: child,
+                            );
+                          },
+
+                          child: Text(
+                            "$total PKR",
+                            key: ValueKey(total),
+
+                            style: TextStyle(
+                              fontSize: 16.sp,
+                              fontWeight: FontWeight.w900,
+                              color: Colors.black,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+
+                  SizedBox(width: 3.w),
+
+                  // Add to cart
+                  Expanded(
+                    flex: 2,
+
+                    child: SizedBox(
+                      height: 6.h,
+
+                      child: ElevatedButton(
+                        onPressed: isAddingToCart ? null : addToCart,
+
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.amberAccent,
+
+                          disabledBackgroundColor: Colors.grey.shade300,
+
+                          elevation: 3,
+
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(18),
+                          ),
+                        ),
+
+                        child: isAddingToCart
+                            ? const SizedBox(
+                                width: 24,
+                                height: 24,
+
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2.5,
+                                  color: Colors.black,
+                                ),
+                              )
+                            : Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+
+                                children: [
+                                  const Icon(
+                                    Icons.shopping_cart_rounded,
+                                    color: Colors.black,
+                                  ),
+
+                                  SizedBox(width: 2.w),
+
+                                  Text(
+                                    "Add to Cart",
+                                    style: TextStyle(
+                                      fontSize: 16.sp,
+                                      fontWeight: FontWeight.w800,
+                                      color: Colors.black,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
