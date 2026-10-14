@@ -549,69 +549,96 @@ class _FoodDetailPageState extends State<FoodDetailPage>
 
                   children: [
                     // ==========================================
-                    // FOOD IMAGE HEADER
+
                     // ==========================================
-                    Stack(
-                      children: [
-                        Container(
-                          height: 30.h,
-                          width: double.infinity,
-
-                          decoration: const BoxDecoration(
-                            color: Colors.amberAccent,
-
-                            borderRadius: BorderRadius.only(
-                              bottomLeft: Radius.circular(45),
-                              bottomRight: Radius.circular(45),
-                            ),
-                          ),
-
-                          child: Padding(
-                            padding: EdgeInsets.only(top: 3.h, bottom: 2.h),
-
+                    // FOOD IMAGE HEADER - FULL WIDTH
+                    // ==========================================
+                    SizedBox(
+                      height: 38.h,
+                      width: double.infinity,
+                      child: Stack(
+                        children: [
+                          // FULL-WIDTH FOOD IMAGE
+                          Positioned.fill(
                             child: Hero(
                               tag: '${widget.itemName}_${widget.image}',
-
                               child: Image.network(
                                 widget.image,
-
                                 width: double.infinity,
-                                height: 32.h,
-
-                                fit: BoxFit.contain,
-
+                                height: double.infinity,
+                                fit: BoxFit.cover,
+                                alignment: Alignment.center,
                                 errorBuilder: (context, error, stackTrace) {
-                                  return Icon(
-                                    Icons.fastfood_rounded,
-                                    size: 90,
-                                    color: Colors.grey.shade600,
+                                  return Container(
+                                    color: Colors.amberAccent,
+                                    child: Icon(
+                                      Icons.fastfood_rounded,
+                                      size: 90,
+                                      color: Colors.grey.shade600,
+                                    ),
                                   );
                                 },
                               ),
                             ),
                           ),
-                        ),
 
-                        // ======================================
-                        // BACK BUTTON
-                        // ======================================
-                        Positioned(
-                          top: 1.5.h,
-                          left: 4.w,
+                          // IMAGE OVERLAY
+                          Positioned.fill(
+                            child: IgnorePointer(
+                              child: DecoratedBox(
+                                decoration: BoxDecoration(
+                                  gradient: LinearGradient(
+                                    begin: Alignment.topCenter,
+                                    end: Alignment.bottomCenter,
+                                    colors: [
+                                      Colors.black.withOpacity(0.20),
+                                      Colors.transparent,
+                                      Colors.black.withOpacity(0.10),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
 
-                          child: GestureDetector(
-                            onTap: () {
-                              Navigator.pop(context);
-                            },
+                          // BACK BUTTON
+                          Positioned(
+                            top: 1.5.h,
+                            left: 4.w,
+                            child: GestureDetector(
+                              onTap: () => Navigator.pop(context),
+                              child: Container(
+                                width: 11.w,
+                                height: 11.w,
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  shape: BoxShape.circle,
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.black.withOpacity(0.10),
+                                      blurRadius: 10,
+                                    ),
+                                  ],
+                                ),
+                                child: const Icon(
+                                  Icons.arrow_back_ios_new_rounded,
+                                  size: 18,
+                                  color: Colors.black,
+                                ),
+                              ),
+                            ),
+                          ),
 
+                          // FAVORITE BUTTON
+                          Positioned(
+                            top: 1.5.h,
+                            right: 4.w,
                             child: Container(
                               width: 11.w,
                               height: 11.w,
-
                               decoration: BoxDecoration(
                                 color: Colors.white,
                                 shape: BoxShape.circle,
-
                                 boxShadow: [
                                   BoxShadow(
                                     color: Colors.black.withOpacity(0.10),
@@ -619,45 +646,15 @@ class _FoodDetailPageState extends State<FoodDetailPage>
                                   ),
                                 ],
                               ),
-
                               child: const Icon(
-                                Icons.arrow_back_ios_new_rounded,
-                                size: 18,
+                                Icons.favorite_border_rounded,
+                                size: 21,
+                                color: Colors.black,
                               ),
                             ),
                           ),
-                        ),
-
-                        // ======================================
-                        // FAVORITE BUTTON
-                        // ======================================
-                        Positioned(
-                          top: 1.5.h,
-                          right: 4.w,
-
-                          child: Container(
-                            width: 11.w,
-                            height: 11.w,
-
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              shape: BoxShape.circle,
-
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.black.withOpacity(0.10),
-                                  blurRadius: 10,
-                                ),
-                              ],
-                            ),
-
-                            child: const Icon(
-                              Icons.favorite_border_rounded,
-                              size: 21,
-                            ),
-                          ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
 
                     SizedBox(height: 2.h),

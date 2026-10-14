@@ -528,7 +528,7 @@ class _LoginScreenState extends State<LoginScreen>
                       ),
                     ),
 
-                    SizedBox(height: 2.h),
+                    SizedBox(height: 1.h),
 
                     // ==================================================
                     // FOOD IMAGE
@@ -540,7 +540,7 @@ class _LoginScreenState extends State<LoginScreen>
 
                       child: SizedBox(
                         width: double.infinity,
-                        height: 28.h,
+                        height: 35.h,
 
                         child: Image.asset(
                           'assets/images/login.png',
