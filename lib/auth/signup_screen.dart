@@ -259,7 +259,7 @@ class _SignupScreenState extends State<SignupScreen>
               Colors.amber.shade200,
               Colors.amber.shade400,
             ],
-           begin: Alignment.topCenter,
+            begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
           ),
         ),
@@ -271,7 +271,7 @@ class _SignupScreenState extends State<SignupScreen>
               crossAxisAlignment: CrossAxisAlignment.center,
 
               children: [
-                SizedBox(height: 2.h),
+                SizedBox(height: 1.h),
 
                 // ==================================================
                 // FOODIES LOGO
@@ -285,7 +285,7 @@ class _SignupScreenState extends State<SignupScreen>
                   child: Center(
                     child: Image.asset(
                       'assets/images/foodies_logo.png',
-                      width: 70.w,
+                      // width: 70.w,
                       height: 14.h,
                       fit: BoxFit.contain,
                     ),
@@ -575,8 +575,8 @@ class _SignupScreenState extends State<SignupScreen>
                                 textAlign: TextAlign.center,
 
                                 style: GoogleFonts.poppins(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 16.sp,
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: 15.sp,
                                   color: Colors.black,
                                 ),
                               ),

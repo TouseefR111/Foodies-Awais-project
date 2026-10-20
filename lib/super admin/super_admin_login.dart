@@ -380,7 +380,7 @@ class _SuperAdminLoginState extends State<SuperAdminLogin>
                   child: Padding(
                     padding: EdgeInsets.symmetric(
                       horizontal: 6.w,
-                      // vertical: 3.h,
+                      vertical: 3.h,
                     ),
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -393,7 +393,8 @@ class _SuperAdminLoginState extends State<SuperAdminLogin>
                           end: 0.35,
                           child: Image.asset(
                             'assets/images/foodies_logo.png',
-                            height: 13.h,
+                            height: 14.h,
+                            // width: 70.w,
                             fit: BoxFit.contain,
                             errorBuilder: (context, error, stackTrace) {
                               return Text(
@@ -408,7 +409,7 @@ class _SuperAdminLoginState extends State<SuperAdminLogin>
                           ),
                         ),
 
-                        SizedBox(height: 2.h),
+                        SizedBox(height: 1.h),
 
                         // ==================================================
                         // SUPER ADMIN TITLE
@@ -419,7 +420,7 @@ class _SuperAdminLoginState extends State<SuperAdminLogin>
                           child: Text(
                             "Super Admin",
                             style: GoogleFonts.poppins(
-                              fontSize: 22.sp,
+                              fontSize: 20.sp,
                               fontWeight: FontWeight.w700,
                               color: Colors.black,
                             ),
@@ -441,7 +442,7 @@ class _SuperAdminLoginState extends State<SuperAdminLogin>
                           ),
                         ),
 
-                        SizedBox(height: 3.h),
+                        SizedBox(height: 2.h),
 
                         // ==================================================
                         // LOGIN CARD
@@ -636,45 +637,45 @@ class _SuperAdminLoginState extends State<SuperAdminLogin>
                             ),
                           ),
                         ),
-                        SizedBox(height: 1.h),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
 
-                          children: [
-                            Text(
-                              "Not an admin? ",
+                        // SizedBox(height: 1.h),
+                        // Row(
+                        //   mainAxisAlignment: MainAxisAlignment.center,
 
-                              style: GoogleFonts.poppins(
-                                fontSize: 14.sp,
-                                color: Colors.black87,
-                              ),
-                            ),
+                        //   children: [
+                        //     Text(
+                        //       "Not an admin? ",
 
-                            GestureDetector(
-                              onTap: () {
-                                Navigator.push(
-                                  context,
+                        //       style: GoogleFonts.poppins(
+                        //         fontSize: 14.sp,
+                        //         color: Colors.black87,
+                        //       ),
+                        //     ),
 
-                                  MaterialPageRoute(
-                                    builder: (context) => const WelcomeScreen(),
-                                  ),
-                                );
-                              },
+                        //     GestureDetector(
+                        //       onTap: () {
+                        //         Navigator.push(
+                        //           context,
 
-                              child: Text(
-                                "Go back to Navigation Screen",
+                        //           MaterialPageRoute(
+                        //             builder: (context) => const WelcomeScreen(),
+                        //           ),
+                        //         );
+                        //       },
 
-                                style: GoogleFonts.poppins(
-                                  fontSize: 14.sp,
-                                  fontWeight: FontWeight.bold,
-                                  decoration: TextDecoration.underline,
-                                  color: Colors.black,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
+                        //       child: Text(
+                        //         "Go back to Navigation Screen",
 
+                        //         style: GoogleFonts.poppins(
+                        //           fontSize: 14.sp,
+                        //           fontWeight: FontWeight.bold,
+                        //           decoration: TextDecoration.underline,
+                        //           color: Colors.black,
+                        //         ),
+                        //       ),
+                        //     ),
+                        //   ],
+                        // ),
                         SizedBox(height: 1.h),
 
                         // ==================================================
@@ -711,6 +712,30 @@ class _SuperAdminLoginState extends State<SuperAdminLogin>
                         // ),
                       ],
                     ),
+                  ),
+                ),
+              ),
+
+              // BACK ARROW — KEEP ON TOP
+              Positioned(
+                top: 0,
+                left: 0,
+                child: Material(
+                  color: Colors.transparent,
+                  child: IconButton(
+                    icon: const Icon(
+                      Icons.arrow_back,
+                      color: Colors.black,
+                      size: 28,
+                    ),
+                    onPressed: () {
+                      Navigator.of(context).pushAndRemoveUntil(
+                        MaterialPageRoute(
+                          builder: (_) => const WelcomeScreen(),
+                        ),
+                        (route) => false,
+                      );
+                    },
                   ),
                 ),
               ),

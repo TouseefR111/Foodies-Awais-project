@@ -325,8 +325,8 @@ class _WelcomeScreenState extends State<WelcomeScreen>
                           scale: _logoScale,
                           child: Image.asset(
                             'assets/images/foodies_logo.png',
-                            width: 68.w,
-                            height: 13.h,
+                            // width: 70.w,
+                            height: 14.h,
                             fit: BoxFit.contain,
                           ),
                         ),
